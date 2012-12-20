@@ -54,8 +54,8 @@ require 'chef_zero/endpoints/not_found_endpoint'
 module ChefZero
   class Server < Rack::Server
     def initialize(options)
-      options[:host] ||= "localhost" # TODO 0.0.0.0?
-      options[:port] ||= 80
+      options[:Host] ||= "localhost" # TODO 0.0.0.0?
+      options[:Port] ||= 80
       options[:generate_real_keys] = true if !options.has_key?(:generate_real_keys)
       super(options)
       @generate_real_keys = options[:generate_real_keys]
