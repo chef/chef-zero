@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
+require 'chef_zero/server'
+
+server = ChefZero::Server.new(:Port => 8889)
+server.start

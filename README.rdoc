@@ -1,0 +1,10 @@
+== Chef Zero
+
+= DESCRIPTION:
+
+chef-zero is a simple, easy-instal, in-memory Chef server that can be useful
+for Chef client testing and chef-solo-like tasks that require a full Chef
+server.  It IS intended to be simple, fully Chef 11 compliant, easy to
+run and fast to start. It is NOT intended to be highly scalable, performant
+or persistent.
+
