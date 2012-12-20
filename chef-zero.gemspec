@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://www.opscode.com"
 
   s.add_dependency 'chef' # For version, version constraint and deep merge
+  s.add_dependency 'thin' # webrick DOES NOT FREAKING WORK
 
   s.bindir       = "bin"
   s.executables  = %w( chef-zero )
