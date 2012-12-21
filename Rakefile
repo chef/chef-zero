@@ -13,3 +13,7 @@ RDoc::Task.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+task :test do
+  sh "cd test && ruby run-pedant.rb"
+end
