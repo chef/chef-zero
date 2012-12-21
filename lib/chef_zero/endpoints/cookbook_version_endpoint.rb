@@ -8,7 +8,7 @@ module ChefZero
     # /cookbooks/NAME/VERSION
     class CookbookVersionEndpoint < RestObjectEndpoint
       def get(request)
-        if request.rest_path[2] == "_latest"
+        if request.rest_path[2] == "_latest" || request.rest_path[2] == "latest"
           request.rest_path[2] = latest_version(get_data(request, request.rest_path[0..1]).keys)
         end
         super(request)
@@ -51,6 +51,10 @@ module ChefZero
       end
 
       def delete(request)
+        if request.rest_path[2] == "_latest" || request.rest_path[2] == "latest"
+          request.rest_path[2] = latest_version(get_data(request, request.rest_path[0..1]).keys)
+        end
+
         deleted_cookbook = get_data(request, request.rest_path)
         response = super(request)
         cookbook_name = request.rest_path[1]
