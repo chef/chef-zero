@@ -1,5 +1,7 @@
 {
   "chef_type": "node",
+  "json_class": "Chef::Node",
   "name": "boxer",
-  "chef_environment": "_default"
+  "chef_environment": "_default",
+  "run_list": []
 }
