@@ -1,0 +1,13 @@
+{
+  "name": "desert",
+  "default_attributes": {
+  },
+  "json_class": "Chef::Environment",
+  "description": "This is your just desert",
+  "cookbook_versions": {
+    "bork": "> 2.0"
+  },
+  "override_attributes": {
+  },
+  "chef_type": "environment"
+}

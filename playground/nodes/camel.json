@@ -1,0 +1,5 @@
+{
+  "chef_type": "node",
+  "name": "camel",
+  "chef_environment": "desert"
+}

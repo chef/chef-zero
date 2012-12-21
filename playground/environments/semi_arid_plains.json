@@ -1,0 +1,13 @@
+{
+  "name": "semi_arid_plains",
+  "description": "The plains, they are so arid",
+  "cookbook_versions": {
+  },
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+    "derp": true
+  },
+  "override_attributes": {
+  }
+}

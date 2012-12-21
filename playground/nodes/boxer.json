@@ -1,0 +1,5 @@
+{
+  "chef_type": "node",
+  "name": "boxer",
+  "chef_environment": "_default"
+}

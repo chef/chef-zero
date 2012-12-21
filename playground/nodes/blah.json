@@ -1,0 +1,5 @@
+{
+  "chef_type": "node",
+  "name": "blah",
+  "chef_environment": "_default"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rainforest",
+  "description": "Aaaaagh!  Save me!",
+  "cookbook_versions": {
+  },
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+    "a": "b"
+  },
+  "override_attributes": {
+  }
+}
