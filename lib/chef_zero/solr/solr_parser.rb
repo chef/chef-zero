@@ -109,7 +109,6 @@ module ChefZero
 
       def parse_error(token, str)
         error = "Error on token '#{token}' at #{@index} of '#{@query_string}': #{str}"
-        puts error
         raise error
       end
 
