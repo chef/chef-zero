@@ -5,7 +5,7 @@ $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 require 'chef_zero/server'
 
 thread = Thread.new do
-  server = ChefZero::Server.new(:Port => 8889)
+  server = ChefZero::Server.new(:port => 8889)
   server.start
 end
 

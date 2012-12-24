@@ -8,18 +8,18 @@ require 'chef_zero/server'
 require 'optparse'
 
 options = {
-  :Host => '127.0.0.1',
-  :Port => 8889,
+  :host => '127.0.0.1',
+  :port => 8889,
   :generate_real_keys => false
 }
 OptionParser.new do |opts|
   opts.banner = "Usage: chef-zero [ARGS]"
 
   opts.on("-H", "--host HOST", "Host to bind to (default: 127.0.0.1)") do |value|
-    options[:Host] = value
+    options[:host] = value
   end
   opts.on("-p", "--port PORT", Integer, "Port to listen on") do |value|
-    options[:Port] = value
+    options[:port] = value
   end
   opts.on("--[no-]generate-keys", "Whether to generate actual keys or fake it (faster).  Default: false.") do |value|
     options[:generate_real_keys] = value

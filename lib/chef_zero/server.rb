@@ -17,11 +17,11 @@
 #
 
 require 'rubygems'
-require 'webrick'
-require 'rack'
+require 'thin'
 require 'openssl'
 require 'chef_zero'
 require 'chef_zero/router'
+require 'timeout'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
@@ -52,12 +52,13 @@ require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
 
 module ChefZero
-  class Server < Rack::Server
-    def initialize(options)
-      options[:Host] ||= "localhost" # TODO 0.0.0.0?
-      options[:Port] ||= 80
+  class Server
+    def initialize(options = {})
+      @options = options
+      options[:host] ||= '127.0.0.1'
+      options[:port] ||= 80
       options[:generate_real_keys] = true if !options.has_key?(:generate_real_keys)
-      super(options)
+      @server = Thin::Server.new(options[:host], options[:port], make_app)
       @generate_real_keys = options[:generate_real_keys]
       @data = {
         'clients' => {
@@ -79,49 +80,43 @@ module ChefZero
       }
     end
 
+    attr_reader :server
     attr_reader :data
+    attr_reader :options
     attr_reader :generate_real_keys
 
     include ChefZero::Endpoints
 
-    def app
-      @app ||= begin
-        router = Router.new([
-          [ '/authenticate_user', AuthenticateUserEndpoint.new(self) ],
-          [ '/clients', ActorsEndpoint.new(self) ],
-          [ '/clients/*', ActorEndpoint.new(self) ],
-          [ '/cookbooks', CookbooksEndpoint.new(self) ],
-          [ '/cookbooks/*', CookbookEndpoint.new(self) ],
-          [ '/cookbooks/*/*', CookbookVersionEndpoint.new(self) ],
-          [ '/data', DataBagsEndpoint.new(self) ],
-          [ '/data/*', DataBagEndpoint.new(self) ],
-          [ '/data/*/*', DataBagItemEndpoint.new(self) ],
-          [ '/environments', RestListEndpoint.new(self) ],
-          [ '/environments/*', EnvironmentEndpoint.new(self) ],
-          [ '/environments/*/cookbooks', EnvironmentCookbooksEndpoint.new(self) ],
-          [ '/environments/*/cookbooks/*', EnvironmentCookbookEndpoint.new(self) ],
-          [ '/environments/*/cookbook_versions', EnvironmentCookbookVersionsEndpoint.new(self) ],
-          [ '/environments/*/nodes', EnvironmentNodesEndpoint.new(self) ],
-          [ '/environments/*/recipes', EnvironmentRecipesEndpoint.new(self) ],
-          [ '/environments/*/roles/*', EnvironmentRoleEndpoint.new(self) ],
-          [ '/nodes', RestListEndpoint.new(self) ],
-          [ '/nodes/*', NodeEndpoint.new(self) ],
-          [ '/principals/*', PrincipalEndpoint.new(self) ],
-          [ '/roles', RestListEndpoint.new(self) ],
-          [ '/roles/*', RoleEndpoint.new(self) ],
-          [ '/roles/*/environments', RoleEnvironmentsEndpoint.new(self) ],
-          [ '/roles/*/environments/*', EnvironmentRoleEndpoint.new(self) ],
-          [ '/sandboxes', SandboxesEndpoint.new(self) ],
-          [ '/sandboxes/*', SandboxEndpoint.new(self) ],
-          [ '/search', SearchesEndpoint.new(self) ],
-          [ '/search/*', SearchEndpoint.new(self) ],
-          [ '/users', ActorsEndpoint.new(self) ],
-          [ '/users/*', ActorEndpoint.new(self) ],
+    def url
+      "http://#{options[:host]}:#{options[:port]}"
+    end
 
-          [ '/file_store/*', FileStoreFileEndpoint.new(self) ],
-        ])
-        router.not_found = NotFoundEndpoint.new
-        router
+    def start
+      server.start
+    end
+
+    def start_background(timeout = 5)
+      @thread = Thread.new do
+        server.start
+      end
+      Timeout::timeout(timeout) do
+        until server.running?
+          sleep(0.01)
+        end
+      end
+    end
+
+    def running?
+      server.running?
+    end
+
+    def stop(timeout = 5)
+      Timeout::timeout(timeout) do
+        server.stop
+      end
+      if @thread
+        @thread.kill
+        @thread = nil
       end
     end
 
@@ -135,6 +130,98 @@ module ChefZero
       else
         [PRIVATE_KEY, PUBLIC_KEY]
       end
+    end
+
+    # Load data in a nice, friendly form:
+    # {
+    #   'roles' => {
+    #     'desert' => '{ "description": "Hot and dry"' },
+    #     'rainforest' => { "description" => 'Wet and humid' }
+    #   },
+    #   'cookbooks' => {
+    #     'apache2-1.0.1' => {
+    #       'templates' => { 'default' => { 'blah.txt' => 'hi' }}
+    #       'recipes' => { 'default.rb' => 'template "blah.txt"' }
+    #       'metadata.rb' => 'depends "mysql"'
+    #     },
+    #     'apache2-1.2.0' => {
+    #       'templates' => { 'default' => { 'blah.txt' => 'lo' }}
+    #       'recipes' => { 'default.rb' => 'template "blah.txt"' }
+    #       'metadata.rb' => 'depends "mysql"'
+    #     },
+    #     'mysql' => {
+    #       'recipes' => { 'default.rb' => 'file { contents "hi" }' },
+    #       'metadata.rb' => 'version "1.0.0"'
+    #     }
+    #   }
+    # }
+    def load_data(contents)
+      %w(clients data environments nodes roles users).each do |data_type|
+        server.data[data_type].merge!(contents[data_type]) if contents[data_type]
+      end
+      if contents['cookbooks']
+        contents['cookbooks'].each_pair do |name_version, cookbook|
+          if name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
+            cookbook_data = CookbookData.to_json(cookbook, $1, $2)
+          else
+            cookbook_data = CookbookData.to_json(cookbook, name_version)
+          end
+          server.data['cookbooks'][cookbook_data['cookbook_name']][cookbook_data['version']] = cookbook_data
+          cookbook_data.each do |files|
+            next unless files.is_a? Array
+            server.data['file_store'][file[:checksum]] = get_file(cookbook, file[:path])
+          end
+        end
+      end
+    end
+
+    private
+
+    def make_app
+      router = Router.new([
+        [ '/authenticate_user', AuthenticateUserEndpoint.new(self) ],
+        [ '/clients', ActorsEndpoint.new(self) ],
+        [ '/clients/*', ActorEndpoint.new(self) ],
+        [ '/cookbooks', CookbooksEndpoint.new(self) ],
+        [ '/cookbooks/*', CookbookEndpoint.new(self) ],
+        [ '/cookbooks/*/*', CookbookVersionEndpoint.new(self) ],
+        [ '/data', DataBagsEndpoint.new(self) ],
+        [ '/data/*', DataBagEndpoint.new(self) ],
+        [ '/data/*/*', DataBagItemEndpoint.new(self) ],
+        [ '/environments', RestListEndpoint.new(self) ],
+        [ '/environments/*', EnvironmentEndpoint.new(self) ],
+        [ '/environments/*/cookbooks', EnvironmentCookbooksEndpoint.new(self) ],
+        [ '/environments/*/cookbooks/*', EnvironmentCookbookEndpoint.new(self) ],
+        [ '/environments/*/cookbook_versions', EnvironmentCookbookVersionsEndpoint.new(self) ],
+        [ '/environments/*/nodes', EnvironmentNodesEndpoint.new(self) ],
+        [ '/environments/*/recipes', EnvironmentRecipesEndpoint.new(self) ],
+        [ '/environments/*/roles/*', EnvironmentRoleEndpoint.new(self) ],
+        [ '/nodes', RestListEndpoint.new(self) ],
+        [ '/nodes/*', NodeEndpoint.new(self) ],
+        [ '/principals/*', PrincipalEndpoint.new(self) ],
+        [ '/roles', RestListEndpoint.new(self) ],
+        [ '/roles/*', RoleEndpoint.new(self) ],
+        [ '/roles/*/environments', RoleEnvironmentsEndpoint.new(self) ],
+        [ '/roles/*/environments/*', EnvironmentRoleEndpoint.new(self) ],
+        [ '/sandboxes', SandboxesEndpoint.new(self) ],
+        [ '/sandboxes/*', SandboxEndpoint.new(self) ],
+        [ '/search', SearchesEndpoint.new(self) ],
+        [ '/search/*', SearchEndpoint.new(self) ],
+        [ '/users', ActorsEndpoint.new(self) ],
+        [ '/users/*', ActorEndpoint.new(self) ],
+
+        [ '/file_store/*', FileStoreFileEndpoint.new(self) ],
+      ])
+      router.not_found = NotFoundEndpoint.new
+      router
+    end
+
+    def get_file(directory, path)
+      value = directory
+      path.split('/').each do |part|
+        value = value[part]
+      end
+      value
     end
   end
 end

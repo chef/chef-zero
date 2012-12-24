@@ -24,7 +24,7 @@ One of chef-zero's primary uses is as a small test server for people writing and
 testing clients.  To bring it up, simply do:
 
     require 'chef_zero/server'
-    server = ChefZero::Server.new(:Port => 8889)
+    server = ChefZero::Server.new(:port => 8889)
     server.start
 
 To bring it up in the background, do:

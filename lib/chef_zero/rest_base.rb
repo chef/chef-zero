@@ -1,5 +1,6 @@
 require 'chef_zero/rest_request'
 require 'chef_zero/rest_error_response'
+require 'chef/log'
 
 module ChefZero
   class RestBase
@@ -32,8 +33,7 @@ module ChefZero
           error(e.response_code, e.error)
         end
       rescue
-        puts $!.inspect
-        puts $!.backtrace
+        Chef::Log.error("#{$!.inspect}\n#{$!.backtrace}")
         raise
       end
     end
