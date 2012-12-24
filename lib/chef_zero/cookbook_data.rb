@@ -3,7 +3,7 @@ require 'chef/cookbook/metadata' # for ruby metadata.rb dsl
 
 module ChefZero
   module CookbookData
-    def self.to_json(cookbook, name, version=nil)
+    def self.to_hash(cookbook, name, version=nil)
       result = files_from(cookbook)
       recipe_names = result[:recipes].map do |recipe|
         recipe_name = recipe[:name][0..-2]
@@ -34,26 +34,32 @@ module ChefZero
       # If both .rb and .json exist, read .rb
       # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
       # the resulting recipe list have 1, or 3-4 recipes in it?
-      if cookbook['metadata.rb']
-        metadata.instance_eval(cookbook['metadata.rb'])
-      elsif cookbook['metadata.json']
-        metadata.from_json(cookbook['metadata.json'])
+      if directory['metadata.rb']
+        metadata.instance_eval(directory['metadata.rb'])
+      elsif directory['metadata.json']
+        metadata.from_json(directory['metadata.json'])
       end
-      metadata.to_json
+      result = {}
+      metadata.to_hash.each_pair do |key,value|
+        result[key.to_sym] = value
+      end
+      result[:version] = version
+      result
+
     end
 
-    def self.files_from(cookbook)
+    def self.files_from(directory)
       # TODO some support .rb only
       result = {
-        :attributes => load_child_files(cookbook, 'attributes', false),
-        :definitions => load_child_files(cookbook, 'definitions', false),
-        :recipes => load_child_files(cookbook, 'recipes', false),
-        :libraries => load_child_files(cookbook, 'libraries', false),
-        :templates => load_child_files(cookbook, 'templates', true, true),
-        :files => load_child_files(cookbook, 'files', true, true),
-        :resources => load_child_files(cookbook, 'resources', true),
-        :providers => load_child_files(cookbook, 'providers', true),
-        :root_files => load_files(cookbook, false)
+        :attributes => load_child_files(directory, 'attributes', false),
+        :definitions => load_child_files(directory, 'definitions', false),
+        :recipes => load_child_files(directory, 'recipes', false),
+        :libraries => load_child_files(directory, 'libraries', false),
+        :templates => load_child_files(directory, 'templates', true),
+        :files => load_child_files(directory, 'files', true),
+        :resources => load_child_files(directory, 'resources', true),
+        :providers => load_child_files(directory, 'providers', true),
+        :root_files => load_files(directory, false)
       }
       set_specificity(result[:templates])
       set_specificity(result[:files])
@@ -70,28 +76,27 @@ module ChefZero
 
     def self.load_files(directory, recursive)
       result = []
-      directory.each_pair do |child_key, child|
-        if child.is_a? Hash
-          if recursive
-            result += load_child_files(directory, child_key, recursive, false)
-         end
-        else
-          result += load_file(child, child_key)
+      if directory
+        directory.each_pair do |child_key, child|
+          if child.is_a? Hash
+            if recursive
+              result += load_child_files(directory, child_key, recursive)
+           end
+          else
+            result += load_file(child, child_key)
+          end
         end
-      end
-      result.each do |file|
-        file[:path] = "key/#{file[:path]}"
       end
       result
     end
 
     def self.load_file(value, name)
-      result = {
+      [{
         :name => name,
         :path => name,
         :checksum => Digest::MD5.hexdigest(value),
         :specificity => 'default'
-      }
+      }]
     end
 
     def self.set_specificity(files)

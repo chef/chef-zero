@@ -33,7 +33,7 @@ module ChefZero
           error(e.response_code, e.error)
         end
       rescue
-        Chef::Log.error("#{$!.inspect}\n#{$!.backtrace}")
+        Chef::Log.error("#{$!.inspect}\n#{$!.backtrace.join("\n")}")
         raise
       end
     end

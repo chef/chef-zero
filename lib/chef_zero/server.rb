@@ -22,6 +22,7 @@ require 'openssl'
 require 'chef_zero'
 require 'chef_zero/router'
 require 'timeout'
+require 'chef_zero/cookbook_data'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
@@ -97,10 +98,15 @@ module ChefZero
 
     def start_background(timeout = 5)
       @thread = Thread.new do
-        server.start
+        begin
+          server.start
+        rescue
+          @server_error = $!
+          Chef::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
+        end
       end
       Timeout::timeout(timeout) do
-        until server.running?
+        until server.running? || @server_error
           sleep(0.01)
         end
       end
@@ -113,6 +119,9 @@ module ChefZero
     def stop(timeout = 5)
       Timeout::timeout(timeout) do
         server.stop
+        until !server.running? || !server_error
+          sleep(0.01)
+        end
       end
       if @thread
         @thread.kill
@@ -156,20 +165,33 @@ module ChefZero
     #   }
     # }
     def load_data(contents)
-      %w(clients data environments nodes roles users).each do |data_type|
-        server.data[data_type].merge!(contents[data_type]) if contents[data_type]
+      %w(clients environments nodes roles users).each do |data_type|
+        if contents[data_type]
+          dejsonize_children!(contents[data_type])
+          data[data_type].merge!(contents[data_type])
+        end
+      end
+      if contents['data']
+        contents['data'].values.each do |data_bag|
+          dejsonize_children!(data_bag)
+        end
+        data['data'].merge!(contents['data'])
       end
       if contents['cookbooks']
         contents['cookbooks'].each_pair do |name_version, cookbook|
           if name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
-            cookbook_data = CookbookData.to_json(cookbook, $1, $2)
+            cookbook_data = CookbookData.to_hash(cookbook, $1, $2)
           else
-            cookbook_data = CookbookData.to_json(cookbook, name_version)
+            cookbook_data = CookbookData.to_hash(cookbook, name_version)
           end
-          server.data['cookbooks'][cookbook_data['cookbook_name']][cookbook_data['version']] = cookbook_data
-          cookbook_data.each do |files|
+          raise "No version specified" if !cookbook_data[:version]
+          data['cookbooks'][cookbook_data[:cookbook_name]] = {} if !data['cookbooks'][cookbook_data[:cookbook_name]]
+          data['cookbooks'][cookbook_data[:cookbook_name]][cookbook_data[:version]] = JSON.pretty_generate(cookbook_data)
+          cookbook_data.values.each do |files|
             next unless files.is_a? Array
-            server.data['file_store'][file[:checksum]] = get_file(cookbook, file[:path])
+            files.each do |file|
+              data['file_store'][file[:checksum]] = get_file(cookbook, file[:path])
+            end
           end
         end
       end
@@ -214,6 +236,12 @@ module ChefZero
       ])
       router.not_found = NotFoundEndpoint.new
       router
+    end
+
+    def dejsonize_children!(hash)
+      hash.each_pair do |key, value|
+        hash[key] = JSON.pretty_generate(value) if value.is_a?(Hash)
+      end
     end
 
     def get_file(directory, path)
