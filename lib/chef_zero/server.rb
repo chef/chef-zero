@@ -117,14 +117,13 @@ module ChefZero
     end
 
     def stop(timeout = 5)
-      Timeout::timeout(timeout) do
+      begin
         server.stop
-        until !server.running? || !server_error
-          sleep(0.01)
-        end
-      end
-      if @thread
-        @thread.kill
+        @thread.join(timeout)
+        @thread = nil
+      rescue
+        Chef::Log.error("Server did not stop within #{timeout}s.  Killing.")
+        @thread.kill if @thread
         @thread = nil
       end
     end
