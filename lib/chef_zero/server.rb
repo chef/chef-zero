@@ -61,24 +61,7 @@ module ChefZero
       options[:generate_real_keys] = true if !options.has_key?(:generate_real_keys)
       @server = Thin::Server.new(options[:host], options[:port], make_app)
       @generate_real_keys = options[:generate_real_keys]
-      @data = {
-        'clients' => {
-          'chef-validator' => '{ "validator": true }',
-          'chef-webui' => '{ "admin": true }'
-        },
-        'cookbooks' => {},
-        'data' => {},
-        'environments' => {
-          '_default' => '{ "description": "The default Chef environment" }'
-        },
-        'file_store' => {},
-        'nodes' => {},
-        'roles' => {},
-        'sandboxes' => {},
-        'users' => {
-          'admin' => '{ "admin": true }'
-        }
-      }
+      clear_data
     end
 
     attr_reader :server
@@ -194,6 +177,27 @@ module ChefZero
           end
         end
       end
+    end
+
+    def clear_data
+      @data = {
+        'clients' => {
+          'chef-validator' => '{ "validator": true }',
+          'chef-webui' => '{ "admin": true }'
+        },
+        'cookbooks' => {},
+        'data' => {},
+        'environments' => {
+          '_default' => '{ "description": "The default Chef environment" }'
+        },
+        'file_store' => {},
+        'nodes' => {},
+        'roles' => {},
+        'sandboxes' => {},
+        'users' => {
+          'admin' => '{ "admin": true }'
+        }
+      }
     end
 
     private
