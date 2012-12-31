@@ -24,7 +24,7 @@ module ChefZero
           unless ChefZero::RSpec.server
             # Set up configuration so that clients will point to the server
             Thin::Logging.silent = true
-            ChefZero::RSpec.server = ChefZero::Server.new(:port => 8889)
+            ChefZero::RSpec.server = ChefZero::Server.new(:port => 8889, :signals => false)
             ChefZero::RSpec.client_key = Tempfile.new(['chef_zero_client_key', '.pem'])
             ChefZero::RSpec.client_key.write(ChefZero::PRIVATE_KEY)
             ChefZero::RSpec.client_key.close

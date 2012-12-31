@@ -59,7 +59,9 @@ module ChefZero
       options[:host] ||= '127.0.0.1'
       options[:port] ||= 80
       options[:generate_real_keys] = true if !options.has_key?(:generate_real_keys)
-      @server = Thin::Server.new(options[:host], options[:port], make_app)
+      thin_options = {}
+      thin_options[:signals] = options[:signals] if options.has_key?(:signals)
+      @server = Thin::Server.new(options[:host], options[:port], make_app, thin_options)
       @generate_real_keys = options[:generate_real_keys]
       clear_data
     end
