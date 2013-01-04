@@ -18,8 +18,8 @@ module ChefZero
       @client_key = value
     end
 
-    def when_the_chef_server(description, &block)
-      context "When the Chef server #{description}" do
+    def when_the_chef_server(description, *tags, &block)
+      context "When the Chef server #{description}", *tags do
         before :each do
           unless ChefZero::RSpec.server
             # Set up configuration so that clients will point to the server
@@ -34,9 +34,18 @@ module ChefZero
             ChefZero::RSpec.server.clear_data
           end
 
+          @old_chef_server_url = Chef::Config.chef_server_url
+          @old_node_name = Chef::Config.node_name
+          @old_client_key = Chef::Config.client_key
           Chef::Config.chef_server_url = ChefZero::RSpec.server.url
           Chef::Config.node_name = 'admin'
           Chef::Config.client_key = ChefZero::RSpec.client_key
+        end
+
+        after :each do
+          Chef::Config.chef_server_url = @old_chef_server_url
+          Chef::Config.node_name = @old_node_name
+          Chef::Config.client_key = @old_client_key
         end
 
         def self.client(name, client)
