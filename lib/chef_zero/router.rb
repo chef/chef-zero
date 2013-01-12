@@ -13,14 +13,19 @@ module ChefZero
     attr_accessor :not_found
 
     def call(env)
-      Chef::Log.debug "#{env['REQUEST_METHOD']} #{env['PATH_INFO']}#{env['QUERY_STRING'] != '' ? "?" + env['QUERY_STRING'] : ''}"
-      clean_path = "/" + env['PATH_INFO'].split('/').select { |part| part != "" }.join("/")
-      routes.each do |route, endpoint|
-        if route.match(clean_path)
-          return endpoint.call(env)
+      begin
+        Chef::Log.debug "#{env['REQUEST_METHOD']} #{env['PATH_INFO']}#{env['QUERY_STRING'] != '' ? "?" + env['QUERY_STRING'] : ''}"
+        clean_path = "/" + env['PATH_INFO'].split('/').select { |part| part != "" }.join("/")
+        routes.each do |route, endpoint|
+          if route.match(clean_path)
+            return endpoint.call(env)
+          end
         end
+        not_found.call(env)
+      rescue
+        Chef::Log.error("#{$!.inspect}\n#{$!.backtrace.join("\n")}")
+        [500, {"Content-Type" => "text/plain"}, "Exception raised!  #{$!.inspect}\n#{$!.backtrace.join("\n")}"]
       end
-      not_found.call(env)
     end
   end
 end
