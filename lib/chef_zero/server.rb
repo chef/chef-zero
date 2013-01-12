@@ -151,15 +151,15 @@ module ChefZero
     def load_data(contents)
       %w(clients environments nodes roles users).each do |data_type|
         if contents[data_type]
-          dejsonize_children!(contents[data_type])
-          data[data_type].merge!(contents[data_type])
+          data[data_type].merge!(dejsonize_children(contents[data_type]))
         end
       end
       if contents['data']
-        contents['data'].values.each do |data_bag|
-          dejsonize_children!(data_bag)
+        new_data = {}
+        contents['data'].each_pair do |key, data_bag|
+          new_data[key] = dejsonize_children(data_bag)
         end
-        data['data'].merge!(contents['data'])
+        data['data'].merge!(new_data)
       end
       if contents['cookbooks']
         contents['cookbooks'].each_pair do |name_version, cookbook|
@@ -243,10 +243,12 @@ module ChefZero
       router
     end
 
-    def dejsonize_children!(hash)
+    def dejsonize_children(hash)
+      result = {}
       hash.each_pair do |key, value|
-        hash[key] = JSON.pretty_generate(value) if value.is_a?(Hash)
+        result[key] = value.is_a?(Hash)  ? JSON.pretty_generate(value) : value
       end
+      result
     end
 
     def get_file(directory, path)
