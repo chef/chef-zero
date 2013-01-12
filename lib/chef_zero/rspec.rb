@@ -40,6 +40,7 @@ module ChefZero
           Chef::Config.chef_server_url = ChefZero::RSpec.server.url
           Chef::Config.node_name = 'admin'
           Chef::Config.client_key = ChefZero::RSpec.client_key
+          Chef::Config.http_retry_count = 0
         end
 
         after :each do
