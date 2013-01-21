@@ -9,7 +9,9 @@ module ChefZero
         container = get_data(request)
         contents = request.body
         name = JSON.parse(contents, :create_additions => false)[identity_key]
-        if container[name]
+        if name.nil?
+          error(400, "Must specify '#{identity_key}' in JSON")
+        elsif container[name]
           error(409, "Object already exists")
         else
           container[name] = {}

@@ -20,7 +20,7 @@ require 'rubygems'
 require 'thin'
 require 'openssl'
 require 'chef_zero'
-require 'chef_zero/router'
+require 'chef_zero/rest_router'
 require 'timeout'
 require 'chef_zero/cookbook_data'
 
@@ -125,6 +125,14 @@ module ChefZero
       end
     end
 
+    def on_request(&block)
+      @on_request_proc = block
+    end
+
+    def on_response(&block)
+      @on_response_proc = block
+    end
+
     # Load data in a nice, friendly form:
     # {
     #   'roles' => {
@@ -205,7 +213,7 @@ module ChefZero
     private
 
     def make_app
-      router = Router.new([
+      router = RestRouter.new([
         [ '/authenticate_user', AuthenticateUserEndpoint.new(self) ],
         [ '/clients', ActorsEndpoint.new(self) ],
         [ '/clients/*', ActorEndpoint.new(self) ],
@@ -240,7 +248,18 @@ module ChefZero
         [ '/file_store/*', FileStoreFileEndpoint.new(self) ],
       ])
       router.not_found = NotFoundEndpoint.new
-      router
+
+      return proc do |env|
+        request = RestRequest.new(env)
+        if @on_request_proc
+          @on_request_proc.call(request)
+        end
+        response = router.call(request)
+        if @on_response_proc
+          @on_response_proc.call(request, response)
+        end
+        response
+      end
     end
 
     def dejsonize_children(hash)

@@ -25,7 +25,9 @@ module ChefZero
         container = get_data(request)
         contents = request.body
         key = get_key(contents)
-        if container[key]
+        if key.nil?
+          error(400, "Must specify '#{identity_key}' in JSON")
+        elsif container[key]
           error(409, 'Object already exists')
         else
           container[key] = contents

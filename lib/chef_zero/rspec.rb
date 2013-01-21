@@ -1,6 +1,7 @@
 require 'thin'
 require 'tempfile'
 require 'chef_zero/server'
+require 'chef_zero/rest_request'
 require 'chef/config'
 
 module ChefZero
@@ -17,6 +18,12 @@ module ChefZero
     def self.client_key=(value)
       @client_key = value
     end
+    def self.request_log
+      @request_log ||= []
+    end
+    def self.clear_request_log
+      @request_log = []
+    end
 
     def when_the_chef_server(description, *tags, &block)
       context "When the Chef server #{description}", *tags do
@@ -24,15 +31,19 @@ module ChefZero
           unless ChefZero::RSpec.server
             # Set up configuration so that clients will point to the server
             Thin::Logging.silent = true
-            ChefZero::RSpec.server = ChefZero::Server.new(:port => 8889, :signals => false)
+            ChefZero::RSpec.server = ChefZero::Server.new(:port => 8889, :signals => false, :log_requests => true)
             ChefZero::RSpec.client_key = Tempfile.new(['chef_zero_client_key', '.pem'])
             ChefZero::RSpec.client_key.write(ChefZero::PRIVATE_KEY)
             ChefZero::RSpec.client_key.close
             # Start the server
             ChefZero::RSpec.server.start_background
+            ChefZero::RSpec.server.on_response do |request, response|
+              ChefZero::RSpec.request_log << [ request, response ]
+            end
           else
             ChefZero::RSpec.server.clear_data
           end
+          ChefZero::RSpec.clear_request_log
 
           @old_chef_server_url = Chef::Config.chef_server_url
           @old_node_name = Chef::Config.node_name

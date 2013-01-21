@@ -1,8 +1,8 @@
 module ChefZero
   module Endpoints
     class NotFoundEndpoint
-      def call(env)
-        return [404, {"Content-Type" => "application/json"}, "Object not found: #{env['REQUEST_PATH']}"]
+      def call(request)
+        return [404, {"Content-Type" => "application/json"}, "Object not found: #{request.env['REQUEST_PATH']}"]
       end
     end
   end
