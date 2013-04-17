@@ -34,7 +34,7 @@ module ChefZero
 
         # Filter by environment constraints
         environment = JSON.parse(get_data(request, request.rest_path[0..1]), :create_additions => false)
-        environment_constraints = environment['cookbook_versions']
+        environment_constraints = environment['cookbook_versions'] || {}
 
         desired_versions.each_key do |name|
           desired_versions = filter_by_constraint(desired_versions, name, environment_constraints[name])
@@ -69,8 +69,10 @@ module ChefZero
 
           # Pick this cookbook, and add dependencies
           cookbook_obj = JSON.parse(cookbooks[solve_for][desired_version], :create_additions => false)
+          cookbook_metadata = cookbook_obj['metadata'] || {}
+          cookbook_dependencies = cookbook_metadata['dependencies'] || {}
           dep_not_found = false
-          cookbook_obj['metadata']['dependencies'].each_pair do |dep_name, dep_constraint|
+          cookbook_dependencies.each_pair do |dep_name, dep_constraint|
             # If the dep is not already in the list, add it to the list to solve
             # and bring in all environment-allowed cookbook versions to desired_versions
             if !new_desired_versions.has_key?(dep_name)
