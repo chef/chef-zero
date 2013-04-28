@@ -22,13 +22,14 @@ module ChefZero
         desired_versions = {}
         run_list = JSON.parse(request.body, :create_additions => false)['run_list']
         run_list.each do |run_list_entry|
-          if run_list_entry =~ /(.+)\@(.+)/
+          if run_list_entry =~ /(.+)(::.+)?\@(.+)/
             raise RestErrorResponse.new(412, "No such cookbook: #{$1}") if !cookbooks[$1]
             raise RestErrorResponse.new(412, "No such cookbook version for cookbook #{$1}: #{$2}") if !cookbooks[$1][$2]
-            desired_versions[$1] = [ $2 ]
+            desired_versions[$1] = [ $3 ]
           else
-            raise RestErrorResponse.new(412, "No such cookbook: #{run_list_entry}") if !cookbooks[run_list_entry]
-            desired_versions[run_list_entry] = cookbooks[run_list_entry].keys
+            desired_cookbook = run_list_entry.split('::')[0]
+            raise RestErrorResponse.new(412, "No such cookbook: #{desired_cookbook}") if !cookbooks[desired_cookbook]
+            desired_versions[desired_cookbook] = cookbooks[desired_cookbook].keys
           end
         end
 
