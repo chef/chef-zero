@@ -21,7 +21,7 @@ module ChefZero
         accept_methods_str = accept_methods.map { |m| m.to_s.upcase }.join(', ')
         return [405, {"Content-Type" => "text/plain", "Allow" => accept_methods_str}, "Bad request method for '#{request.env['REQUEST_PATH']}': #{request.env['REQUEST_METHOD']}"]
       end
-      if json_only && !request.env['HTTP_ACCEPT'].split(';').include?('application/json')
+      if json_only && request.env['HTTP_ACCEPT'] && !request.env['HTTP_ACCEPT'].split(';').include?('application/json')
         return [406, {"Content-Type" => "text/plain"}, "Must accept application/json"]
       end
       # Dispatch to get()/post()/put()/delete()
