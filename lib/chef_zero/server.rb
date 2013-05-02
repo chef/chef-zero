@@ -94,6 +94,7 @@ module ChefZero
         until server.running? || @server_error
           sleep(0.01)
         end
+        raise @server_error if @server_error
       end
     end
 
@@ -210,6 +211,10 @@ module ChefZero
       }
     end
 
+    def request_handler(&block)
+      @request_handler = block
+    end
+
     private
 
     def make_app
@@ -254,7 +259,13 @@ module ChefZero
         if @on_request_proc
           @on_request_proc.call(request)
         end
-        response = router.call(request)
+        response = nil
+        if @request_handler
+          response = @request_handler.call(request)
+        end
+        unless response
+          response = router.call(request)
+        end
         if @on_response_proc
           @on_response_proc.call(request, response)
         end
