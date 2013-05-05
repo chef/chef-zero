@@ -13,7 +13,6 @@ Gem::Specification.new do |s|
   s.email = "jkeiser@opscode.com"
   s.homepage = "http://www.opscode.com"
 
-  s.add_dependency 'chef' # For version, version constraint and deep merge
   s.add_dependency 'thin' # webrick DOES NOT FREAKING WORK
   s.add_dependency 'mixlib-log', '>= 1.3.0'
   s.add_dependency 'solve', '>= 0.4.3'
