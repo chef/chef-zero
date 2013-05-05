@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'thin' # webrick DOES NOT FREAKING WORK
   s.add_dependency 'mixlib-log', '>= 1.3.0'
   s.add_dependency 'solve', '>= 0.4.3'
+  s.add_dependency 'hashie', '>= 2.0.4'
 
   s.bindir       = "bin"
   s.executables  = %w( chef-zero )

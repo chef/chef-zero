@@ -1,4 +1,5 @@
 require 'solve'
+require 'chef_zero/core_ext'
 
 module ChefZero
   autoload :Log, 'chef_zero/log'
