@@ -1,3 +1,5 @@
+require 'solve'
+
 module ChefZero
   autoload :Log, 'chef_zero/log'
 
