@@ -1,5 +1,3 @@
-require 'chef/log'
-
 module ChefZero
   class RestRouter
     def initialize(routes)
