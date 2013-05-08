@@ -43,6 +43,24 @@ module ChefZero
             ChefZero::RSpec.server.clear_data
           end
           ChefZero::RSpec.clear_request_log
+
+          if defined?(Chef::Config)
+            @old_chef_server_url = Chef::Config.chef_server_url
+            @old_node_name = Chef::Config.node_name
+            @old_client_key = Chef::Config.client_key
+            Chef::Config.chef_server_url = ChefZero::RSpec.server.url
+            Chef::Config.node_name = 'admin'
+            Chef::Config.client_key = ChefZero::RSpec.client_key.path
+            Chef::Config.http_retry_count = 0
+          end
+        end
+
+        if defined?(Chef::Config)
+          after :each do
+            Chef::Config.chef_server_url = @old_chef_server_url
+            Chef::Config.node_name = @old_node_name
+            Chef::Config.client_key = @old_client_key
+          end
         end
 
         def self.client(name, client)
