@@ -2,6 +2,7 @@ require 'json'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/rest_error_response'
 require 'chef_zero/data_normalizer'
+require 'solve'
 
 module ChefZero
   module Endpoints

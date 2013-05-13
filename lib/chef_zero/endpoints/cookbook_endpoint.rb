@@ -1,4 +1,5 @@
 require 'chef_zero/endpoints/cookbooks_base'
+require 'solve'
 
 module ChefZero
   module Endpoints

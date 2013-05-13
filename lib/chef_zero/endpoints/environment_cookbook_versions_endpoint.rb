@@ -1,6 +1,7 @@
 require 'json'
 require 'chef_zero/rest_base'
 require 'chef_zero/rest_error_response'
+require 'solve'
 
 module ChefZero
   module Endpoints

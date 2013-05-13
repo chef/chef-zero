@@ -1,4 +1,3 @@
-require 'solve'
 require 'chef_zero/core_ext'
 
 module ChefZero
