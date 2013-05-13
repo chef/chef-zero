@@ -1,4 +1,5 @@
 require 'chef_zero/endpoints/cookbooks_base'
+require 'solve'
 
 module ChefZero
   module Endpoints
@@ -31,7 +32,7 @@ module ChefZero
       end
 
       def latest_version(versions)
-        sorted = versions.sort_by { |version| Chef::Version.new(version) }
+        sorted = versions.sort_by { |version| Solve::Version.new(version) }
         sorted[-1]
       end
     end

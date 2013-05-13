@@ -1,5 +1,4 @@
 require 'json'
-require 'chef/mixin/deep_merge'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/data_normalizer'
 require 'chef_zero/rest_error_response'
@@ -64,10 +63,10 @@ module ChefZero
       def expand_for_indexing(value, index, id)
         if index == 'node'
           result = {}
-          Chef::Mixin::DeepMerge.deep_merge!(value['default'] || {}, result)
-          Chef::Mixin::DeepMerge.deep_merge!(value['normal'] || {}, result)
-          Chef::Mixin::DeepMerge.deep_merge!(value['override'] || {}, result)
-          Chef::Mixin::DeepMerge.deep_merge!(value['automatic'] || {}, result)
+          result.deep_merge!(value['default'] || {})
+          result.deep_merge!(value['normal'] || {})
+          result.deep_merge!(value['override'] || {})
+          result.deep_merge!(value['automatic'] || {})
           result['recipe'] = []
           result['role'] = []
           if value['run_list']

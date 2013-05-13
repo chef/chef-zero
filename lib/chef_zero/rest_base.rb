@@ -1,6 +1,5 @@
 require 'chef_zero/rest_request'
 require 'chef_zero/rest_error_response'
-require 'chef/log'
 
 module ChefZero
   class RestBase
