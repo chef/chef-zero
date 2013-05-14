@@ -1,5 +1,5 @@
 require 'digest/md5'
-require 'chef/cookbook/metadata' # for ruby metadata.rb dsl
+require 'chef_zero/chef/cookbook/metadata'
 
 module ChefZero
   module CookbookData
@@ -30,7 +30,7 @@ module ChefZero
     end
 
     def self.metadata_from(directory, name, version, recipe_names)
-      metadata = Chef::Cookbook::Metadata.new(PretendCookbook.new(name, recipe_names))
+      metadata = ChefZero::Chef::Cookbook::Metadata.new(PretendCookbook.new(name, recipe_names))
       # If both .rb and .json exist, read .rb
       # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
       # the resulting recipe list have 1, or 3-4 recipes in it?
@@ -45,7 +45,6 @@ module ChefZero
       end
       result[:version] = version
       result
-
     end
 
     def self.files_from(directory)

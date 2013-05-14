@@ -1,5 +1,3 @@
-require 'chef/log'
-
 module ChefZero
   class RestRouter
     def initialize(routes)
@@ -14,7 +12,7 @@ module ChefZero
 
     def call(request)
       begin
-        Chef::Log.debug "Request: #{request}"
+        ChefZero::Log.debug "Request: #{request}"
         clean_path = "/" + request.rest_path.join("/")
         routes.each do |route, endpoint|
           if route.match(clean_path)
@@ -23,7 +21,7 @@ module ChefZero
         end
         not_found.call(request)
       rescue
-        Chef::Log.error("#{$!.inspect}\n#{$!.backtrace.join("\n")}")
+        ChefZero::Log.error("#{$!.inspect}\n#{$!.backtrace.join("\n")}")
         [500, {"Content-Type" => "text/plain"}, "Exception raised!  #{$!.inspect}\n#{$!.backtrace.join("\n")}"]
       end
     end

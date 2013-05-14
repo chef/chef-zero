@@ -87,7 +87,7 @@ module ChefZero
           server.start
         rescue
           @server_error = $!
-          Chef::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
+          ChefZero::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
         end
       end
       Timeout::timeout(timeout) do
@@ -107,7 +107,7 @@ module ChefZero
         @thread.join(timeout)
         @thread = nil
       rescue
-        Chef::Log.error("Server did not stop within #{timeout}s.  Killing.")
+        ChefZero::Log.error("Server did not stop within #{timeout}s.  Killing.")
         @thread.kill if @thread
         @thread = nil
       end
