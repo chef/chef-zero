@@ -14,6 +14,8 @@ module ChefZero
     end
 
     def call(request)
+      ChefZero::Log.debug(request)
+
       method = request.method.downcase.to_sym
       if !self.respond_to?(method)
         accept_methods = [:get, :put, :post, :delete].select { |m| self.respond_to?(m) }

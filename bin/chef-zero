@@ -18,11 +18,17 @@ OptionParser.new do |opts|
   opts.on("-H", "--host HOST", "Host to bind to (default: 127.0.0.1)") do |value|
     options[:host] = value
   end
+
   opts.on("-p", "--port PORT", Integer, "Port to listen on") do |value|
     options[:port] = value
   end
+
   opts.on("--[no-]generate-keys", "Whether to generate actual keys or fake it (faster).  Default: false.") do |value|
     options[:generate_real_keys] = value
+  end
+
+  opts.on("-d", "--debug", "Show requests and debugging output") do |value|
+    options[:debug] = true
   end
 
   opts.on_tail("-h", "--help", "Show this message") do
