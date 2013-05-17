@@ -12,7 +12,7 @@ server = ChefZero::Server.new(port: 8889)
 server.start_background
 
 Pedant.config.suite = 'api'
-Pedant.config[:config_file] = 'test/support/pedant.rb'
+Pedant.config[:config_file] = 'spec/support/pedant.rb'
 Pedant.setup([
   '--skip-validation',
   '--skip-authentication',

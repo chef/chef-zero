@@ -62,7 +62,7 @@ include_internal false
 # are using pre-existing users, you must supply a ':key_file' key,
 # which should be the fully-qualified path /on the machine Pedant is
 # running on/ to a private key for that user.
-key = 'test/support/stickywicket.pem'
+key = 'spec/support/stickywicket.pem'
 superuser_name 'admin'
 superuser_key key
 webui_key key
