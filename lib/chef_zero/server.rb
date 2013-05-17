@@ -56,10 +56,12 @@ require 'chef_zero/endpoints/not_found_endpoint'
 
 module ChefZero
   class Server
+    DEFAULT_OPTIONS = { host: '127.0.0.1', port: 8889 }
+
     def initialize(options = {})
-      @options = options
-      @options[:host] ||= '127.0.0.1'
-      @options[:port] ||= 80
+      options = DEFAULT_OPTIONS.merge(options)
+      @url = "http://#{options[:host]}:#{options[:port]}"
+      @generate_real_keys = options[:generate_real_keys]
 
       ChefZero::Log.level = options[:debug] ? :debug : :info
 
@@ -71,14 +73,9 @@ module ChefZero
 
     attr_reader :server
     attr_reader :data
-    attr_reader :options
-    attr_reader :generate_real_keys
+    attr_reader :url
 
     include ChefZero::Endpoints
-
-    def url
-      "http://#{options[:host]}:#{options[:port]}"
-    end
 
     def start(options = {})
       if options[:publish]
@@ -116,7 +113,7 @@ module ChefZero
     end
 
     def gen_key_pair
-      if options[:generate_real_keys]
+      if generate_real_keys?
         private_key = OpenSSL::PKey::RSA.new(2048)
         public_key = private_key.public_key.to_s
         public_key.sub!(/^-----BEGIN RSA PUBLIC KEY-----/, '-----BEGIN PUBLIC KEY-----')
@@ -294,6 +291,10 @@ module ChefZero
         value = value[part]
       end
       value
+    end
+
+    def generate_real_keys?
+      !!@generate_real_keys
     end
   end
 end
