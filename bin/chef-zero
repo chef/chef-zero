@@ -43,4 +43,4 @@ OptionParser.new do |opts|
 end.parse!
 
 server = ChefZero::Server.new(options)
-server.start
+server.start(publish: true)

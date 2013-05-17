@@ -24,6 +24,7 @@ require 'timeout'
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
 require 'chef_zero/rest_router'
+require 'chef_zero/version'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
@@ -60,9 +61,9 @@ module ChefZero
       @options[:host] ||= '127.0.0.1'
       @options[:port] ||= 80
 
-      ChefZero::Log.level = :debug if options.has_key?(:debug)
+      ChefZero::Log.level = options[:debug] ? :debug : :info
 
-      @server = Puma::Server.new(make_app, @events)
+      @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
       @server.add_tcp_listener(options[:host], options[:port])
 
       clear_data
@@ -79,25 +80,39 @@ module ChefZero
       "http://#{options[:host]}:#{options[:port]}"
     end
 
-    def start
-      server.start(false)
+    def start(options = {})
+      if options[:publish]
+        puts ">> Starting Chef Zero (v#{ChefZero::VERSION})..."
+        puts ">> Puma (v#{Puma::Const::PUMA_VERSION}) is listening at #{url}"
+        puts ">> Press CLTR+C to stop"
+      end
+
+      begin
+        thread = server.run.join
+      rescue Object, Interrupt
+        puts "\n>> Stopping Puma..."
+        server.stop(true) if running?
+      end
     end
 
     def start_background
-      server.start
+      @thread = Thread.new { start }
     end
 
     def running?
-      server.running
+      !!server.running
     end
 
     def stop(timeout = 5)
-      begin
-        server.graceful_shutdown
-      rescue
-        ChefZero::Log.error("Server did not stop within #{timeout}s.  Killing.")
-        server.halt
+      if @thread
+        @thread.join(timeout)
+      else
+        server.stop(true)
       end
+    rescue
+      @thread.kill
+    ensure
+      @thread = nil
     end
 
     def gen_key_pair
@@ -255,6 +270,12 @@ module ChefZero
         if @on_response_proc
           @on_response_proc.call(request, response)
         end
+
+        # Puma expects the response to be an array (chunked responses). Since
+        # we are statically generating data, we won't ever have said chunked
+        # response, so fake it.
+        response[-1] = Array(response[-1])
+
         response
       end
     end
