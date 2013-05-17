@@ -14,6 +14,6 @@ RDoc::Task.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-task :test do
-  sh "ruby spec/run.rb"
+task :spec do
+  sh 'ruby spec/run.rb'
 end
