@@ -16,13 +16,14 @@
 # limitations under the License.
 #
 
-require 'rubygems'
-require 'thin'
 require 'openssl'
-require 'chef_zero'
-require 'chef_zero/rest_router'
+require 'puma'
+require 'rubygems'
 require 'timeout'
+
+require 'chef_zero'
 require 'chef_zero/cookbook_data'
+require 'chef_zero/rest_router'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
@@ -56,14 +57,14 @@ module ChefZero
   class Server
     def initialize(options = {})
       @options = options
-      options[:host] ||= '127.0.0.1'
-      options[:port] ||= 80
-      options[:generate_real_keys] = true if !options.has_key?(:generate_real_keys)
+      @options[:host] ||= '127.0.0.1'
+      @options[:port] ||= 80
+
       ChefZero::Log.level = :debug if options.has_key?(:debug)
-      thin_options = {}
-      thin_options[:signals] = options[:signals] if options.has_key?(:signals)
-      @server = Thin::Server.new(options[:host], options[:port], make_app, thin_options)
-      @generate_real_keys = options[:generate_real_keys]
+
+      @server = Puma::Server.new(make_app, @events)
+      @server.add_tcp_listener(options[:host], options[:port])
+
       clear_data
     end
 
@@ -79,44 +80,28 @@ module ChefZero
     end
 
     def start
+      server.start(false)
+    end
+
+    def start_background
       server.start
     end
 
-    def start_background(timeout = 5)
-      @thread = Thread.new do
-        begin
-          server.start
-        rescue
-          @server_error = $!
-          ChefZero::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
-        end
-      end
-      Timeout::timeout(timeout) do
-        until server.running? || @server_error
-          sleep(0.01)
-        end
-        raise @server_error if @server_error
-      end
-    end
-
     def running?
-      server.running?
+      server.running
     end
 
     def stop(timeout = 5)
       begin
-        server.stop
-        @thread.join(timeout)
-        @thread = nil
+        server.graceful_shutdown
       rescue
         ChefZero::Log.error("Server did not stop within #{timeout}s.  Killing.")
-        @thread.kill if @thread
-        @thread = nil
+        server.halt
       end
     end
 
     def gen_key_pair
-      if generate_real_keys
+      if options[:generate_real_keys]
         private_key = OpenSSL::PKey::RSA.new(2048)
         public_key = private_key.public_key.to_s
         public_key.sub!(/^-----BEGIN RSA PUBLIC KEY-----/, '-----BEGIN PUBLIC KEY-----')
