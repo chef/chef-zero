@@ -18,6 +18,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'solve',         '~> 0.4'
   s.add_dependency 'hashie',        '~> 2.0'
 
+  # s.add_development_dependency 'chef-pdeant'
+
   s.bindir       = 'bin'
   s.executables  = ['chef-zero']
   s.require_path = 'lib'
