@@ -9,7 +9,7 @@ require 'pedant'
 require 'pedant/opensource'
 
 server = ChefZero::Server.new(port: 8889)
-thread = server.start_background
+server.start_background
 
 Pedant.config.suite = 'api'
 Pedant.config[:config_file] = 'test/support/pedant.rb'
