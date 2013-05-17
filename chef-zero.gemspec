@@ -5,8 +5,6 @@ Gem::Specification.new do |s|
   s.name = 'chef-zero'
   s.version = ChefZero::VERSION
   s.platform = Gem::Platform::RUBY
-  s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc', 'LICENSE']
   s.summary = 'Self-contained, easy-setup, fast-start in-memory Chef server for testing and solo setup purposes'
   s.description = s.summary
   s.author = 'John Keiser'
@@ -19,10 +17,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'hashie',        '~> 2.0'
 
   # s.add_development_dependency 'chef-pdeant'
+  s.add_development_dependency 'rake'
 
   s.bindir       = 'bin'
   s.executables  = ['chef-zero']
   s.require_path = 'lib'
-  s.files = %w(LICENSE README.rdoc Rakefile) + Dir.glob('{lib,spec}/**/*')
+  s.files = %w(LICENSE README.md Rakefile) + Dir.glob('{lib,spec}/**/*')
 end
 
