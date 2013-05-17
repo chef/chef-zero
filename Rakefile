@@ -15,5 +15,5 @@ RDoc::Task.new do |rdoc|
 end
 
 task :test do
-  sh "ruby spec/run.rb"
+  require_relative 'spec/run'
 end

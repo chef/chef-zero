@@ -1,10 +1,6 @@
 #!/usr/bin/env ruby
-require 'bundler'
-require 'bundler/setup'
-
 require 'chef_zero/server'
 require 'rspec/core'
-
 require 'pedant'
 require 'pedant/opensource'
 
