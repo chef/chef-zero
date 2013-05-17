@@ -15,5 +15,5 @@ RDoc::Task.new do |rdoc|
 end
 
 task :test do
-  sh "cd test && ruby run-pedant.rb"
+  sh "ruby test/run-pedant.rb"
 end

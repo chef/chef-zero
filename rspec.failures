@@ -1,0 +1,8 @@
+-e "Cookbooks API endpoint GET /cookbooks with existing cookbooks and multiple versions with num_versions set to 0 should respond with cookbook collection with no version"
+-e "Cookbooks API endpoint GET /cookbooks with existing cookbooks and multiple versions when num_versions is not set should return cookbook collection with one version per cookbook"
+-e "Cookbooks API endpoint GET /cookbooks with existing cookbooks and multiple versions when num_versions is set to 1 should return cookbook collection with one version per cookbook"
+-e "Cookbooks API endpoint PUT /cookbooks/<name>/<version> [update] when modifying metadata for name name = delete returns 200"
+-e "Cookbooks API endpoint PUT /cookbooks/<name>/<version> [update] when modifying metadata for long description long_description = delete returns 200"
+-e "Cookbooks API endpoint PUT /cookbooks/<name>/<version> [update] when modifying metadata for collections for dependencies dependencies = delete returns 200"
+-e "Depsolver API endpoint POST /environments/:env/cookbook_versions success cases returns 200 with a minimal good cookbook"
+-e "knife node list as an admin should succeed"

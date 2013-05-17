@@ -21,7 +21,7 @@
 ################################################################################
 # You MUST specify the address of the server the API requests will be
 # sent to.  Only specify protocol, hostname, and port.
-chef_server "http://127.0.0.1:8889"
+chef_server 'http://127.0.0.1:8889'
 
 # If you are doing development testing, you can specify the address of
 # the Solr server.  The presence of this parameter will enable tests
@@ -62,54 +62,56 @@ include_internal false
 # are using pre-existing users, you must supply a ':key_file' key,
 # which should be the fully-qualified path /on the machine Pedant is
 # running on/ to a private key for that user.
-
+key = 'test/support/stickywicket.pem'
 superuser_name 'admin'
-superuser_key '../stickywicket.pem'
-webui_key '../stickywicket.pem'
+superuser_key key
+webui_key key
 
+# Set the platform_class
+platform_class Pedant::OpenSourcePlatform
 
 requestors({
-             :clients => {
-               # The the admin user, for the purposes of getting things rolling
-               :admin => {
-                 :name => "pedant_admin_client",
-                 :create_me => true,
-                 :create_knife => true,
-                 :admin => true
-               },
-               :non_admin => {
-                 :name => 'pedant_client',
-                 :create_me => true,
-                 :create_knife => true
-               },
-               :bad => {
-                 :name => 'bad_client',
-                 :bogus => true
-               }
-             },
-             :users => {
-               :admin => {
-                 :name => "admin",
-                 :key_file => "../stickywicket.pem",
-                 :create_me => false,
-                 :create_knife => false,
-                 :admin => true
-                },
-               :non_admin => {
-                 :name => "pedant_non_admin_user",
-                 :create_me => true,
-                 :create_knife => true,
-                 :admin => false
-               },
-               # A user for Knife tests.  A knife.rb and key files will be set up
-               # for this user
-               :knife_user => {
-                 :name => "knifey",
-                 :create_me => true,
-                 :create_knife => true
-               }
-             }
-           })
+  :clients => {
+    # The the admin user, for the purposes of getting things rolling
+    :admin => {
+      :name => "pedant_admin_client",
+      :create_me => true,
+      :create_knife => true,
+      :admin => true
+    },
+    :non_admin => {
+      :name => 'pedant_client',
+      :create_me => true,
+      :create_knife => true
+    },
+    :bad => {
+      :name => 'bad_client',
+      :bogus => true
+    }
+  },
+  :users => {
+    :admin => {
+      :name => "admin",
+      :key_file => key,
+      :create_me => false,
+      :create_knife => false,
+      :admin => true
+     },
+    :non_admin => {
+      :name => "pedant_non_admin_user",
+      :create_me => true,
+      :create_knife => true,
+      :admin => false
+    },
+    # A user for Knife tests.  A knife.rb and key files will be set up
+    # for this user
+    :knife_user => {
+      :name => "knifey",
+      :create_me => true,
+      :create_knife => true
+    }
+  }
+})
 
 self[:tags] = [:validation, :authentication, :authorization]
 verify_error_messages false

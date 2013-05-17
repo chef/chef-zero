@@ -1,18 +1,25 @@
 #!/usr/bin/env ruby
+require 'bundler'
+require 'bundler/setup'
 
-require 'rubygems'
-$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 require 'chef_zero/server'
+require 'rspec/core'
 
-thread = Thread.new do
-  server = ChefZero::Server.new(:port => 8889)
-  server.start
-end
+require 'pedant'
+require 'pedant/opensource'
 
-system('git clone git://github.com/opscode/chef-pedant.git')
-system('cd chef-pedant && git pull')
-system('cd chef-pedant && git reset --hard 458a3eed89915ff54913040f0001fd2ccd75511b')
-system('cd chef-pedant && bundle install')
-result = system('cd chef-pedant && bin/chef-pedant -c ../chef-zero-pedant-config.rb --skip-validation --skip-authentication --skip-authorization')
-thread.kill
+server = ChefZero::Server.new(port: 8889)
+thread = server.start_background
+
+Pedant.config.suite = 'api'
+Pedant.config[:config_file] = 'test/support/pedant.rb'
+Pedant.setup([
+  '--skip-validation',
+  '--skip-authentication',
+  '--skip-authorization'
+])
+
+result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
+
+server.stop
 exit(result)
