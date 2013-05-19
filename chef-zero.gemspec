@@ -16,7 +16,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'solve',         '~> 0.4'
   s.add_dependency 'hashie',        '~> 2.0'
 
-  # s.add_development_dependency 'chef-pdeant'
+  # Remove at some point
+  s.add_dependency 'moneta',        '~> 0.6'
+
   s.add_development_dependency 'rake'
 
   s.bindir       = 'bin'
