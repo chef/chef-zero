@@ -81,7 +81,7 @@ module ChefZero
       if options[:publish]
         puts ">> Starting Chef Zero (v#{ChefZero::VERSION})..."
         puts ">> Puma (v#{Puma::Const::PUMA_VERSION}) is listening at #{url}"
-        puts ">> Press CLTR+C to stop"
+        puts ">> Press CTRL+C to stop"
       end
 
       begin
