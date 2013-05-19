@@ -4,3 +4,6 @@ rvm:
   - 2.0.0
   - jruby-19mode
 script: bundle exec rake spec
+matrix:
+  allow_failures:
+    - rvm: jruby-19mode
