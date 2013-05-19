@@ -95,7 +95,7 @@ module ChefZero
     def start_background(wait = 5)
       @thread = Thread.new {
         begin
-          server.start
+          start
         rescue
           @server_error = $!
           ChefZero::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
