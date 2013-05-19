@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'hashie/mash'
 
 module ChefZero
   module CookbookData
@@ -36,6 +37,9 @@ module ChefZero
       def initialize(cookbook)
         self.name(cookbook.name)
         self.recipes(cookbook.fully_qualified_recipe_names)
+        %w(dependencies supports recommendations suggestions conflicting providing replacing recipes).each do |cookbook_arg|
+          self[cookbook_arg.to_sym] = Hashie::Mash.new
+        end
       end
 
       def from_json(filepath)
@@ -43,6 +47,50 @@ module ChefZero
       end
 
       private
+
+      def depends(cookbook, *version_constraints)
+        cookbook_arg(:dependencies, cookbook, version_constraints)
+      end
+
+      def supports(cookbook, *version_constraints)
+        cookbook_arg(:supports, cookbook, version_constraints)
+      end
+
+      def recommends(cookbook, *version_constraints)
+        cookbook_arg(:recommendations, cookbook, version_constraints)
+      end
+
+      def suggests(cookbook, *version_constraints)
+        cookbook_arg(:suggestions, cookbook, version_constraints)
+      end
+
+      def conflicts(cookbook, *version_constraints)
+        cookbook_arg(:conflicting, cookbook, version_constraints)
+      end
+
+      def provides(cookbook, *version_constraints)
+        cookbook_arg(:providing, cookbook, version_constraints)
+      end
+
+      def replaces(cookbook, *version_constraints)
+        cookbook_arg(:replacing, cookbook, version_constraints)
+      end
+
+      def recipe(recipe, description)
+        self[:recipes][recipe] = description
+      end
+
+      def attribute(name, options)
+        self[:attributes][name] = options
+      end
+
+      def grouping(name, options)
+        self[:grouping][name] = options
+      end
+
+      def cookbook_arg(key, cookbook, version_constraints)
+        self[key][cookbook] = version_constraints.first || ">= 0.0.0"
+      end
 
       def method_missing(key, value = nil)
         if value.nil?
