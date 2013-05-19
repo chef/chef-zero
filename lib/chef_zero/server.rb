@@ -92,22 +92,39 @@ module ChefZero
       end
     end
 
-    def start_background
-      @thread = Thread.new { start }
+    def start_background(wait = 5)
+      @thread = Thread.new {
+        begin
+          server.start
+        rescue
+          @server_error = $!
+          ChefZero::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
+        end
+      }
+
+      # Wait x seconds to make sure the server actually started
+      Timeout::timeout(wait) {
+        sleep(0.01) until running? || @server_error
+        raise @server_error if @server_error
+      }
+
+      # Give the user the thread, just in case they want it
+      @thread
     end
 
     def running?
       !!server.running
     end
 
-    def stop(timeout = 5)
+    def stop(wait = 5)
       if @thread
-        @thread.join(timeout)
+        @thread.join(wait)
       else
         server.stop(true)
       end
     rescue
-      @thread.kill
+      ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
+      @thread.kill if @thread
     ensure
       @thread = nil
     end
