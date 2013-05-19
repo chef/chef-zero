@@ -24,8 +24,8 @@ OptionParser.new do |opts|
     options[:generate_real_keys] = value
   end
 
-  opts.on("-d", "--debug", "Show requests and debugging output") do |value|
-    options[:debug] = true
+  opts.on("-l", "--log-level LEVEL", "Set the output log level") do |value|
+    options[:log_level] = value
   end
 
   opts.on_tail("-h", "--help", "Show this message") do

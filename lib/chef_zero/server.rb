@@ -56,14 +56,14 @@ require 'chef_zero/endpoints/not_found_endpoint'
 
 module ChefZero
   class Server
-    DEFAULT_OPTIONS = { host: '127.0.0.1', port: 8889 }
+    DEFAULT_OPTIONS = { host: '127.0.0.1', port: 8889, log_level: :info }
 
     def initialize(options = {})
       options = DEFAULT_OPTIONS.merge(options)
       @url = "http://#{options[:host]}:#{options[:port]}"
       @generate_real_keys = options[:generate_real_keys]
 
-      ChefZero::Log.level = options[:debug] ? :debug : :info
+      ChefZero::Log.level = options[:log_level].to_sym
 
       @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
       @server.add_tcp_listener(options[:host], options[:port])
