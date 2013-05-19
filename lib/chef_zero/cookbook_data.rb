@@ -1,5 +1,4 @@
 require 'digest/md5'
-require 'chef_zero/chef/cookbook/metadata'
 
 module ChefZero
   module CookbookData
@@ -29,8 +28,33 @@ module ChefZero
       attr_reader :name, :fully_qualified_recipe_names
     end
 
+    # Handles loading configuration values from a Chef config file
+    #
+    # @author Justin Campbell <justin.campbell@riotgames.com>
+    class PretendCookbookMetadata < Hash
+      # @param [String] path
+      def initialize(cookbook)
+        self.name(cookbook.name)
+        self.recipes(cookbook.fully_qualified_recipe_names)
+      end
+
+      def from_json(filepath)
+        self.merge!(JSON.parse(File.read(filepath)))
+      end
+
+      private
+
+      def method_missing(key, value = nil)
+        if value.nil?
+          self[key.to_sym]
+        else
+          store key.to_sym, value
+        end
+      end
+    end
+
     def self.metadata_from(directory, name, version, recipe_names)
-      metadata = ChefZero::Chef::Cookbook::Metadata.new(PretendCookbook.new(name, recipe_names))
+      metadata = PretendCookbookMetadata.new(PretendCookbook.new(name, recipe_names))
       # If both .rb and .json exist, read .rb
       # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
       # the resulting recipe list have 1, or 3-4 recipes in it?
