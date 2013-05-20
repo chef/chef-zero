@@ -105,7 +105,7 @@ module ChefZero
         return versions if !constraint
         constraint = Gem::Requirement.new(constraint)
         new_versions = versions[cookbook_name]
-        new_versions = new_versions.select { |version| constraint.satisfied_by?(Gem::Version.new(version)) }
+        new_versions = new_versions.select { |version| constraint.satisfied_by?(Gem::Version.new(version.dup)) }
         result = versions.clone
         result[cookbook_name] = new_versions
         result
