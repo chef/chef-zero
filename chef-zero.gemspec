@@ -13,10 +13,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'puma',          '~> 2.0'
   s.add_dependency 'mixlib-log',    '~> 1.3'
-  s.add_dependency 'solve',         '~> 0.4'
   s.add_dependency 'hashie',        '~> 2.0'
 
-  # s.add_development_dependency 'chef-pdeant'
   s.add_development_dependency 'rake'
 
   s.bindir       = 'bin'
