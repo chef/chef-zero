@@ -7,4 +7,6 @@ rvm:
 script: bundle exec rake spec
 matrix:
   allow_failures:
-    - rvm: jruby-19mode
+    - rvm:
+      - 1.8.7           # We support 1.8.7, but chef-pedant doesn't
+      - jruby-19mode    # Mixlib Shellout uses fork+exec
