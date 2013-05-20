@@ -8,7 +8,7 @@ require 'rspec/core'
 require 'pedant'
 require 'pedant/opensource'
 
-server = ChefZero::Server.new(port: 8889)
+server = ChefZero::Server.new(:port => 8889)
 server.start_background
 
 Pedant.config.suite = 'api'
