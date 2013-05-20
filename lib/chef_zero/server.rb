@@ -56,7 +56,7 @@ require 'chef_zero/endpoints/not_found_endpoint'
 
 module ChefZero
   class Server
-    DEFAULT_OPTIONS = { host: '127.0.0.1', port: 8889, log_level: :info }
+    DEFAULT_OPTIONS = { host: '127.0.0.1', port: 8889, log_level: :info, generate_real_keys: true }
 
     def initialize(options = {})
       options = DEFAULT_OPTIONS.merge(options)
