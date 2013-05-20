@@ -1,7 +1,6 @@
 require 'json'
 require 'chef_zero/rest_base'
 require 'chef_zero/data_normalizer'
-require 'solve'
 
 module ChefZero
   module Endpoints
@@ -26,11 +25,11 @@ module ChefZero
 
       def filter_cookbooks(cookbooks_list, constraints = {}, num_versions = nil)
         cookbooks_list.keys.sort.each do |name|
-          constraint = Solve::Constraint.new(constraints[name])
+          constraint = Gem::Requirement.new(constraints[name])
           versions = []
-          cookbooks_list[name].keys.sort_by { |version| Solve::Version.new(version) }.reverse.each do |version|
+          cookbooks_list[name].keys.sort_by { |version| Gem::Version.new(version.dup) }.reverse.each do |version|
             break if num_versions && versions.size >= num_versions
-            if constraint.satisfies?(version)
+            if constraint.satisfied_by?(Gem::Version.new(version.dup))
               versions << version
             end
           end
