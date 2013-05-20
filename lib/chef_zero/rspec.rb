@@ -1,4 +1,3 @@
-require 'thin'
 require 'tempfile'
 require 'chef_zero/server'
 require 'chef_zero/rest_request'
