@@ -7,11 +7,8 @@ require 'chef_zero/version'
 require 'chef_zero/server'
 require 'optparse'
 
-options = {
-  :host => '127.0.0.1',
-  :port => 8889,
-  :generate_real_keys => false
-}
+options = {}
+
 OptionParser.new do |opts|
   opts.banner = "Usage: chef-zero [ARGS]"
 
@@ -27,8 +24,8 @@ OptionParser.new do |opts|
     options[:generate_real_keys] = value
   end
 
-  opts.on("-d", "--debug", "Show requests and debugging output") do |value|
-    options[:debug] = true
+  opts.on("-l", "--log-level LEVEL", "Set the output log level") do |value|
+    options[:log_level] = value
   end
 
   opts.on_tail("-h", "--help", "Show this message") do
@@ -43,4 +40,4 @@ OptionParser.new do |opts|
 end.parse!
 
 server = ChefZero::Server.new(options)
-server.start
+server.start(:publish => true)

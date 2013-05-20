@@ -16,13 +16,15 @@
 # limitations under the License.
 #
 
-require 'rubygems'
-require 'thin'
 require 'openssl'
-require 'chef_zero'
-require 'chef_zero/rest_router'
+require 'puma'
+require 'rubygems'
 require 'timeout'
+
+require 'chef_zero'
 require 'chef_zero/cookbook_data'
+require 'chef_zero/rest_router'
+require 'chef_zero/version'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
@@ -54,69 +56,86 @@ require 'chef_zero/endpoints/not_found_endpoint'
 
 module ChefZero
   class Server
+    DEFAULT_OPTIONS = {
+      :host => '127.0.0.1',
+      :port => 8889,
+      :log_level => :info,
+      :generate_real_keys => true
+    }.freeze
+
     def initialize(options = {})
-      @options = options
-      options[:host] ||= '127.0.0.1'
-      options[:port] ||= 80
-      options[:generate_real_keys] = true if !options.has_key?(:generate_real_keys)
-      ChefZero::Log.level = :debug if options.has_key?(:debug)
-      thin_options = {}
-      thin_options[:signals] = options[:signals] if options.has_key?(:signals)
-      @server = Thin::Server.new(options[:host], options[:port], make_app, thin_options)
+      options = DEFAULT_OPTIONS.merge(options)
+      @url = "http://#{options[:host]}:#{options[:port]}"
       @generate_real_keys = options[:generate_real_keys]
+
+      ChefZero::Log.level = options[:log_level].to_sym
+
+      @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
+      @server.add_tcp_listener(options[:host], options[:port])
+
       clear_data
     end
 
     attr_reader :server
     attr_reader :data
-    attr_reader :options
-    attr_reader :generate_real_keys
+    attr_reader :url
 
     include ChefZero::Endpoints
 
-    def url
-      "http://#{options[:host]}:#{options[:port]}"
+    def start(options = {})
+      if options[:publish]
+        puts ">> Starting Chef Zero (v#{ChefZero::VERSION})..."
+        puts ">> Puma (v#{Puma::Const::PUMA_VERSION}) is listening at #{url}"
+        puts ">> Press CTRL+C to stop"
+      end
+
+      begin
+        thread = server.run.join
+      rescue Object, Interrupt
+        puts "\n>> Stopping Puma..."
+        server.stop(true) if running?
+      end
     end
 
-    def start
-      server.start
-    end
-
-    def start_background(timeout = 5)
-      @thread = Thread.new do
+    def start_background(wait = 5)
+      @thread = Thread.new {
         begin
-          server.start
+          start
         rescue
           @server_error = $!
           ChefZero::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
         end
-      end
-      Timeout::timeout(timeout) do
-        until server.running? || @server_error
-          sleep(0.01)
-        end
+      }
+
+      # Wait x seconds to make sure the server actually started
+      Timeout::timeout(wait) {
+        sleep(0.01) until running? || @server_error
         raise @server_error if @server_error
-      end
+      }
+
+      # Give the user the thread, just in case they want it
+      @thread
     end
 
     def running?
-      server.running?
+      !!server.running
     end
 
-    def stop(timeout = 5)
-      begin
-        server.stop
-        @thread.join(timeout)
-        @thread = nil
-      rescue
-        ChefZero::Log.error("Server did not stop within #{timeout}s.  Killing.")
-        @thread.kill if @thread
-        @thread = nil
+    def stop(wait = 5)
+      if @thread
+        @thread.join(wait)
+      else
+        server.stop(true)
       end
+    rescue
+      ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
+      @thread.kill if @thread
+    ensure
+      @thread = nil
     end
 
     def gen_key_pair
-      if generate_real_keys
+      if generate_real_keys?
         private_key = OpenSSL::PKey::RSA.new(2048)
         public_key = private_key.public_key.to_s
         public_key.sub!(/^-----BEGIN RSA PUBLIC KEY-----/, '-----BEGIN PUBLIC KEY-----')
@@ -270,6 +289,12 @@ module ChefZero
         if @on_response_proc
           @on_response_proc.call(request, response)
         end
+
+        # Puma expects the response to be an array (chunked responses). Since
+        # we are statically generating data, we won't ever have said chunked
+        # response, so fake it.
+        response[-1] = Array(response[-1])
+
         response
       end
     end
@@ -288,6 +313,10 @@ module ChefZero
         value = value[part]
       end
       value
+    end
+
+    def generate_real_keys?
+      !!@generate_real_keys
     end
   end
 end

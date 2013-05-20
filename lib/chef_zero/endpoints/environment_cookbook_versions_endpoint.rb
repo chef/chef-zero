@@ -1,7 +1,6 @@
 require 'json'
 require 'chef_zero/rest_base'
 require 'chef_zero/rest_error_response'
-require 'solve'
 
 module ChefZero
   module Endpoints
@@ -98,15 +97,15 @@ module ChefZero
       end
 
       def sort_versions(versions)
-        result = versions.sort_by { |version| Solve::Version.new(version) }
+        result = versions.sort_by { |version| Gem::Version.new(version.dup) }
         result.reverse
       end
 
       def filter_by_constraint(versions, cookbook_name, constraint)
         return versions if !constraint
-        constraint = Solve::Constraint.new(constraint)
+        constraint = Gem::Requirement.new(constraint)
         new_versions = versions[cookbook_name]
-        new_versions = new_versions.select { |version| constraint.satisfies?(version) }
+        new_versions = new_versions.select { |version| constraint.satisfied_by?(Gem::Version.new(version)) }
         result = versions.clone
         result[cookbook_name] = new_versions
         result
