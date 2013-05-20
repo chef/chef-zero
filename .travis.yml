@@ -10,7 +10,7 @@ script: bundle exec rake spec
 matrix:
   include:
     - rvm: 1.9.3
-    - gemfile: gemfiles/gemfile.latest-pedant
+      gemfile: gemfiles/gemfile.latest-pedant
   allow_failures:
     - rvm: 1.8.7           # We support 1.8.7, but chef-pedant doesn't
     - rvm: 2.0.0           # chef-pedant has at least one failure in 2.0.0
