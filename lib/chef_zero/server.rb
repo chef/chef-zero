@@ -74,7 +74,7 @@ module ChefZero
       @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
       @server.add_tcp_listener(options[:host], options[:port])
 
-      clear_data
+      @data_store = options[:data_store] || MemoryStore.new
     end
 
     attr_reader :server
@@ -215,24 +215,7 @@ module ChefZero
     end
 
     def clear_data
-      @data_store = DataStore::MemoryStore.new
-
-      # Create containers
-      data_store.create_dir([], 'clients')
-      data_store.create_dir([], 'cookbooks')
-      data_store.create_dir([], 'data')
-      data_store.create_dir([], 'environments')
-      data_store.create_dir([], 'file_store')
-      data_store.create_dir([], 'nodes')
-      data_store.create_dir([], 'roles')
-      data_store.create_dir([], 'sandboxes')
-      data_store.create_dir([], 'users')
-
-      # Set defaults
-      data_store.create(['clients'], 'chef-validator', '{ "validator": true }')
-      data_store.create(['clients'], 'chef-webui', '{ "admin": true }')
-      data_store.create(['environments'], '_default', '{ "description": "The default Chef environment" }')
-      data_store.create(['users'], 'admin', '{ "admin": true }')
+      @data_store.clear
     end
 
     def request_handler(&block)

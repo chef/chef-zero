@@ -23,7 +23,28 @@ module ChefZero
   module DataStore
     class MemoryStore
       def initialize
+        clear
+      end
+
+      def clear
         @data = {}
+
+        # Create containers
+        create_dir([], 'clients')
+        create_dir([], 'cookbooks')
+        create_dir([], 'data')
+        create_dir([], 'environments')
+        create_dir([], 'file_store')
+        create_dir([], 'nodes')
+        create_dir([], 'roles')
+        create_dir([], 'sandboxes')
+        create_dir([], 'users')
+
+        # Set defaults
+        create(['clients'], 'chef-validator', '{ "validator": true }')
+        create(['clients'], 'chef-webui', '{ "admin": true }')
+        create(['environments'], '_default', '{ "description": "The default Chef environment" }')
+        create(['users'], 'admin', '{ "admin": true }')
       end
 
       def create_dir(path, name, *options)
