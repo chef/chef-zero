@@ -16,7 +16,7 @@ module ChefZero
         needed_checksums = JSON.parse(request.body, :create_additions => false)['checksums']
         result_checksums = {}
         needed_checksums.keys.each do |needed_checksum|
-          if data['file_store'].has_key?(needed_checksum)
+          if list_data(request, ['file_store']).include?(needed_checksum)
             result_checksums[needed_checksum] = { :needs_upload => false }
           else
             result_checksums[needed_checksum] = {
@@ -27,13 +27,20 @@ module ChefZero
           end
         end
 
+        # There is an obvious race condition here.
         id = @next_id.to_s
         @next_id+=1
 
-        data['sandboxes'][id] = { :create_time => Time.now.utc, :checksums => sandbox_checksums }
+        time_str = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S%z')
+        time_str = "#{time_str[0..21]}:#{time_str[22..23]}"
+
+        create_data(request, request.rest_path, id, JSON.pretty_generate({
+          :create_time => time_str,
+          :checksums => sandbox_checksums
+        }))
 
         json_response(201, {
-          :uri => build_uri(request.base_uri, request.rest_path + [id.to_s]),
+          :uri => build_uri(request.base_uri, request.rest_path + [id]),
           :checksums => result_checksums,
           :sandbox_id => id
         })

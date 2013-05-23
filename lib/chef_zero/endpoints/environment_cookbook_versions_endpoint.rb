@@ -6,27 +6,21 @@ module ChefZero
   module Endpoints
     # /environments/NAME/cookbook_versions
     class EnvironmentCookbookVersionsEndpoint < RestBase
-      def cookbooks
-        data['cookbooks']
-      end
-
-      def environments
-        data['environments']
-      end
-
       def post(request)
+        cookbook_names = list_data(request, ['cookbooks'])
+
         # Get the list of cookbooks and versions desired by the runlist
         desired_versions = {}
         run_list = JSON.parse(request.body, :create_additions => false)['run_list']
         run_list.each do |run_list_entry|
           if run_list_entry =~ /(.+)(::.+)?\@(.+)/
-            raise RestErrorResponse.new(412, "No such cookbook: #{$1}") if !cookbooks[$1]
-            raise RestErrorResponse.new(412, "No such cookbook version for cookbook #{$1}: #{$2}") if !cookbooks[$1][$2]
+            raise RestErrorResponse.new(412, "No such cookbook: #{$1}") if !cookbook_names.include?($1)
+            raise RestErrorResponse.new(412, "No such cookbook version for cookbook #{$1}: #{$3}") if !list_data(request, ['cookbooks', $1]).include?($3)
             desired_versions[$1] = [ $3 ]
           else
             desired_cookbook = run_list_entry.split('::')[0]
-            raise RestErrorResponse.new(412, "No such cookbook: #{desired_cookbook}") if !cookbooks[desired_cookbook]
-            desired_versions[desired_cookbook] = cookbooks[desired_cookbook].keys
+            raise RestErrorResponse.new(412, "No such cookbook: #{desired_cookbook}") if !cookbook_names.include?(desired_cookbook)
+            desired_versions[desired_cookbook] = list_data(request, ['cookbooks', desired_cookbook])
           end
         end
 
@@ -46,7 +40,7 @@ module ChefZero
 
         result = {}
         solved.each_pair do |name, versions|
-          cookbook = JSON.parse(data['cookbooks'][name][versions[0]], :create_additions => false)
+          cookbook = JSON.parse(get_data(request, ['cookbooks', name, versions[0]]), :create_additions => false)
           result[name] = DataNormalizer.normalize_cookbook(cookbook, name, versions[0], request.base_uri, 'GET')
         end
         json_response(200, result)
@@ -67,7 +61,7 @@ module ChefZero
           new_unsolved = unsolved[1..-1]
 
           # Pick this cookbook, and add dependencies
-          cookbook_obj = JSON.parse(cookbooks[solve_for][desired_version], :create_additions => false)
+          cookbook_obj = JSON.parse(get_data(request, ['cookbooks', solve_for, desired_version]), create_additions => false)
           cookbook_metadata = cookbook_obj['metadata'] || {}
           cookbook_dependencies = cookbook_metadata['dependencies'] || {}
           dep_not_found = false
@@ -81,7 +75,7 @@ module ChefZero
                 dep_not_found = true
                 break
               end
-              new_desired_versions[dep_name] = cookbooks[dep_name].keys
+              new_desired_versions[dep_name] = list_data(request, ['cookbooks', dep_name])
               new_desired_versions = filter_by_constraint(new_desired_versions, dep_name, environment_constraints[dep_name])
             end
             new_desired_versions = filter_by_constraint(new_desired_versions, dep_name, dep_constraint)

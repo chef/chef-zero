@@ -6,15 +6,14 @@ module ChefZero
     # /data
     class DataBagsEndpoint < RestListEndpoint
       def post(request)
-        container = get_data(request)
         contents = request.body
         name = JSON.parse(contents, :create_additions => false)[identity_key]
         if name.nil?
           error(400, "Must specify '#{identity_key}' in JSON")
-        elsif container[name]
+        elsif exists_data?(request, ['data', name])
           error(409, "Object already exists")
         else
-          container[name] = {}
+          data_store.create_dir(['data'], name, :keep_existing)
           json_response(201, {"uri" => "#{build_uri(request.base_uri, request.rest_path + [name])}"})
         end
       end

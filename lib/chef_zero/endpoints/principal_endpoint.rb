@@ -8,11 +8,11 @@ module ChefZero
     class PrincipalEndpoint < RestBase
       def get(request)
         name = request.rest_path[-1]
-        json = data['users'][name]
+        json = get_data(request, [ 'users', name ], :nil)
         if json
           type = 'user'
         else
-          json = data['clients'][name]
+          json = get_data(request, [ 'clients', name ], :nil)
           type = 'client'
         end
         if json

@@ -32,12 +32,7 @@ module ChefZero
 
       def delete(request)
         key = request.rest_path[1]
-        container = data['data']
-        if !container.has_key?(key)
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
-        end
-        result = container[key]
-        container.delete(key)
+        delete_data(request)
         json_response(200, {
           'chef_type' => 'data_bag',
           'json_class' => 'Chef::DataBag',

@@ -14,7 +14,7 @@ module ChefZero
       end
 
       def put(request)
-        data['file_store'][request.rest_path[1]] = request.body
+        data_store.set(request.rest_path, request.body, :create)
         json_response(200, {})
       end
     end

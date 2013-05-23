@@ -9,7 +9,7 @@ module ChefZero
         case filter
         when '_latest'
           result = {}
-          filter_cookbooks(data['cookbooks'], {}, 1) do |name, versions|
+          filter_cookbooks(all_cookbooks_list, {}, 1) do |name, versions|
             if versions.size > 0
               result[name] = build_uri(request.base_uri, ['cookbooks', name, versions[0]])
             end
@@ -17,15 +17,15 @@ module ChefZero
           json_response(200, result)
         when '_recipes'
           result = []
-          filter_cookbooks(data['cookbooks'], {}, 1) do |name, versions|
+          filter_cookbooks(all_cookbooks_list, {}, 1) do |name, versions|
             if versions.size > 0
-              cookbook = JSON.parse(data['cookbooks'][name][versions[0]], :create_additions => false)
+              cookbook = JSON.parse(get_data(['cookbooks', name, versions[0]]), :create_additions => false)
               result += recipe_names(name, cookbook)
             end
           end
           json_response(200, result.sort)
         else
-          cookbook_list = { filter => get_data(request, request.rest_path) }
+          cookbook_list = { filter => list_data(request, request.rest_path) }
           json_response(200, format_cookbooks_list(request, cookbook_list))
         end
       end

@@ -1,5 +1,6 @@
 require 'chef_zero/rest_request'
 require 'chef_zero/rest_error_response'
+require 'chef_zero/data_store/data_not_found_error'
 
 module ChefZero
   class RestBase
@@ -9,8 +10,8 @@ module ChefZero
 
     attr_reader :server
 
-    def data
-      server.data
+    def data_store
+      server.data_store
     end
 
     def call(request)
@@ -35,17 +36,58 @@ module ChefZero
       true
     end
 
-    def get_data(request, rest_path=nil)
+    def get_data(request, rest_path=nil, *options)
       rest_path ||= request.rest_path
-      # Grab the value we're looking for
-      value = data
-      rest_path.each do |path_part|
-        if !value.has_key?(path_part)
+      begin
+        data_store.get(rest_path)
+      rescue DataStore::DataNotFoundError
+        if options.include?(:nil)
+          nil
+        else
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
-        value = value[path_part]
       end
-      value
+    end
+
+    def list_data(request, rest_path=nil)
+      rest_path ||= request.rest_path
+      begin
+        data_store.list(rest_path)
+      rescue DataStore::DataNotFoundError
+        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
+      end
+    end
+
+    def delete_data(request, rest_path=nil)
+      rest_path ||= request.rest_path
+      begin
+        data_store.delete(rest_path)
+      rescue DataStore::DataNotFoundError
+        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+      end
+    end
+
+    def set_data(request, rest_path, data, *options)
+      rest_path ||= request.rest_path
+      begin
+        data_store.set(rest_path, request.body, *options)
+      rescue DataStore::DataNotFoundError
+        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+      end
+    end
+
+    def create_data(request, rest_path, name, data, *options)
+      rest_path ||= request.rest_path
+      begin
+        data_store.create(rest_path, name, data, *options)
+      rescue DataStore::DataAlreadyExistsError
+        raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+      end
+    end
+
+    def exists_data?(request, rest_path=nil)
+      rest_path ||= request.rest_path
+      data_store.exists?(rest_path)
     end
 
     def error(response_code, error)

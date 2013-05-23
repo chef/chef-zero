@@ -9,8 +9,12 @@ module ChefZero
         request_json = JSON.parse(request.body, :create_additions => false)
         name = request_json['name']
         password = request_json['password']
-        user = data['users'][name]
-        verified = user && JSON.parse(user, :create_additions => false)['password'] == password
+        begin
+          user = data_store.get(['users', name])
+          verified = JSON.parse(user, :create_additions => false)['password'] == password
+        rescue DataStore::DataNotFoundError
+          verified = false
+        end
         json_response(200, {
           'name' => name,
           'verified' => !!verified

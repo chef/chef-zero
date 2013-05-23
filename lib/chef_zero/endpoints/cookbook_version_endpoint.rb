@@ -9,7 +9,7 @@ module ChefZero
     class CookbookVersionEndpoint < RestObjectEndpoint
       def get(request)
         if request.rest_path[2] == "_latest" || request.rest_path[2] == "latest"
-          request.rest_path[2] = latest_version(get_data(request, request.rest_path[0..1]).keys)
+          request.rest_path[2] = latest_version(list_data(request, request.rest_path[0..1]))
         end
         super(request)
       end
@@ -17,9 +17,8 @@ module ChefZero
       def put(request)
         name = request.rest_path[1]
         version = request.rest_path[2]
-        data['cookbooks'][name] = {} if !data['cookbooks'][name]
-        existing_cookbook = data['cookbooks'][name][version]
-
+        existing_cookbook = get_data(request, request.rest_path, :nil)
+        
         # Honor frozen
         if existing_cookbook
           existing_cookbook_json = JSON.parse(existing_cookbook, :create_additions => false)
@@ -37,7 +36,7 @@ module ChefZero
         end
 
         # Set the cookbook
-        data['cookbooks'][name][version] = request.body
+        set_data(request, ['cookbooks', name, version], request.body, :create_dir, :create)
 
         # If the cookbook was updated, check for deleted files and clean them up
         if existing_cookbook
@@ -47,18 +46,22 @@ module ChefZero
           end
         end
 
-        already_json_response(existing_cookbook ? 200 : 201, populate_defaults(request, data['cookbooks'][name][version]))
+        already_json_response(existing_cookbook ? 200 : 201, populate_defaults(request, request.body))
       end
 
       def delete(request)
         if request.rest_path[2] == "_latest" || request.rest_path[2] == "latest"
-          request.rest_path[2] = latest_version(get_data(request, request.rest_path[0..1]).keys)
+          request.rest_path[2] = latest_version(list_data(request, request.rest_path[0..1]))
         end
 
-        deleted_cookbook = get_data(request, request.rest_path)
+        deleted_cookbook = get_data(request)
         response = super(request)
         cookbook_name = request.rest_path[1]
-        data['cookbooks'].delete(cookbook_name) if data['cookbooks'][cookbook_name].size == 0
+        begin
+          data_store.delete(['cookbooks', cookbook_name]) if data_store.list(['cookbooks', cookbook_name]).size == 0
+        rescue DataStore::DataNotFoundError
+          # This is just a race.
+        end
 
         # Hoover deleted files, if they exist
         hoover_unused_checksums(get_checksums(deleted_cookbook))
@@ -79,14 +82,18 @@ module ChefZero
         result
       end
 
+      private
+
       def hoover_unused_checksums(deleted_checksums)
-        data['cookbooks'].each_pair do |cookbook_name, versions|
-          versions.each_pair do |cookbook_version, cookbook|
+        data_store.list(['cookbooks']).each do |cookbook_name|
+          data_store.list(['cookbooks', cookbook_name]).each do |version|
+            cookbook = data_store.get(['cookbooks', cookbook_name, version])
             deleted_checksums = deleted_checksums - get_checksums(cookbook)
           end
         end
         deleted_checksums.each do |checksum|
-          data['file_store'].delete(checksum)
+          # There can be a race here if multiple cookbooks are uploading.
+          data_store.delete(['file_store', checksum])
         end
       end
 

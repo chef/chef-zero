@@ -5,7 +5,7 @@ module ChefZero
     # /cookbooks
     class CookbooksEndpoint < CookbooksBase
       def get(request)
-        json_response(200, format_cookbooks_list(request, data['cookbooks']))
+        json_response(200, format_cookbooks_list(request, all_cookbooks_list))
       end
     end
   end

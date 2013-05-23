@@ -22,33 +22,29 @@ module ChefZero
         old_body = get_data(request)
         request_json = JSON.parse(request.body, :create_additions => false)
         key = request_json[identity_key] || request.rest_path[-1]
-        container = get_data(request, request.rest_path[0..-2])
         # If it's a rename, check for conflict and delete the old value
         rename = key != request.rest_path[-1]
         if rename
-          if container.has_key?(key)
+          begin
+            data_store.create(request.rest_path[0..-2] + [key], request.body)
+          rescue DataStore::DataAlreadyExistsError
             return error(409, "Cannot rename '#{request.rest_path[-1]}' to '#{key}': '#{key}' already exists")
           end
-          container.delete(request.rest_path[-1])
+          delete_data(request)
+        else
+          set_data(request, request.rest_path, request.body)
         end
-        container[key] = request.body
         already_json_response(200, populate_defaults(request, request.body))
       end
 
       def delete(request)
-        key = request.rest_path[-1]
-        container = get_data(request, request.rest_path[0..-2])
-        if !container.has_key?(key)
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
-        end
-        result = container[key]
-        container.delete(key)
+        result = get_data(request)
+        delete_data(request)
         already_json_response(200, populate_defaults(request, result))
       end
 
       def patch_request_body(request)
-        container = get_data(request, request.rest_path[0..-2])
-        existing_value = container[request.rest_path[-1]]
+        existing_value = get_data(request, nil, :nil)
         if existing_value
           request_json = JSON.parse(request.body, :create_additions => false)
           existing_json = JSON.parse(existing_value, :create_additions => false)
