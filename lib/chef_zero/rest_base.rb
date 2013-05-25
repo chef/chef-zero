@@ -39,7 +39,7 @@ module ChefZero
     def get_data(request, rest_path=nil, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.get(rest_path)
+        data_store.get(rest_path, request)
       rescue DataStore::DataNotFoundError
         if options.include?(:nil)
           nil
@@ -62,6 +62,15 @@ module ChefZero
       rest_path ||= request.rest_path
       begin
         data_store.delete(rest_path)
+      rescue DataStore::DataNotFoundError
+        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+      end
+    end
+
+    def delete_data_dir(request, rest_path, *options)
+      rest_path ||= request.rest_path
+      begin
+        data_store.delete_dir(rest_path)
       rescue DataStore::DataNotFoundError
         raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
       end

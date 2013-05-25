@@ -74,7 +74,7 @@ module ChefZero
       @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
       @server.add_tcp_listener(options[:host], options[:port])
 
-      @data_store = options[:data_store] || MemoryStore.new
+      @data_store = options[:data_store] || DataStore::MemoryStore.new
     end
 
     attr_reader :server
@@ -207,7 +207,7 @@ module ChefZero
           cookbook_data.values.each do |files|
             next unless files.is_a? Array
             files.each do |file|
-              data_store.set(['file_store', file[:checksum]], get_file(cookbook, file[:path]), :create)
+              data_store.set(['file_store', 'checksums', file[:checksum]], get_file(cookbook, file[:path]), :create)
             end
           end
         end
@@ -257,7 +257,7 @@ module ChefZero
         [ '/users', ActorsEndpoint.new(self) ],
         [ '/users/*', ActorEndpoint.new(self) ],
 
-        [ '/file_store/*', FileStoreFileEndpoint.new(self) ],
+        [ '/file_store/**', FileStoreFileEndpoint.new(self) ],
       ])
       router.not_found = NotFoundEndpoint.new
 

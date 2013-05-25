@@ -35,6 +35,7 @@ module ChefZero
         create_dir([], 'data')
         create_dir([], 'environments')
         create_dir([], 'file_store')
+        create_dir(['file_store'], 'checksums')
         create_dir([], 'nodes')
         create_dir([], 'roles')
         create_dir([], 'sandboxes')
@@ -69,7 +70,7 @@ module ChefZero
         parent[name] = data
       end
 
-      def get(path)
+      def get(path, request=nil)
         value = _get(path)
         if value.is_a?(Hash)
           raise "get() called on directory #{path.join('/')}"
@@ -93,6 +94,23 @@ module ChefZero
 
       def delete(path)
         parent = _get(path[0,path.length-1])
+        if !parent.has_key?(path[-1])
+          raise DataNotFoundError.new(path)
+        end
+        if !parent[path[-1]].is_a?(String)
+          raise "delete only works with strings: #{path}"
+        end
+        parent.delete(path[-1])
+      end
+
+      def delete_dir(path)
+        parent = _get(path[0,path.length-1])
+        if !parent.has_key?(path[-1])
+          raise DataNotFoundError.new(path)
+        end
+        if !parent[path[-1]].is_a?(Hash)
+          raise "delete_dir only works with directories: #{path}"
+        end
         parent.delete(path[-1])
       end
 

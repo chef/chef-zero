@@ -32,7 +32,7 @@ module ChefZero
 
       def delete(request)
         key = request.rest_path[1]
-        delete_data(request)
+        delete_data_dir(request, request.rest_path, :recursive)
         json_response(200, {
           'chef_type' => 'data_bag',
           'json_class' => 'Chef::DataBag',

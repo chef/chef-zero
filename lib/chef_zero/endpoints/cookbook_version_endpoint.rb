@@ -54,14 +54,9 @@ module ChefZero
           request.rest_path[2] = latest_version(list_data(request, request.rest_path[0..1]))
         end
 
-        deleted_cookbook = get_data(request)
         response = super(request)
         cookbook_name = request.rest_path[1]
-        begin
-          data_store.delete(['cookbooks', cookbook_name]) if data_store.list(['cookbooks', cookbook_name]).size == 0
-        rescue DataStore::DataNotFoundError
-          # This is just a race.
-        end
+        delete_data_dir(request, ['cookbooks', cookbook_name]) if list_data(request, ['cookbooks', cookbook_name]).size == 0
 
         # Hoover deleted files, if they exist
         hoover_unused_checksums(get_checksums(deleted_cookbook))
@@ -93,7 +88,7 @@ module ChefZero
         end
         deleted_checksums.each do |checksum|
           # There can be a race here if multiple cookbooks are uploading.
-          data_store.delete(['file_store', checksum])
+          data_store.delete(['file_store', 'checksums', checksum])
         end
       end
 

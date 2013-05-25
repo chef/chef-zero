@@ -2,7 +2,11 @@ module ChefZero
   class RestRouter
     def initialize(routes)
       @routes = routes.map do |route, endpoint|
-        pattern = Regexp.new("^#{route.gsub('*', '[^/]*')}$")
+        if route =~ /\*\*$/
+          pattern = Regexp.new("^#{route[0..-3].gsub('*', '[^/]*')}")
+        else
+          pattern = Regexp.new("^#{route.gsub('*', '[^/]*')}$")
+        end
         [ pattern, endpoint ]
       end
     end
