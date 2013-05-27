@@ -23,11 +23,20 @@ module ChefZero
         results
       end
 
+      def all_cookbooks_list
+        result = {}
+        # Race conditions exist here (if someone deletes while listing).  I don't care.
+        data_store.list(['cookbooks']).each do |name|
+          result[name] = data_store.list(['cookbooks', name])
+        end
+        result
+      end
+
       def filter_cookbooks(cookbooks_list, constraints = {}, num_versions = nil)
         cookbooks_list.keys.sort.each do |name|
           constraint = Gem::Requirement.new(constraints[name])
           versions = []
-          cookbooks_list[name].keys.sort_by { |version| Gem::Version.new(version.dup) }.reverse.each do |version|
+          cookbooks_list[name].sort_by { |version| Gem::Version.new(version.dup) }.reverse.each do |version|
             break if num_versions && versions.size >= num_versions
             if constraint.satisfied_by?(Gem::Version.new(version.dup))
               versions << version

@@ -15,7 +15,7 @@ module ChefZero
         else
           num_versions = 1
         end
-        json_response(200, format_cookbooks_list(request, data['cookbooks'], constraints, num_versions))
+        json_response(200, format_cookbooks_list(request, all_cookbooks_list, constraints, num_versions))
       end
     end
   end

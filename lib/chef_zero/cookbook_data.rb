@@ -18,6 +18,24 @@ module ChefZero
       result
     end
 
+    def self.metadata_from(directory, name, version, recipe_names)
+      metadata = PretendCookbookMetadata.new(PretendCookbook.new(name, recipe_names))
+      # If both .rb and .json exist, read .rb
+      # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
+      # the resulting recipe list have 1, or 3-4 recipes in it?
+      if has_child(directory, 'metadata.rb')
+        metadata.instance_eval(read_file(directory, 'metadata.rb'))
+      elsif has_child(directory, 'metadata.json')
+        metadata.from_json(read_file(directory, 'metadata.json'))
+      end
+      result = {}
+      metadata.to_hash.each_pair do |key,value|
+        result[key.to_sym] = value
+      end
+      result[:version] = version if version
+      result
+    end
+
     private
 
     # Just enough cookbook to make a Metadata object
@@ -101,24 +119,6 @@ module ChefZero
       end
     end
 
-    def self.metadata_from(directory, name, version, recipe_names)
-      metadata = PretendCookbookMetadata.new(PretendCookbook.new(name, recipe_names))
-      # If both .rb and .json exist, read .rb
-      # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
-      # the resulting recipe list have 1, or 3-4 recipes in it?
-      if directory['metadata.rb']
-        metadata.instance_eval(directory['metadata.rb'])
-      elsif directory['metadata.json']
-        metadata.from_json(directory['metadata.json'])
-      end
-      result = {}
-      metadata.to_hash.each_pair do |key,value|
-        result[key.to_sym] = value
-      end
-      result[:version] = version
-      result
-    end
-
     def self.files_from(directory)
       # TODO some support .rb only
       result = {
@@ -137,8 +137,41 @@ module ChefZero
       result
     end
 
+    def self.has_child(directory, name)
+      if directory.is_a?(Hash)
+        directory.has_key?(name)
+      else
+        directory.child(name).exists?
+      end
+    end
+
+    def self.read_file(directory, name)
+      if directory.is_a?(Hash)
+        directory[name]
+      else
+        directory.child(name).read
+      end
+    end
+
+    def self.get_directory(directory, name)
+      if directory.is_a?(Hash)
+        directory[name].is_a?(Hash) ? directory[name] : nil
+      else
+        result = directory.child(name)
+        result.dir? ? result : nil
+      end
+    end
+
+    def self.list_directory(directory)
+      if directory.is_a?(Hash)
+        directory.keys
+      else
+        directory.children.map { |c| c.name }
+      end
+    end
+
     def self.load_child_files(parent, key, recursive)
-      result = load_files(parent[key], recursive)
+      result = load_files(get_directory(parent, key), recursive)
       result.each do |file|
         file[:path] = "#{key}/#{file[:path]}"
       end
@@ -148,13 +181,14 @@ module ChefZero
     def self.load_files(directory, recursive)
       result = []
       if directory
-        directory.each_pair do |child_key, child|
-          if child.is_a? Hash
+        list(directory) do |child_name|
+          dir = get_directory(directory, child_name)
+          if dir
             if recursive
-              result += load_child_files(directory, child_key, recursive)
-           end
+              result += load_child_files(directory, child_name, recursive)
+            end
           else
-            result += load_file(child, child_key)
+            result += load_file(read_file(directory, child_name), child_name)
           end
         end
       end

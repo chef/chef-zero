@@ -15,6 +15,7 @@ module ChefZero
           environment_path = request.rest_path[2..3]
           role_path = request.rest_path[0..1]
         end
+        # Verify that the environment exists
         get_data(request, environment_path)
 
         role = JSON.parse(get_data(request, role_path), :create_additions => false)

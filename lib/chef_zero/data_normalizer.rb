@@ -64,7 +64,7 @@ module ChefZero
           if value.is_a?(Array)
             value.each do |file|
               if file.is_a?(Hash) && file.has_key?('checksum')
-                file['url'] ||= RestBase::build_uri(base_uri, ['file_store', file['checksum']])
+                file['url'] ||= RestBase::build_uri(base_uri, ['file_store', 'checksums', file['checksum']])
               end
             end
           end

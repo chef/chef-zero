@@ -10,8 +10,8 @@ module ChefZero
         get_data(request, request.rest_path[0..1])
 
         result = {}
-        data['nodes'].each_pair do |name, node|
-          node_json = JSON.parse(node, :create_additions => false)
+        list_data(request, ['nodes']).each do |name|
+          node = JSON.parse(get_data(request, ['nodes', name]), :create_additions => false)
           if node['chef_environment'] == request.rest_path[1]
             result[name] = build_uri(request.base_uri, 'nodes', name)
           end

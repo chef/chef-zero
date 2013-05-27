@@ -9,7 +9,7 @@ module ChefZero
         cookbook_name = request.rest_path[3]
         environment = JSON.parse(get_data(request, request.rest_path[0..1]), :create_additions => false)
         constraints = environment['cookbook_versions'] || {}
-        cookbook = get_data(request, request.rest_path[2..3])
+        cookbook_versions = list_data(request, request.rest_path[2..3])
         if request.query_params['num_versions'] == 'all'
           num_versions = nil
         elsif request.query_params['num_versions']
@@ -17,7 +17,7 @@ module ChefZero
         else
           num_versions = nil
         end
-        json_response(200, format_cookbooks_list(request, { cookbook_name => cookbook }, constraints, num_versions))
+        json_response(200, format_cookbooks_list(request, { cookbook_name => cookbook_versions }, constraints, num_versions))
       end
     end
   end

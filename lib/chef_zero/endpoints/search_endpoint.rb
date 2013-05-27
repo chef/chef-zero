@@ -48,15 +48,15 @@ module ChefZero
       def search_container(request, index)
         case index
         when 'client'
-          [ data['clients'], Proc.new { |client, name| DataNormalizer.normalize_client(client, name) }, build_uri(request.base_uri, [ 'clients' ]) ]
+          [ ['clients'], Proc.new { |client, name| DataNormalizer.normalize_client(client, name) }, build_uri(request.base_uri, [ 'clients' ]) ]
         when 'node'
-          [ data['nodes'], Proc.new { |node, name| DataNormalizer.normalize_node(node, name) }, build_uri(request.base_uri, [ 'nodes' ]) ]
+          [ ['nodes'], Proc.new { |node, name| DataNormalizer.normalize_node(node, name) }, build_uri(request.base_uri, [ 'nodes' ]) ]
         when 'environment'
-          [ data['environments'], Proc.new { |environment, name| DataNormalizer.normalize_environment(environment, name) }, build_uri(request.base_uri, [ 'environments' ]) ]
+          [ ['environments'], Proc.new { |environment, name| DataNormalizer.normalize_environment(environment, name) }, build_uri(request.base_uri, [ 'environments' ]) ]
         when 'role'
-          [ data['roles'], Proc.new { |role, name| DataNormalizer.normalize_role(role, name) }, build_uri(request.base_uri, [ 'roles' ]) ]
+          [ ['roles'], Proc.new { |role, name| DataNormalizer.normalize_role(role, name) }, build_uri(request.base_uri, [ 'roles' ]) ]
         else
-          [ data['data'][index], Proc.new { |data_bag_item, id| DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') }, build_uri(request.base_uri, [ 'data', index ]) ]
+          [ ['data', index], Proc.new { |data_bag_item, id| DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') }, build_uri(request.base_uri, [ 'data', index ]) ]
         end
       end
 
@@ -101,13 +101,11 @@ module ChefZero
 
         # Get the search container
         container, expander, base_uri = search_container(request, index)
-        if container.nil?
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
-        end
 
         # Search!
         result = []
-        container.each_pair do |name,value|
+        list_data(request, container).each do |name|
+          value = get_data(request, container + [name])
           expanded = expander.call(JSON.parse(value, :create_additions => false), name)
           result << [ name, build_uri(base_uri, [name]), expanded, expand_for_indexing(expanded, index, name) ]
         end

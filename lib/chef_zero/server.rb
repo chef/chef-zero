@@ -24,6 +24,7 @@ require 'timeout'
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
 require 'chef_zero/rest_router'
+require 'chef_zero/data_store/memory_store'
 require 'chef_zero/version'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
@@ -73,11 +74,11 @@ module ChefZero
       @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
       @server.add_tcp_listener(options[:host], options[:port])
 
-      clear_data
+      @data_store = options[:data_store] || DataStore::MemoryStore.new
     end
 
     attr_reader :server
-    attr_reader :data
+    attr_reader :data_store
     attr_reader :url
 
     include ChefZero::Endpoints
@@ -180,15 +181,18 @@ module ChefZero
     def load_data(contents)
       %w(clients environments nodes roles users).each do |data_type|
         if contents[data_type]
-          data[data_type].merge!(dejsonize_children(contents[data_type]))
+          dejsonize_children(contents[data_type]).each_pair do |name, data|
+            data_store.create([data_type], name, data)
+          end
         end
       end
       if contents['data']
-        new_data = {}
         contents['data'].each_pair do |key, data_bag|
-          new_data[key] = dejsonize_children(data_bag)
+          data_store.create_dir(['data'], key, :keep_existing)
+          dejsonize_children(data_bag).each do |item_name, item|
+            data_store.set(['data', key], item_name, item, :create)
+          end
         end
-        data['data'].merge!(new_data)
       end
       if contents['cookbooks']
         contents['cookbooks'].each_pair do |name_version, cookbook|
@@ -198,12 +202,12 @@ module ChefZero
             cookbook_data = CookbookData.to_hash(cookbook, name_version)
           end
           raise "No version specified" if !cookbook_data[:version]
-          data['cookbooks'][cookbook_data[:cookbook_name]] = {} if !data['cookbooks'][cookbook_data[:cookbook_name]]
-          data['cookbooks'][cookbook_data[:cookbook_name]][cookbook_data[:version]] = JSON.pretty_generate(cookbook_data)
+          data_store.create_dir(['cookbooks'], cookbook_data[:cookbook_name], :keep_existing)
+          data_store.set(['cookbooks', cookbook_data[:cookbook_name], cookbook_data[:version]], JSON.pretty_generate(cookbook_data), :create)
           cookbook_data.values.each do |files|
             next unless files.is_a? Array
             files.each do |file|
-              data['file_store'][file[:checksum]] = get_file(cookbook, file[:path])
+              data_store.set(['file_store', 'checksums', file[:checksum]], get_file(cookbook, file[:path]), :create)
             end
           end
         end
@@ -211,24 +215,7 @@ module ChefZero
     end
 
     def clear_data
-      @data = {
-        'clients' => {
-          'chef-validator' => '{ "validator": true }',
-          'chef-webui' => '{ "admin": true }'
-        },
-        'cookbooks' => {},
-        'data' => {},
-        'environments' => {
-          '_default' => '{ "description": "The default Chef environment" }'
-        },
-        'file_store' => {},
-        'nodes' => {},
-        'roles' => {},
-        'sandboxes' => {},
-        'users' => {
-          'admin' => '{ "admin": true }'
-        }
-      }
+      @data_store.clear
     end
 
     def request_handler(&block)
@@ -270,7 +257,7 @@ module ChefZero
         [ '/users', ActorsEndpoint.new(self) ],
         [ '/users/*', ActorEndpoint.new(self) ],
 
-        [ '/file_store/*', FileStoreFileEndpoint.new(self) ],
+        [ '/file_store/**', FileStoreFileEndpoint.new(self) ],
       ])
       router.not_found = NotFoundEndpoint.new
 

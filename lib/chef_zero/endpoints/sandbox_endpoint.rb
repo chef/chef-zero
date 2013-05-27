@@ -5,15 +5,13 @@ module ChefZero
     # /sandboxes/ID
     class SandboxEndpoint < RestBase
       def put(request)
-        existing_sandbox = get_data(request, request.rest_path)
-        data['sandboxes'].delete(request.rest_path[1])
-        time_str = existing_sandbox[:create_time].strftime('%Y-%m-%dT%H:%M:%S%z')
-        time_str = "#{time_str[0..21]}:#{time_str[22..23]}"
+        existing_sandbox = JSON.parse(get_data(request), :create_additions => false)
+        delete_data(request)
         json_response(200, {
           :guid => request.rest_path[1],
           :name => request.rest_path[1],
-          :checksums => existing_sandbox[:checksums],
-          :create_time => time_str,
+          :checksums => existing_sandbox['checksums'],
+          :create_time => existing_sandbox['create_time'],
           :is_completed => true
         })
       end
