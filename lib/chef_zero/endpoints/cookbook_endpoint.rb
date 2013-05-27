@@ -19,7 +19,7 @@ module ChefZero
           result = []
           filter_cookbooks(all_cookbooks_list, {}, 1) do |name, versions|
             if versions.size > 0
-              cookbook = JSON.parse(get_data(['cookbooks', name, versions[0]]), :create_additions => false)
+              cookbook = JSON.parse(get_data(request, ['cookbooks', name, versions[0]]), :create_additions => false)
               result += recipe_names(name, cookbook)
             end
           end

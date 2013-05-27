@@ -26,7 +26,7 @@ module ChefZero
         rename = key != request.rest_path[-1]
         if rename
           begin
-            data_store.create(request.rest_path[0..-2] + [key], request.body)
+            data_store.create(request.rest_path[0..-2], key, request.body)
           rescue DataStore::DataAlreadyExistsError
             return error(409, "Cannot rename '#{request.rest_path[-1]}' to '#{key}': '#{key}' already exists")
           end

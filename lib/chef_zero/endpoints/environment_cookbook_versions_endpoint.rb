@@ -33,7 +33,7 @@ module ChefZero
         end
 
         # Depsolve!
-        solved = depsolve(desired_versions.keys, desired_versions, environment_constraints)
+        solved = depsolve(request, desired_versions.keys, desired_versions, environment_constraints)
         if !solved
           return raise RestErrorResponse.new(412, "Unsolvable versions!")
         end
@@ -46,7 +46,7 @@ module ChefZero
         json_response(200, result)
       end
 
-      def depsolve(unsolved, desired_versions, environment_constraints)
+      def depsolve(request, unsolved, desired_versions, environment_constraints)
         return nil if desired_versions.values.any? { |versions| versions.empty? }
 
         # If everything is already
@@ -61,7 +61,7 @@ module ChefZero
           new_unsolved = unsolved[1..-1]
 
           # Pick this cookbook, and add dependencies
-          cookbook_obj = JSON.parse(get_data(request, ['cookbooks', solve_for, desired_version]), create_additions => false)
+          cookbook_obj = JSON.parse(get_data(request, ['cookbooks', solve_for, desired_version]), :create_additions => false)
           cookbook_metadata = cookbook_obj['metadata'] || {}
           cookbook_dependencies = cookbook_metadata['dependencies'] || {}
           dep_not_found = false
@@ -71,7 +71,7 @@ module ChefZero
             if !new_desired_versions.has_key?(dep_name)
               new_unsolved = new_unsolved + [dep_name]
               # If the dep is missing, we will try other versions of the cookbook that might not have the bad dep.
-              if !cookbooks[dep_name]
+              if !exists_data_dir?(request, ['cookbooks', dep_name])
                 dep_not_found = true
                 break
               end
@@ -84,7 +84,7 @@ module ChefZero
           next if dep_not_found
 
           # Depsolve children with this desired version!  First solution wins.
-          result = depsolve(new_unsolved, new_desired_versions, environment_constraints)
+          result = depsolve(request, new_unsolved, new_desired_versions, environment_constraints)
           return result if result
         end
         return nil

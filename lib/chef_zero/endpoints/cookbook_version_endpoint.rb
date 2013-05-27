@@ -54,6 +54,8 @@ module ChefZero
           request.rest_path[2] = latest_version(list_data(request, request.rest_path[0..1]))
         end
 
+        deleted_cookbook = get_data(request)
+
         response = super(request)
         cookbook_name = request.rest_path[1]
         delete_data_dir(request, ['cookbooks', cookbook_name]) if list_data(request, ['cookbooks', cookbook_name]).size == 0

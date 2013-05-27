@@ -10,7 +10,7 @@ module ChefZero
         name = JSON.parse(contents, :create_additions => false)[identity_key]
         if name.nil?
           error(400, "Must specify '#{identity_key}' in JSON")
-        elsif exists_data?(request, ['data', name])
+        elsif exists_data_dir?(request, ['data', name])
           error(409, "Object already exists")
         else
           data_store.create_dir(['data'], name, :keep_existing)

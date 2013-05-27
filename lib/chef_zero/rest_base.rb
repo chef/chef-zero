@@ -89,6 +89,8 @@ module ChefZero
       rest_path ||= request.rest_path
       begin
         data_store.create(rest_path, name, data, *options)
+      rescue DataStore::DataNotFoundError
+        raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
       rescue DataStore::DataAlreadyExistsError
         raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
       end
@@ -97,6 +99,11 @@ module ChefZero
     def exists_data?(request, rest_path=nil)
       rest_path ||= request.rest_path
       data_store.exists?(rest_path)
+    end
+
+    def exists_data_dir?(request, rest_path=nil)
+      rest_path ||= request.rest_path
+      data_store.exists_dir?(rest_path)
     end
 
     def error(response_code, error)

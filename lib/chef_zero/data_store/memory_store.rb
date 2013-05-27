@@ -131,6 +131,18 @@ module ChefZero
         end
       end
 
+      def exists_dir?(path)
+        begin
+          dir = _get(path)
+          if !dir.is_a? Hash
+            raise "exists_dir? only works with directories (#{path} = #{dir.class}"
+          end
+          return true
+        rescue DataNotFoundError
+          return false
+        end
+      end
+
       private
 
       def _get(path, create_dir=false)

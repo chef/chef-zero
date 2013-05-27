@@ -10,8 +10,8 @@ module ChefZero
         json_response(200, {
           :guid => request.rest_path[1],
           :name => request.rest_path[1],
-          :checksums => existing_sandbox[:checksums],
-          :create_time => existing_sandbox[:create_time],
+          :checksums => existing_sandbox['checksums'],
+          :create_time => existing_sandbox['create_time'],
           :is_completed => true
         })
       end
