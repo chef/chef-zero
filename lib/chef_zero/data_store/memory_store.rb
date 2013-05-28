@@ -52,9 +52,12 @@ module ChefZero
         parent = _get(path, options.include?(:recursive))
 
         if parent.has_key?(name)
-          raise DataAlreadyExistsError.new(path + [name])
+          if !options.include?(:recursive)
+            raise DataAlreadyExistsError.new(path + [name])
+          end
+        else
+          parent[name] = {}
         end
-        parent[name] = {}
       end
 
       def create(path, name, data, *options)

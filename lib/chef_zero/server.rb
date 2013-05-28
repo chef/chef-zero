@@ -188,9 +188,9 @@ module ChefZero
       end
       if contents['data']
         contents['data'].each_pair do |key, data_bag|
-          data_store.create_dir(['data'], key, :keep_existing)
+          data_store.create_dir(['data'], key, :recursive)
           dejsonize_children(data_bag).each do |item_name, item|
-            data_store.set(['data', key], item_name, item, :create)
+            data_store.set(['data', key, item_name], item, :create)
           end
         end
       end
@@ -202,7 +202,7 @@ module ChefZero
             cookbook_data = CookbookData.to_hash(cookbook, name_version)
           end
           raise "No version specified" if !cookbook_data[:version]
-          data_store.create_dir(['cookbooks'], cookbook_data[:cookbook_name], :keep_existing)
+          data_store.create_dir(['cookbooks'], cookbook_data[:cookbook_name], :recursive)
           data_store.set(['cookbooks', cookbook_data[:cookbook_name], cookbook_data[:version]], JSON.pretty_generate(cookbook_data), :create)
           cookbook_data.values.each do |files|
             next unless files.is_a? Array
