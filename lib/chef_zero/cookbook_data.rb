@@ -162,7 +162,7 @@ module ChefZero
       end
     end
 
-    def self.list_directory(directory)
+    def self.list(directory)
       if directory.is_a?(Hash)
         directory.keys
       else
