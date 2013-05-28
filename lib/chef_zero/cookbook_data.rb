@@ -181,7 +181,7 @@ module ChefZero
     def self.load_files(directory, recursive)
       result = []
       if directory
-        list(directory) do |child_name|
+        list(directory).each do |child_name|
           dir = get_directory(directory, child_name)
           if dir
             if recursive
