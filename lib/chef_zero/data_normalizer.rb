@@ -69,17 +69,26 @@ module ChefZero
             end
           end
         end
+        cookbook['name'] ||= "#{name}-#{version}"
+        # TODO this feels wrong, but the real chef server doesn't expand this default
+  #      cookbook['version'] ||= version
+        cookbook['cookbook_name'] ||= name
+        cookbook['frozen?'] ||= false
+        cookbook['metadata'] ||= {}
+        cookbook['metadata']['version'] ||= version
+        # Sad to not be expanding defaults just because Chef doesn't :(
+#        cookbook['metadata']['name'] ||= name
+#        cookbook['metadata']['description'] ||= "A fabulous new cookbook"
+        cookbook['metadata']['long_description'] ||= ""
+#        cookbook['metadata']['maintainer'] ||= "YOUR_COMPANY_NAME"
+#        cookbook['metadata']['maintainer_email'] ||= "YOUR_EMAIL"
+#        cookbook['metadata']['license'] ||= "none"
+        cookbook['metadata']['dependencies'] ||= {}
+        cookbook['metadata']['attributes'] ||= {}
+        cookbook['metadata']['recipes'] ||= {}
       end
-      cookbook['name'] ||= "#{name}-#{version}"
-      # TODO this feels wrong, but the real chef server doesn't expand this default
-#      cookbook['version'] ||= version
-      cookbook['cookbook_name'] ||= name
       cookbook['json_class'] ||= 'Chef::CookbookVersion'
       cookbook['chef_type'] ||= 'cookbook_version'
-      cookbook['frozen?'] ||= false
-      cookbook['metadata'] ||= {}
-      cookbook['metadata']['version'] ||= version
-      cookbook['metadata']['name'] ||= name
       cookbook
     end
 
