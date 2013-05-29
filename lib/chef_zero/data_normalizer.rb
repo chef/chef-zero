@@ -89,6 +89,10 @@ module ChefZero
       end
       cookbook['json_class'] ||= 'Chef::CookbookVersion'
       cookbook['chef_type'] ||= 'cookbook_version'
+      if method == 'MIN'
+        cookbook['metadata'].delete('attributes')
+        cookbook['metadata'].delete('long_description')
+      end
       cookbook
     end
 
