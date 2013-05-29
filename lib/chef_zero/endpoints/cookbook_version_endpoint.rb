@@ -76,7 +76,7 @@ module ChefZero
             end
           end
         end
-        result
+        result.uniq
       end
 
       private
