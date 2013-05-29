@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
-gemspec
+
+gemspec :path => "../"
 
 gem 'chef-pedant', :github => 'opscode/chef-pedant'
