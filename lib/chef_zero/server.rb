@@ -182,7 +182,7 @@ module ChefZero
       %w(clients environments nodes roles users).each do |data_type|
         if contents[data_type]
           dejsonize_children(contents[data_type]).each_pair do |name, data|
-            data_store.create([data_type], name, data)
+            data_store.set([data_type, name], data, :create)
           end
         end
       end
