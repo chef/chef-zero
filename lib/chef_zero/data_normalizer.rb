@@ -79,7 +79,7 @@ module ChefZero
         # Sad to not be expanding defaults just because Chef doesn't :(
 #        cookbook['metadata']['name'] ||= name
 #        cookbook['metadata']['description'] ||= "A fabulous new cookbook"
-#        cookbook['metadata']['long_description'] ||= ""
+        cookbook['metadata']['long_description'] ||= ""
 #        cookbook['metadata']['maintainer'] ||= "YOUR_COMPANY_NAME"
 #        cookbook['metadata']['maintainer_email'] ||= "YOUR_EMAIL"
 #        cookbook['metadata']['license'] ||= "none"
