@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => '033af2396028c141f8bb96ea578ccb9096fa4ac8'
+gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => '55d276117db4689b5be4b32e78160749dc4dd9b5'
