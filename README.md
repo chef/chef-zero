@@ -139,7 +139,7 @@ Usage: chef-zero [ARGS]
     -H, --host HOST                  Host to bind to (default: 127.0.0.1)
     -p, --port PORT                  Port to listen on
         --[no-]generate-keys         Whether to generate actual keys or fake it (faster).  Default: false.
-    -d, --debug                      Show requests and debugging output
+    -l, --log-level LEVEL            Set the output log level
     -h, --help                       Show this message
         --version                    Show version
 ```
