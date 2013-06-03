@@ -4,6 +4,13 @@ require 'hashie/mash'
 module ChefZero
   module CookbookData
     def self.to_hash(cookbook, name, version=nil)
+      frozen = false
+      if cookbook.has_key?(:frozen)
+        frozen = cookbook[:frozen]
+        cookbook = cookbook.dup
+        cookbook.delete(:frozen)
+      end
+
       result = files_from(cookbook)
       recipe_names = result[:recipes].map do |recipe|
         recipe_name = recipe[:name][0..-2]
@@ -15,6 +22,7 @@ module ChefZero
       result[:cookbook_name] = name
       result[:version] = result[:metadata][:version]
       result[:chef_type] = 'cookbook_version'
+      result[:frozen?] = true if frozen
       result
     end
 

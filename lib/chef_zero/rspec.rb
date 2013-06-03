@@ -65,8 +65,8 @@ module ChefZero
           before(:each) { ChefZero::RSpec.server.load_data({ 'clients' => { name => client }}) }
         end
 
-        def self.cookbook(name, version, cookbook)
-          before(:each) { ChefZero::RSpec.server.load_data({ 'cookbooks' => { "#{name}-#{version}" => cookbook }}) }
+        def self.cookbook(name, version, cookbook, options = {})
+          before(:each) { ChefZero::RSpec.server.load_data({ 'cookbooks' => { "#{name}-#{version}" => cookbook.merge(options) }}) }
         end
 
         def self.data_bag(name, data_bag)
