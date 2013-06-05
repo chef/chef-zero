@@ -63,10 +63,10 @@ module ChefZero
       def expand_for_indexing(value, index, id)
         if index == 'node'
           result = {}
-          result.deep_merge!(value['default'] || {})
-          result.deep_merge!(value['normal'] || {})
-          result.deep_merge!(value['override'] || {})
-          result.deep_merge!(value['automatic'] || {})
+          deep_merge!(value['default'] || {}, result)
+          deep_merge!(value['normal'] || {}, result)
+          deep_merge!(value['override'] || {}, result)
+          deep_merge!(value['automatic'] || {}, result)
           result['recipe'] = []
           result['role'] = []
           if value['run_list']
@@ -131,6 +131,58 @@ module ChefZero
           'total' => total
         }
       end
+
+      private
+
+      # Deep Merge core documentation.
+      # deep_merge! method permits merging of arbitrary child elements. The two top level
+      # elements must be hashes. These hashes can contain unlimited (to stack limit) levels
+      # of child elements. These child elements to not have to be of the same types.
+      # Where child elements are of the same type, deep_merge will attempt to merge them together.
+      # Where child elements are not of the same type, deep_merge will skip or optionally overwrite
+      # the destination element with the contents of the source element at that level.
+      # So if you have two hashes like this:
+      #   source = {:x => [1,2,3], :y => 2}
+      #   dest =   {:x => [4,5,'6'], :y => [7,8,9]}
+      #   dest.deep_merge!(source)
+      #   Results: {:x => [1,2,3,4,5,'6'], :y => 2}
+      # By default, "deep_merge!" will overwrite any unmergeables and merge everything else.
+      # To avoid this, use "deep_merge" (no bang/exclamation mark)
+      def deep_merge!(source, dest)
+        # if dest doesn't exist, then simply copy source to it
+        if dest.nil?
+          dest = source; return dest
+        end
+
+        case source
+        when nil
+          dest
+        when Hash
+          source.each do |src_key, src_value|
+            if dest.kind_of?(Hash)
+              if dest[src_key]
+                dest[src_key] = deep_merge!(src_value, dest[src_key])
+              else # dest[src_key] doesn't exist so we take whatever source has
+                dest[src_key] = src_value
+              end
+            else # dest isn't a hash, so we overwrite it completely
+              dest = source
+            end
+          end
+        when Array
+          if dest.kind_of?(Array)
+            dest = dest | source
+          else
+            dest = source
+          end
+        when String
+          dest = source
+        else # src_hash is not an array or hash, so we'll have to overwrite dest
+          dest = source
+        end
+        dest
+      end # deep_merge!
+
     end
   end
 end
