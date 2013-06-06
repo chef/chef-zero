@@ -14,8 +14,7 @@ module ChefZero
         attr_reader :regexp
 
         def matches_doc?(doc)
-          value = doc[DEFAULT_FIELD]
-          return value ? matches_values?([value]) : false
+          matches_values?(doc[DEFAULT_FIELD])
         end
         def matches_values?(values)
           values.any? { |value| !@regexp.match(value).nil? }

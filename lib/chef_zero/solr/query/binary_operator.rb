@@ -26,12 +26,11 @@ module ChefZero
             left.matches_doc?(doc)
           when ':'
             if left.respond_to?(:literal_string) && left.literal_string
-              value = doc[left.literal_string]
-              right.matches_values?([value])
+              values = doc[left.literal_string]
             else
               values = doc.matching_values { |key| left.matches_values?([key]) }
-              right.matches_values?(values)
             end
+            right.matches_values?(values)
           end
         end
 

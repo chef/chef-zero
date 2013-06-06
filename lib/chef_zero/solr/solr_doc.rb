@@ -9,31 +9,22 @@ module ChefZero
       end
 
       def [](key)
-        values = matching_values { |match_key| match_key == key }
-        values[0]
+        matching_values { |match_key| match_key == key }
       end
 
       def matching_values(&block)
-        result = {}
+        result = []
         key_values(nil, @json) do |key, value|
           if block.call(key)
-            if result.has_key?(key)
-              result[key] << value.to_s
-            else
-              result[key] = value.to_s.clone
-            end
+            result << value.to_s
           end
         end
         # Handle manufactured value(s)
         if block.call('X_CHEF_id_CHEF_X')
-          if result.has_key?('X_CHEF_id_CHEF_X')
-            result['X_CHEF_id_CHEF_X'] << @id.to_s
-          else
-            result['X_CHEF_id_CHEF_X'] = @id.to_s.clone
-          end
+          result << @id.to_s
         end
 
-        result.values
+        result.uniq
       end
 
       private
