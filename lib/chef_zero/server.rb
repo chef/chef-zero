@@ -17,9 +17,10 @@
 #
 
 require 'openssl'
-require 'puma'
+require 'rbconfig'
 require 'rubygems'
 require 'timeout'
+require 'uri'
 
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
@@ -66,18 +67,17 @@ module ChefZero
 
     def initialize(options = {})
       options = DEFAULT_OPTIONS.merge(options)
-      @url = "http://#{options[:host]}:#{options[:port]}"
+      @url = URI("http://#{options[:host]}:#{options[:port]}")
       @generate_real_keys = options[:generate_real_keys]
 
       ChefZero::Log.level = options[:log_level].to_sym
-
-      @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
-      @server.add_tcp_listener(options[:host], options[:port])
+      make_server
 
       @data_store = options[:data_store] || DataStore::MemoryStore.new
     end
 
     attr_reader :server
+    attr_reader :server_version
     attr_reader :data_store
     attr_reader :url
 
@@ -86,15 +86,16 @@ module ChefZero
     def start(options = {})
       if options[:publish]
         puts ">> Starting Chef Zero (v#{ChefZero::VERSION})..."
-        puts ">> Puma (v#{Puma::Const::PUMA_VERSION}) is listening at #{url}"
+        puts ">> #{server_name} (v#{server_version}) is listening at #{url}"
         puts ">> Press CTRL+C to stop"
       end
 
       begin
-        thread = server.run.join
+        thread = @server_commands[:run].call
       rescue Object, Interrupt
-        puts "\n>> Stopping Puma..."
-        server.stop(true) if running?
+        puts $!.inspect
+        puts "\n>> Stopping #{server_name.downcase}..."
+        @server_commands[:stop].call if running?
       end
     end
 
@@ -119,14 +120,14 @@ module ChefZero
     end
 
     def running?
-      !!server.running
+      !!@server_commands[:running?].call
     end
 
     def stop(wait = 5)
       if @thread
         @thread.join(wait)
       else
-        server.stop(true)
+        @server_commands[:stop].call
       end
     rescue
       ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
@@ -304,6 +305,37 @@ module ChefZero
 
     def generate_real_keys?
       !!@generate_real_keys
+    end
+
+    def server_name
+      return nil unless server
+      server.class.to_s.split('::').first
+    end
+
+    # Determine the correct server based on the operating system.
+    def make_server
+      if ENV['SERVER'] == 'thin' || RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+        require 'thin'
+        Thin::Logging.silent = true
+
+        @server = Thin::Server.new(@url.host, @url.port, make_app)
+        @server_version = Thin::VERSION::STRING
+        @server_commands = {
+          :running? => Proc.new { @server.running? },
+          :run      => Proc.new { @server.start },
+          :stop     => Proc.new { @server.stop }
+        }
+      else
+        require 'puma'
+        @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
+        @server.add_tcp_listener(@url.host, @url.port)
+        @server_version = Puma::Const::VERSION
+        @server_commands = {
+          :running? => Proc.new { @server.running },
+          :run      => Proc.new { @server.run.join },
+          :stop     => Proc.new { @server.stop }
+        }
+      end
     end
   end
 end
