@@ -1,3 +1,3 @@
 module ChefZero
-  VERSION = '1.2.1'
+  VERSION = '1.4.0.alpha'
 end
