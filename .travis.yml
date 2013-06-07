@@ -7,13 +7,9 @@ matrix:
     - rvm: 1.9.3
     - rvm: 1.9.3
       gemfile: gemfiles/gemfile.latest-pedant
-    - rvm: 1.9.3
-      env: SERVER=thin
     - rvm: jruby-19mode
       env: SKIP_PEDANT=true
     - rvm: 2.0.0
-    - rvm: 2.0.0
-      env: SERVER=thin
   allow_failures:
     - rvm: jruby-19mode
     - gemfile: gemfiles/gemfile.latest-pedant
