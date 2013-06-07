@@ -1,5 +1,6 @@
 $:.unshift(File.dirname(__FILE__) + '/lib')
 require 'chef_zero/version'
+require 'rbconfig'
 
 Gem::Specification.new do |s|
   s.name = 'chef-zero'
@@ -11,7 +12,14 @@ Gem::Specification.new do |s|
   s.email = 'jkeiser@opscode.com'
   s.homepage = 'http://www.opscode.com'
 
-  s.add_dependency 'puma',          '~> 2.0'
+  if ENV['SERVER'] == 'thin' || RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+    # Windows and/or explicit thin testing
+    s.add_dependency 'thin', '~> 1.5'
+  else
+    # Everyone else
+    s.add_dependency 'puma', '~> 2.0'
+  end
+
   s.add_dependency 'mixlib-log',    '~> 1.3'
   s.add_dependency 'hashie',        '~> 2.0'
   s.add_dependency 'moneta',        '< 0.7.0' # For chef, see CHEF-3721
