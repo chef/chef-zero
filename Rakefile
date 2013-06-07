@@ -4,5 +4,5 @@ require 'bundler/gem_tasks'
 require 'chef_zero/version'
 
 task :spec do
-  sh 'ruby spec/run.rb'
+  require File.expand_path('spec/run')
 end

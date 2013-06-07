@@ -5,21 +5,25 @@ require 'bundler/setup'
 require 'chef_zero/server'
 require 'rspec/core'
 
-require 'pedant'
-require 'pedant/opensource'
-
 server = ChefZero::Server.new(:port => 8889)
 server.start_background
 
-Pedant.config.suite = 'api'
-Pedant.config[:config_file] = 'spec/support/pedant.rb'
-Pedant.setup([
-  '--skip-validation',
-  '--skip-authentication',
-  '--skip-authorization'
-])
+unless ENV['SKIP_PEDANT']
+  require 'pedant'
+  require 'pedant/opensource'
 
-result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
+  Pedant.config.suite = 'api'
+  Pedant.config[:config_file] = 'spec/support/pedant.rb'
+  Pedant.setup([
+    '--skip-validation',
+    '--skip-authentication',
+    '--skip-authorization'
+  ])
+
+  result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
+else
+  result = 0
+end
 
 server.stop
 exit(result)
