@@ -22,7 +22,14 @@ unless ENV['SKIP_PEDANT']
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
 else
-  result = 0
+  require 'net/http'
+  response = Net::HTTP.new('127.0.0.1', 8889).get("/environments", { 'Accept' => 'application/json'}).body
+  if response =~ /_default/
+    result = 0
+  else
+    puts "GET /environments returned #{response}.  Expected _default!"
+    result = 1
+  end
 end
 
 server.stop
