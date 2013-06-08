@@ -24,6 +24,10 @@ OptionParser.new do |opts|
     options[:generate_real_keys] = value
   end
 
+  opts.on("-d", "--daemon", "Run as a daemon process") do |value|
+    options[:daemon] = value
+  end
+
   opts.on("-l", "--log-level LEVEL", "Set the output log level") do |value|
     options[:log_level] = value
   end
@@ -40,4 +44,14 @@ OptionParser.new do |opts|
 end.parse!
 
 server = ChefZero::Server.new(options)
-server.start(:publish => true)
+
+if options[:daemon]
+  unless Process.respond_to?('daemon')
+    abort 'Process.deamon requires Ruby >= 1.9'
+  else
+    Process.daemon(true)
+    server.start(:publish => true)
+  end
+else
+  server.start(:publish => true)
+end
