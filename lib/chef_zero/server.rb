@@ -60,6 +60,7 @@ module ChefZero
     DEFAULT_OPTIONS = {
       :host => '127.0.0.1',
       :port => 8889,
+      :sock => nil,
       :log_level => :info,
       :generate_real_keys => true
     }.freeze
@@ -72,7 +73,12 @@ module ChefZero
       ChefZero::Log.level = options[:log_level].to_sym
 
       @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
-      @server.add_tcp_listener(options[:host], options[:port])
+      if options[:sock]
+        @server.add_unix_listener(options[:sock])
+      else
+        @server.add_tcp_listener(options[:host], options[:port])
+      end
+
 
       @data_store = options[:data_store] || DataStore::MemoryStore.new
     end
