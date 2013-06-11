@@ -73,8 +73,8 @@ module ChefZero
       ChefZero::Log.level = options[:log_level].to_sym
 
       @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
-      if options[:sock]
-        @server.add_unix_listener(options[:sock])
+      if options[:socket]
+        @server.add_unix_listener(options[:socket])
       else
         @server.add_tcp_listener(options[:host], options[:port])
       end

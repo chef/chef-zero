@@ -20,8 +20,8 @@ OptionParser.new do |opts|
     options[:port] = value
   end
 
-  opts.on("-s", "--socket PATH", String, "Unix socket path to listen on") do |value|
-    options[:sock] = value
+  opts.on("--socket PATH", String, "Unix socket path to listen on") do |value|
+    options[:socket] = value
   end
 
   opts.on("--[no-]generate-keys", "Whether to generate actual keys or fake it (faster).  Default: false.") do |value|
