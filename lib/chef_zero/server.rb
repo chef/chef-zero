@@ -60,7 +60,7 @@ module ChefZero
     DEFAULT_OPTIONS = {
       :host => '127.0.0.1',
       :port => 8889,
-      :sock => nil,
+      :socket => nil,
       :log_level => :info,
       :generate_real_keys => true
     }.freeze
