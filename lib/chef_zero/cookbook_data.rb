@@ -32,7 +32,11 @@ module ChefZero
       # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
       # the resulting recipe list have 1, or 3-4 recipes in it?
       if has_child(directory, 'metadata.rb')
-        metadata.instance_eval(read_file(directory, 'metadata.rb'))
+        begin
+          metadata.instance_eval(read_file(directory, 'metadata.rb'), File.join(filename(directory), 'metadata.rb'))
+        rescue
+          ChefZero::Log.error("Error loading cookbook #{name}: #{$!}")
+        end
       elsif has_child(directory, 'metadata.json')
         metadata.from_json(read_file(directory, 'metadata.json'))
       end
@@ -158,6 +162,14 @@ module ChefZero
         directory[name]
       else
         directory.child(name).read
+      end
+    end
+
+    def self.filename(directory)
+      if directory.respond_to?(:file_path)
+        directory.file_path
+      else
+        nil
       end
     end
 
