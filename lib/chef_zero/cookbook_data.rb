@@ -33,9 +33,10 @@ module ChefZero
       # the resulting recipe list have 1, or 3-4 recipes in it?
       if has_child(directory, 'metadata.rb')
         begin
-          metadata.instance_eval(read_file(directory, 'metadata.rb'), File.join(filename(directory), 'metadata.rb'))
+          file = filename(directory, 'metadata.rb') || "(#{name}/metadata.rb)"
+          metadata.instance_eval(read_file(directory, 'metadata.rb'), file)
         rescue
-          ChefZero::Log.error("Error loading cookbook #{name}: #{$!}")
+          ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n#{$!.backtrace}")
         end
       elsif has_child(directory, 'metadata.json')
         metadata.from_json(read_file(directory, 'metadata.json'))
@@ -165,9 +166,9 @@ module ChefZero
       end
     end
 
-    def self.filename(directory)
+    def self.filename(directory, name)
       if directory.respond_to?(:file_path)
-        directory.file_path
+        File.join(directory.file_path, name)
       else
         nil
       end
