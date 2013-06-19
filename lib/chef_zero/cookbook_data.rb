@@ -36,7 +36,7 @@ module ChefZero
           file = filename(directory, 'metadata.rb') || "(#{name}/metadata.rb)"
           metadata.instance_eval(read_file(directory, 'metadata.rb'), file)
         rescue
-          ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n#{$!.backtrace}")
+          ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n  #{$!.backtrace.join("\n  ")}")
         end
       elsif has_child(directory, 'metadata.json')
         metadata.from_json(read_file(directory, 'metadata.json'))
@@ -68,8 +68,8 @@ module ChefZero
       def initialize(cookbook)
         self.name(cookbook.name)
         self.recipes(cookbook.fully_qualified_recipe_names)
-        %w(dependencies supports recommendations suggestions conflicting providing replacing recipes).each do |cookbook_arg|
-          self[cookbook_arg.to_sym] = Hashie::Mash.new
+        %w(attributes grouping dependencies supports recommendations suggestions conflicting providing replacing recipes).each do |hash_arg|
+          self[hash_arg.to_sym] = Hashie::Mash.new
         end
       end
 
