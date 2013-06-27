@@ -6,8 +6,10 @@ module ChefZero
           @subquery = subquery
         end
 
+        attr_reader :subquery
+
         def to_s
-          "(#{@subquery})"
+          "(#{subquery})"
         end
 
         def literal_string
