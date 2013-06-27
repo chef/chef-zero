@@ -108,8 +108,7 @@ module ChefZero
       end
 
       def parse_error(token, str)
-        error = "Error on token '#{token}' at #{@index} of '#{@query_string}': #{str}"
-        raise error
+        raise "Error on token '#{token}' at #{@index} of '#{@query_string}': #{str}"
       end
 
       def read_single_expression
@@ -162,7 +161,12 @@ module ChefZero
 
         # Otherwise it's a term.
         else
-          Query::Term.new(token)
+          term = Query::Term.new(token)
+          if peek_token == ':'
+            Query::BinaryOperator.new(term, next_token, read_single_expression)
+          else
+            term
+          end
         end
       end
 
