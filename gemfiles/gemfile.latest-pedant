@@ -3,3 +3,4 @@ source 'https://rubygems.org'
 gemspec :path => "../"
 
 gem 'chef-pedant', :github => 'opscode/chef-pedant'
+gem 'chef', '>= 11.0'
