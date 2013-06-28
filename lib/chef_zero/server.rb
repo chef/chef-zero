@@ -283,6 +283,9 @@ module ChefZero
           @on_response_proc.call(request, response)
         end
 
+        # Insert Server header
+        response[1]['Server'] = 'chef-zero'
+
         # Puma expects the response to be an array (chunked responses). Since
         # we are statically generating data, we won't ever have said chunked
         # response, so fake it.
