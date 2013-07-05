@@ -5,7 +5,7 @@ Description
 -----------
 Chef Zero is a simple, easy-install, in-memory Chef server that can be useful
 for Chef Client testing and chef-solo-like tasks that require a full Chef
-Cerver. It IS intended to be simple, Chef 11 compliant, easy to run and fast
+Server. It IS intended to be simple, Chef 11 compliant, easy to run and fast
 to start. It is NOT intended to be secure, scalable, performant or persistent.
 It does NO input validation, authentication or authorization (it will not
 throw a 400, 401 or 403). It does not save data, and will start up empty each
