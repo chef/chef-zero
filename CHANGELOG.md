@@ -1,3 +1,7 @@
+# 1.5.4
+
+- Fix issue where run_lists in format cookbook::recipe@version do not depsolve
+
 # 1.5.3
 
 - Add Server: chef-zero header to response
