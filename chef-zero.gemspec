@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.author = 'John Keiser'
   s.email = 'jkeiser@opscode.com'
   s.homepage = 'http://www.opscode.com'
+  s.license = 'Apache 2.0'
 
   s.add_dependency 'puma',          '~> 1.6'
   s.add_dependency 'mixlib-log',    '~> 1.3'
