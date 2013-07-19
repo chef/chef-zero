@@ -142,7 +142,7 @@ module ChefZero
           right = next_token
           parse_error(right, "Expected left term in range query") if !right
           end_range = next_token
-          parse_error(right, "Expected end range '#{expected_end_range}") if !['{', '['].include?(end_range)
+          parse_error(right, "Expected end range '#{end_range}") if !['}', ']'].include?(end_range)
           Query::RangeQuery.new(left, right, token == '[', end_range == ']')
 
         elsif token == '('
