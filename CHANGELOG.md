@@ -1,3 +1,7 @@
+# 1.5.5
+
+- Fix issue with - in term (name:a-b)
+
 # 1.5.4
 
 - Fix issue where run_lists in format cookbook::recipe@version do not depsolve
