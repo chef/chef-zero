@@ -49,16 +49,22 @@ module ChefZero
               @index+=1
             end
             @index+=1 if !eof?
-          end until eof? || @query_string[@index] =~ /\s/ || peek_operator_token
+          end while !eof? && peek_term_token
           @query_string[start_index..@index-1]
         end
       end
 
       def skip_whitespace
         if @query_string[@index] =~ /\s/
-          whitespace = /\s+/.match(@query_string, @index)
+          whitespace = /\s+/.match(@query_string, @index) || peek
           @index += whitespace[0].length
         end
+      end
+
+      def peek_term_token
+        return nil if @query_string[@index] =~ /\s/
+        op = peek_operator_token
+        return !op || op == '-'
       end
 
       def peek_operator_token

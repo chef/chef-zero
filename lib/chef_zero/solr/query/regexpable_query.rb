@@ -20,6 +20,7 @@ module ChefZero
           values.any? { |value| !@regexp.match(value).nil? }
         end
 
+        DEFAULT_FIELD = "text"
         WORD_CHARACTER = "[A-Za-z0-9@._':]"
         NON_WORD_CHARACTER = "[^A-Za-z0-9@._':]"
       end
