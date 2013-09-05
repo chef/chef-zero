@@ -127,7 +127,9 @@ module ChefZero
 
     def running?
       begin
-        Net::HTTP.get_response(URI(@url))
+        uri = URI(@url)
+        if uri.host == '0.0.0.0' then uri.host = '127.0.0.1' end
+        Net::HTTP.get_response(uri)
       rescue Errno::ECONNREFUSED
         false
       else
