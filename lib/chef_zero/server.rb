@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+require 'net/http'
 require 'openssl'
 require 'puma'
 require 'rubygems'
@@ -125,12 +126,21 @@ module ChefZero
     end
 
     def running?
-      !!server.running
+      begin
+        uri = URI(@url)
+        if uri.host == '0.0.0.0' then uri.host = '127.0.0.1' end
+        Net::HTTP.get_response(uri)
+      rescue Errno::ECONNREFUSED
+        false
+      else
+        true
+      end
     end
 
     def stop(wait = 5)
       if @thread
-        @thread.join(wait)
+        server.stop(false)
+        raise unless @thread.join(wait)
       else
         server.stop(true)
       end
