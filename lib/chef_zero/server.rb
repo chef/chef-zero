@@ -129,10 +129,9 @@ module ChefZero
     end
 
     def stop(wait = 5)
+      server.stop(true)
       if @thread
         @thread.join(wait)
-      else
-        server.stop(true)
       end
     rescue
       ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
