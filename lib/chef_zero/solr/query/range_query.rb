@@ -13,14 +13,15 @@ module ChefZero
           "#{@from_inclusive ? '[' : '{'}#{@from} TO #{@to}#{@to_inclusive ? ']' : '}'}"
         end
 
-        def matches?(key, value)
+        def matches_values?(values)
+          value = values.first
           case @from <=> value
           when -1
             return false
           when 0
             return false if !@from_inclusive
           end
-          case @to <=> value
+          case value <=> @to
           when 1
             return false
           when 0
