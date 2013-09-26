@@ -1,8 +1,6 @@
 require 'chef_zero/solr/solr_parser'
 require 'chef_zero/solr/solr_doc'
 
-#p = ChefZero::Solr::SolrParser.new('chef_environment:prod AND roles:redis_history_server AND -redis_slaveof:[a TO z]')
-
 describe ChefZero::Solr::SolrParser do
   let (:all_docs) do
     docs = []
