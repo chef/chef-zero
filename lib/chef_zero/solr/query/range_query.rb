@@ -10,7 +10,7 @@ module ChefZero
         end
 
         def to_s
-          "#{@from_inclusive ? '[' : '{'}#{@from} TO #{@to}#{@to_inclusive ? '[' : '{'}"
+          "#{@from_inclusive ? '[' : '{'}#{@from} TO #{@to}#{@to_inclusive ? ']' : '}'}"
         end
 
         def matches?(key, value)
