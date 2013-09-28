@@ -14,21 +14,28 @@ module ChefZero
         end
 
         def matches_values?(values)
-          value = values.first
-          case @from <=> value
-          when -1
-            return false
-          when 0
-            return false if !@from_inclusive
+          values.any? do |value|
+            case @from <=> value
+            when -1
+              return false
+            when 0
+              return false if !@from_inclusive
+            end
+            case value <=> @to
+            when 1
+              return false
+            when 0
+              return false if !@to_inclusive
+            end
+            return true
           end
-          case value <=> @to
-          when 1
-            return false
-          when 0
-            return false if !@to_inclusive
-          end
-          return true
         end
+
+        def matches_doc?(doc)
+          matches_values?(doc[DEFAULT_FIELD])
+        end
+
+        DEFAULT_FIELD = "text"
       end
     end
   end
