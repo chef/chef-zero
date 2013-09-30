@@ -11,15 +11,22 @@ describe ChefZero::Solr::SolrParser do
     docs
   end
 
+  def search_for(query)
+    q = ChefZero::Solr::SolrParser.new(query).parse
+    all_docs.select {|doc| q.matches_doc?(doc) }
+  end
+
   it "handles terms" do
-    q = ChefZero::Solr::SolrParser.new('foo:d').parse
-    results = all_docs.select {|doc| q.matches_doc?(doc) }
-    results.size.should eq(1)
+    search_for('foo:d').size.should eq(1)
   end
 
   it "handles ranges" do
-    q = ChefZero::Solr::SolrParser.new('foo:[a TO c]').parse
-    results = all_docs.select {|doc| q.matches_doc?(doc) }
-    results.size.should eq(1)
+    search_for('foo:[a TO c]').size.should eq(1)
+  end
+
+  it "handles wildcard ranges" do
+    search_for('foo:[* TO c]').size.should eq(1)
+    search_for('foo:[c TO *]').size.should eq(1)
+    search_for('foo:[* TO *]').size.should eq(2)
   end
 end
