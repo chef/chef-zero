@@ -106,7 +106,7 @@ module ChefZero
         parent.delete(path[-1])
       end
 
-      def delete_dir(path)
+      def delete_dir(path, *options)
         parent = _get(path[0,path.length-1])
         if !parent.has_key?(path[-1])
           raise DataNotFoundError.new(path)
