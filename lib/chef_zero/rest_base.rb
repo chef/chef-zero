@@ -70,7 +70,7 @@ module ChefZero
     def delete_data_dir(request, rest_path, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.delete_dir(rest_path)
+        data_store.delete_dir(rest_path, *options)
       rescue DataStore::DataNotFoundError
         raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
       end
