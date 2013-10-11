@@ -17,7 +17,8 @@ unless ENV['SKIP_PEDANT']
   Pedant.setup([
     '--skip-validation',
     '--skip-authentication',
-    '--skip-authorization'
+    '--skip-authorization',
+    '--skip-omnibus'
   ])
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
