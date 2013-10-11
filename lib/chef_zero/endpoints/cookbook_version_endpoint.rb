@@ -2,6 +2,7 @@ require 'json'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/rest_error_response'
 require 'chef_zero/data_normalizer'
+require 'chef_zero/data_store/data_not_found_error'
 
 module ChefZero
   module Endpoints
@@ -42,7 +43,7 @@ module ChefZero
         if existing_cookbook
           missing_checksums = get_checksums(existing_cookbook) - get_checksums(request.body)
           if missing_checksums.size > 0
-            hoover_unused_checksums(missing_checksums)
+            hoover_unused_checksums(missing_checksums, request)
           end
         end
 
@@ -58,10 +59,12 @@ module ChefZero
 
         response = super(request)
         cookbook_name = request.rest_path[1]
-        delete_data_dir(request, ['cookbooks', cookbook_name]) if list_data(request, ['cookbooks', cookbook_name]).size == 0
+        if exists_data_dir?(request, [ 'cookbooks', cookbook_name ]) && list_data(request, ['cookbooks', cookbook_name]).size == 0
+          delete_data_dir(request, ['cookbooks', cookbook_name])
+        end
 
         # Hoover deleted files, if they exist
-        hoover_unused_checksums(get_checksums(deleted_cookbook))
+        hoover_unused_checksums(get_checksums(deleted_cookbook), request)
         response
       end
 
@@ -81,16 +84,21 @@ module ChefZero
 
       private
 
-      def hoover_unused_checksums(deleted_checksums)
+      def hoover_unused_checksums(deleted_checksums, request)
         data_store.list(['cookbooks']).each do |cookbook_name|
           data_store.list(['cookbooks', cookbook_name]).each do |version|
-            cookbook = data_store.get(['cookbooks', cookbook_name, version])
+            cookbook = data_store.get(['cookbooks', cookbook_name, version], request)
             deleted_checksums = deleted_checksums - get_checksums(cookbook)
           end
         end
         deleted_checksums.each do |checksum|
           # There can be a race here if multiple cookbooks are uploading.
-          data_store.delete(['file_store', 'checksums', checksum])
+          # This deals with an exception on delete, but things can still get deleted
+          # that shouldn't be.
+          begin
+            data_store.delete(['file_store', 'checksums', checksum])
+          rescue ChefZero::DataStore::DataNotFoundError
+          end
         end
       end
 
