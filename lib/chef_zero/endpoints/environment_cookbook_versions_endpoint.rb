@@ -6,6 +6,7 @@ module ChefZero
   module Endpoints
     # /environments/NAME/cookbook_versions
     class EnvironmentCookbookVersionsEndpoint < RestBase
+
       def post(request)
         cookbook_names = list_data(request, ['cookbooks'])
 
@@ -35,7 +36,11 @@ module ChefZero
         # Depsolve!
         solved = depsolve(request, desired_versions.keys, desired_versions, environment_constraints)
         if !solved
-          return raise RestErrorResponse.new(412, "Unsolvable versions!")
+          if @last_missing_dep && !cookbook_names.include?(@last_missing_dep)
+            return raise RestErrorResponse.new(412, "No such cookbook: #{@last_missing_dep}") 
+          else
+            return raise RestErrorResponse.new(412, "Unsolvable versions!")
+          end
         end
 
         result = {}
@@ -72,6 +77,7 @@ module ChefZero
               new_unsolved = new_unsolved + [dep_name]
               # If the dep is missing, we will try other versions of the cookbook that might not have the bad dep.
               if !exists_data_dir?(request, ['cookbooks', dep_name])
+                @last_missing_dep = dep_name.to_s
                 dep_not_found = true
                 break
               end
