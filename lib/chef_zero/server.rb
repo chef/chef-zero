@@ -17,7 +17,6 @@
 #
 
 require 'openssl'
-require 'puma'
 require 'rubygems'
 require 'timeout'
 
@@ -67,40 +66,76 @@ module ChefZero
 
     def initialize(options = {})
       options = DEFAULT_OPTIONS.merge(options)
+      @options = options
       @url = "http://#{options[:host]}:#{options[:port]}"
       @generate_real_keys = options[:generate_real_keys]
 
       ChefZero::Log.level = options[:log_level].to_sym
 
-      @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
-      if options[:socket]
-        @server.add_unix_listener(options[:socket])
-      else
-        @server.add_tcp_listener(options[:host], options[:port])
+      begin
+        require 'puma'
+        @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
+        if options[:socket]
+          @server.add_unix_listener(options[:socket])
+        else
+          @server.add_tcp_listener(options[:host], options[:port])
+        end
+        @server_type = :puma
+      rescue LoadError
+        require 'rack'
+        @server_type = :webrick
       end
-
 
       @data_store = options[:data_store] || DataStore::MemoryStore.new
     end
 
+    attr_reader :options
     attr_reader :server
     attr_reader :data_store
     attr_reader :url
 
     include ChefZero::Endpoints
 
-    def start(options = {})
-      if options[:publish]
+    def start(start_options = {})
+      if start_options[:publish]
         puts ">> Starting Chef Zero (v#{ChefZero::VERSION})..."
-        puts ">> Puma (v#{Puma::Const::PUMA_VERSION}) is listening at #{url}"
+        case @server_type
+        when :puma
+          puts ">> Puma (v#{Puma::Const::PUMA_VERSION}) is listening at #{url}"
+        when :webrick
+          puts ">> WEBrick (v#{WEBrick::VERSION}) on Rack (v#{Rack.release}) is listening at #{url}"
+        end
         puts ">> Press CTRL+C to stop"
       end
 
       begin
-        thread = server.run.join
+        case @server_type
+        when :puma
+          server.run.join
+        when :webrick
+          Rack::Handler::WEBrick.run(
+            make_app,
+            :BindAddress => @options[:host],
+            :Port => @options[:port],
+            :AccessLog => [],
+            :Logger => WEBrick::Log::new("/dev/null", 7)
+          ) do |server|
+            @server = server
+          end
+        end
       rescue Object, Interrupt
-        puts "\n>> Stopping Puma..."
-        server.stop(true) if running?
+        puts "\n>> Stopping Chef Zero ..."
+        case @server_type
+        when :puma
+          server.stop(true) if running?
+        else
+        end
+      ensure
+        case @server_type
+        when :webrick
+          @server = nil
+        else
+        end
       end
     end
 
@@ -125,17 +160,29 @@ module ChefZero
     end
 
     def running?
-      !!server.running
+      case @server_type
+      when :puma
+        !!server.running
+      when :webrick
+        !!@server
+      end
     end
 
     def stop(wait = 5)
-      server.stop(true)
-      if @thread
-        @thread.join(wait)
+      case @server_type
+      when :puma
+        server.stop(true)
+        if @thread
+          @thread.join(wait)
+        end
+      when :webrick
+        @thread.kill if @thread
       end
     rescue
-      ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
-      @thread.kill if @thread
+      if @thread
+        ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
+        @thread.kill
+      end
     ensure
       @thread = nil
     end
