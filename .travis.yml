@@ -20,6 +20,8 @@ matrix:
       gemfile: gemfiles/gemfile.no-pedant
     - rvm: 2.0.0
       gemfile: Gemfile
+    - rvm: 2.0.0
+      gemfile: gemfiles/gemfile.puma
   allow_failures:
     - rvm: 1.8.7
       gemfile: Gemfile
