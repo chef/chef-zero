@@ -164,7 +164,7 @@ module ChefZero
       when :puma
         !!server.running
       when :webrick
-        !!@server
+        !!(server && server.status == :Running)
       end
     end
 
