@@ -19,6 +19,7 @@
 require 'openssl'
 require 'rubygems'
 require 'timeout'
+require 'stringio'
 
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
@@ -118,17 +119,20 @@ module ChefZero
             :BindAddress => @options[:host],
             :Port => @options[:port],
             :AccessLog => [],
-            :Logger => WEBrick::Log::new("/dev/null", 7)
+            :Logger => WEBrick::Log::new(StringIO.new, 7)
           ) do |server|
             @server = server
           end
         end
       rescue Object, Interrupt
-        puts "\n>> Stopping Chef Zero ..."
-        case @server_type
-        when :puma
-          server.stop(true) if running?
-        else
+        if running?
+          puts "\n>> Stopping Chef Zero ..."
+          case @server_type
+          when :puma
+            server.stop(true)
+          when :webrick
+            server.shutdown
+          end
         end
       ensure
         case @server_type
@@ -172,16 +176,19 @@ module ChefZero
       case @server_type
       when :puma
         server.stop(true)
-        if @thread
-          @thread.join(wait)
-        end
       when :webrick
-        @thread.kill if @thread
+        server.shutdown
+        @server
       end
-    rescue
       if @thread
-        ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
-        @thread.kill
+        begin
+          @thread.join(wait) if @thread
+        rescue
+          if @thread
+            ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
+            @thread.kill
+          end
+        end
       end
     ensure
       @thread = nil
