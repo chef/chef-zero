@@ -20,6 +20,7 @@ require 'openssl'
 require 'rubygems'
 require 'timeout'
 require 'stringio'
+require 'webrick/version'
 
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
