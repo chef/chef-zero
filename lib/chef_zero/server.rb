@@ -69,7 +69,8 @@ module ChefZero
     def initialize(options = {})
       options = DEFAULT_OPTIONS.merge(options)
       @options = options
-      @url = "http://#{options[:host]}:#{options[:port]}"
+      uri_safe_host = options[:host].include?(":") ? "[#{options[:host]}]" : options[:host]
+      @url = "http://#{uri_safe_host}:#{options[:port]}"
       @generate_real_keys = options[:generate_real_keys]
 
       ChefZero::Log.level = options[:log_level].to_sym
