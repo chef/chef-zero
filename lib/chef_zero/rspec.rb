@@ -26,9 +26,20 @@ module ChefZero
     def when_the_chef_server(description, *tags, &block)
       context "When the Chef server #{description}", *tags do
         before :each do
+
           unless ChefZero::RSpec.server
+            default_opts = {:port => 8889, :signals => false, :log_requests => true}
+            server_opts = if self.respond_to?(:chef_zero_opts)
+              default_opts.merge(chef_zero_opts)
+            else
+              default_opts
+            end
+
+            # TODO: can this be logged easily?
+            # pp :zero_opts => server_opts
+
             # Set up configuration so that clients will point to the server
-            ChefZero::RSpec.server = ChefZero::Server.new(:port => 8889, :signals => false, :log_requests => true)
+            ChefZero::RSpec.server = ChefZero::Server.new(server_opts)
             ChefZero::RSpec.client_key = Tempfile.new(['chef_zero_client_key', '.pem'])
             ChefZero::RSpec.client_key.write(ChefZero::PRIVATE_KEY)
             ChefZero::RSpec.client_key.close
