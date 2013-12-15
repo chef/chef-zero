@@ -17,10 +17,13 @@
 #
 
 require 'openssl'
+require 'open-uri'
 require 'rubygems'
 require 'timeout'
 require 'stringio'
-require 'webrick/version'
+
+require 'rack'
+require 'webrick'
 
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
@@ -61,138 +64,155 @@ module ChefZero
     DEFAULT_OPTIONS = {
       :host => '127.0.0.1',
       :port => 8889,
-      :socket => nil,
       :log_level => :info,
       :generate_real_keys => true
     }.freeze
 
     def initialize(options = {})
-      options = DEFAULT_OPTIONS.merge(options)
-      @options = options
-      uri_safe_host = options[:host].include?(":") ? "[#{options[:host]}]" : options[:host]
-      @url = "http://#{uri_safe_host}:#{options[:port]}"
-      @generate_real_keys = options[:generate_real_keys]
+      @options = DEFAULT_OPTIONS.merge(options)
+      @options[:host] = "[#{@options[:host]}]" if @options[:host].include?(':')
+      @options.freeze
 
-      ChefZero::Log.level = options[:log_level].to_sym
-
-      begin
-        require 'puma'
-        @server = Puma::Server.new(make_app, Puma::Events.new(STDERR, STDOUT))
-        if options[:socket]
-          @server.add_unix_listener(options[:socket])
-        else
-          @server.add_tcp_listener(options[:host], options[:port])
-        end
-        @server_type = :puma
-      rescue LoadError
-        require 'rack'
-        @server_type = :webrick
-      end
-
-      @data_store = options[:data_store] || DataStore::MemoryStore.new
+      ChefZero::Log.level = @options[:log_level].to_sym
     end
 
+    # @return [Hash]
     attr_reader :options
+
+    # @return [WEBrick::HTTPServer]
     attr_reader :server
-    attr_reader :data_store
-    attr_reader :url
 
     include ChefZero::Endpoints
 
-    def start(start_options = {})
-      if start_options[:publish]
-        puts ">> Starting Chef Zero (v#{ChefZero::VERSION})..."
-        case @server_type
-        when :puma
-          puts ">> Puma (v#{Puma::Const::PUMA_VERSION}) is listening at #{url}"
-        when :webrick
-          puts ">> WEBrick (v#{WEBrick::VERSION}) on Rack (v#{Rack.release}) is listening at #{url}"
-        end
-        puts ">> Press CTRL+C to stop"
-      end
-
-      begin
-        case @server_type
-        when :puma
-          server.run.join
-        when :webrick
-          Rack::Handler::WEBrick.run(
-            make_app,
-            :BindAddress => @options[:host],
-            :Port => @options[:port],
-            :AccessLog => [],
-            :Logger => WEBrick::Log::new(StringIO.new, 7)
-          ) do |server|
-            @server = server
-          end
-        end
-      rescue Object, Interrupt
-        if running?
-          puts "\n>> Stopping Chef Zero ..."
-          case @server_type
-          when :puma
-            server.stop(true)
-          when :webrick
-            server.shutdown
-          end
-        end
-      ensure
-        case @server_type
-        when :webrick
-          @server = nil
-        else
-        end
-      end
+    #
+    # The URL for this Chef Zero server.
+    #
+    # @return [String]
+    #
+    def url
+      "http://#{@options[:host]}:#{@options[:port]}"
     end
 
-    def start_background(wait = 5)
-      @thread = Thread.new {
-        begin
-          start
-        rescue
-          @server_error = $!
-          ChefZero::Log.error("#{$!.message}\n#{$!.backtrace.join("\n")}")
+    #
+    # The data store for this server (default is in-memory).
+    #
+    # @return [~ChefZero::DataStore]
+    #
+    def data_store
+      @data_store ||= @options[:data_store] || DataStore::MemoryStore.new
+    end
+
+    #
+    # Boolean method to determine if real Public/Private keys should be
+    # generated.
+    #
+    # @return [Boolean]
+    #   true if real keys should be created, false otherwise
+    #
+    def generate_real_keys?
+      !!@options[:generate_real_keys]
+    end
+
+    #
+    # Start a Chef Zero server in the current thread. You can stop this server
+    # by canceling the current thread.
+    #
+    # @param [Boolean] publish
+    #   publish the server information to STDOUT
+    #
+    # @return [nil]
+    #   this method will block the main thread until interrupted
+    #
+    def start(publish = true)
+      publish = publish[:publish] if publish.is_a?(Hash) # Legacy API
+
+      if publish
+        puts <<-EOH.gsub(/^ {10}/, '')
+          >> Starting Chef Zero (v#{ChefZero::VERSION})...
+          >> WEBrick (v#{WEBrick::VERSION}) on Rack (v#{Rack.release}) is listening at #{url}
+          >> Press CTRL+C to stop
+
+        EOH
+      end
+
+      thread = start_background
+
+      %w[INT TERM].each do |signal|
+        Signal.trap(signal) do
+          puts "\n>> Stopping Chef Zero..."
+          @server.shutdown
         end
-      }
+      end
 
-      # Wait x seconds to make sure the server actually started
-      Timeout::timeout(wait) {
-        sleep(0.01) until running? || @server_error
-        raise @server_error if @server_error
-      }
+      # Move the background process to the main thread
+      thread.join
+    end
 
-      # Give the user the thread, just in case they want it
+
+    #
+    # Start a Chef Zero server in a forked process. This method returns the PID
+    # to the forked process.
+    #
+    # @param [Fixnum] wait
+    #   the number of seconds to wait for the server to start
+    #
+    # @return [Thread]
+    #   the thread the background process is running in
+    #
+    def start_background(wait = 5)
+      @server = WEBrick::HTTPServer.new(
+        :BindAddress => @options[:host],
+        :Port        => @options[:port],
+        :AccessLog   => [],
+        :Logger      => WEBrick::Log.new(StringIO.new, 7)
+      )
+      @server.mount('/', Rack::Handler::WEBrick, app)
+
+      @thread = Thread.new { @server.start }
+      @thread.abort_on_exception = true
       @thread
     end
 
+    #
+    # Boolean method to determine if the server is currently ready to accept
+    # requests. This method will attempt to make an HTTP request against the
+    # server. If this method returns true, you are safe to make a request.
+    #
+    # @return [Boolean]
+    #   true if the server is accepting requests, false otherwise
+    #
     def running?
-      case @server_type
-      when :puma
-        !!server.running
-      when :webrick
-        !!(server && server.status == :Running)
+      if @server.nil? || @server.status != :Running
+        return false
       end
+
+      uri     = URI.join(url, 'cookbooks')
+      headers = { 'Accept' => 'application/json' }
+
+      Timeout.timeout(0.1) { !open(uri, headers).nil? }
+    rescue SocketError, Errno::ECONNREFUSED, Timeout::Error
+      false
     end
 
+    #
+    # Gracefully stop the Chef Zero server.
+    #
+    # @param [Fixnum] wait
+    #   the number of seconds to wait before raising force-terminating the
+    #   server
+    #
     def stop(wait = 5)
-      case @server_type
-      when :puma
-        server.stop(true)
-      when :webrick
-        server.shutdown
-        @server
+      Timeout.timeout(wait) do
+        @server.shutdown
+        @thread.join(wait) if @thread
       end
+    rescue Timeout::Error
       if @thread
-        begin
-          @thread.join(wait) if @thread
-        rescue
-          if @thread
-            ChefZero::Log.error "Server did not stop within #{wait} seconds. Killing..."
-            @thread.kill
-          end
-        end
+        ChefZero::Log.error("Chef Zero did not stop within #{wait} seconds! Killing...")
+        @thread.kill
       end
     ensure
+      @server = nil
       @thread = nil
     end
 
@@ -283,9 +303,17 @@ module ChefZero
       @request_handler = block
     end
 
+    def to_s
+      "#<#{self.class} #{url}>"
+    end
+
+    def inspect
+      "#<#{self.class} @url=#{url.inspect}>"
+    end
+
     private
 
-    def make_app
+    def app
       router = RestRouter.new([
         [ '/authenticate_user', AuthenticateUserEndpoint.new(self) ],
         [ '/clients', ActorsEndpoint.new(self) ],
@@ -364,10 +392,6 @@ module ChefZero
         value = value[part]
       end
       value
-    end
-
-    def generate_real_keys?
-      !!@generate_real_keys
     end
   end
 end

@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+# Trap interrupts to quit cleanly.
+Signal.trap('INT') { exit 1 }
+
 require 'rubygems'
 $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
@@ -18,10 +21,6 @@ OptionParser.new do |opts|
 
   opts.on("-p", "--port PORT", Integer, "Port to listen on") do |value|
     options[:port] = value
-  end
-
-  opts.on("--socket PATH", String, "Unix socket path to listen on") do |value|
-    options[:socket] = value
   end
 
   opts.on("--[no-]generate-keys", "Whether to generate actual keys or fake it (faster).  Default: false.") do |value|
@@ -50,12 +49,12 @@ end.parse!
 server = ChefZero::Server.new(options)
 
 if options[:daemon]
-  unless Process.respond_to?('daemon')
-    abort 'Process.deamon requires Ruby >= 1.9'
-  else
+  if Process.respond_to?(:daemon)
     Process.daemon(true)
-    server.start(:publish => true)
+    server.start(true)
+  else
+    abort 'Process.daemon requires Ruby >= 1.9'
   end
 else
-  server.start(:publish => true)
+  server.start(true)
 end
