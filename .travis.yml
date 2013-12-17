@@ -10,22 +10,20 @@ matrix:
       gemfile: Gemfile
     - rvm: 1.8.7
       env: SKIP_PEDANT=true
-      gemfile: gemfiles/gemfile.no-pedant
+      gemfile: gemfiles/no-pedant.gemfile
     - rvm: 1.9.3
-      gemfile: gemfiles/gemfile.latest-pedant
+      gemfile: gemfiles/latest-pedant.gemfile
     - rvm: jruby-19mode
       gemfile: Gemfile
     - rvm: jruby-19mode
       env: SKIP_PEDANT=true
-      gemfile: gemfiles/gemfile.no-pedant
+      gemfile: gemfiles/no-pedant.gemfile
     - rvm: 2.0.0
       gemfile: Gemfile
-    - rvm: 2.0.0
-      gemfile: gemfiles/gemfile.puma
   allow_failures:
     - rvm: 1.8.7
       gemfile: Gemfile
     - rvm: jruby-19mode
       gemfile: Gemfile
     - rvm: 1.9.3
-      gemfile: gemfiles/gemfile.latest-pedant
+      gemfile: gemfiles/latest-pedant.gemfile
