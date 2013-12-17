@@ -1,3 +1,12 @@
+Chef Zero CHANGELOG
+===================
+
+# 2.0.0 (12/17/2013)
+
+- Remove Puma (and `--socket` option)
+- Use a cleaner threading approach
+- Implement a better `running?` check
+
 # 1.5.5
 
 - Fix issue with - in term (name:a-b)
