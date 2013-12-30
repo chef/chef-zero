@@ -1,0 +1,12 @@
+{
+  "id": "twitter",
+  "development": {
+    "api_key": "ABC123"
+  },
+  "staging": {
+    "api_key": "DEF456"
+  },
+  "production": {
+    "api_key": "HIJ789"
+  }
+}

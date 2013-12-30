@@ -1,0 +1,12 @@
+{
+  "id": "github",
+  "development": {
+    "token": "ABC123"
+  },
+  "staging": {
+    "token": "DEF456"
+  },
+  "production": {
+    "token": "HIJ789"
+  }
+}

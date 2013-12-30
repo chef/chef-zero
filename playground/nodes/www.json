@@ -1,7 +1,7 @@
 {
+  "name": "www",
   "chef_type": "node",
   "json_class": "Chef::Node",
-  "name": "camel",
-  "chef_environment": "desert",
+  "chef_environment": "_default",
   "run_list": []
 }

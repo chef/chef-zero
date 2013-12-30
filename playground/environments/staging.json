@@ -1,0 +1,10 @@
+{
+  "name": "staging",
+  "description": "This is just like production, but not",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+    "some_key": "value"
+  },
+  "override_attributes": {}
+}
