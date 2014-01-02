@@ -296,7 +296,7 @@ module ChefZero
     end
 
     def clear_data
-      @data_store.clear
+      data_store.clear
     end
 
     def request_handler(&block)
