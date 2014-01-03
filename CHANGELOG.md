@@ -1,6 +1,12 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.0.1 (1/3/2014)
+
+- Make playground items more semantic
+- Fix an issue where an incorrect number of parameters was passed in `environments/NAME/nodes` endpoint
+- Fix an issue where the `data_store` was not yet initialized in the server
+
 # 2.0.0 (12/17/2013)
 
 - Remove Puma (and `--socket` option)
