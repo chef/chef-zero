@@ -1,0 +1,11 @@
+{
+  "name": "production",
+  "description": "This is just production",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "cookbook_versions": {
+    "apache": ">= 1.0.0"
+  },
+  "default_attributes": {},
+  "override_attributes": {}
+}

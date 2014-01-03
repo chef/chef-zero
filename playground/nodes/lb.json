@@ -1,7 +1,7 @@
 {
+  "name": "lb",
   "chef_type": "node",
   "json_class": "Chef::Node",
-  "name": "blah",
-  "chef_environment": "_default",
+  "chef_environment": "production",
   "run_list": []
 }

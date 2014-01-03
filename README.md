@@ -97,26 +97,29 @@ work (show, list, delete, from file, upload, download, diff ...). For example,
 with +knife-essentials+ (or Chef 11) you can upload everything in the repo:
 
     chef-zero/playground> knife upload .
-    Created remote/cookbooks/blah
-    Created remote/cookbooks/blork
-    Created remote/data_bags/foo/
-    Created remote/data_bags/foo/bar.json
-    Created remote/data_bags/foo/baz.json
-    Created remote/data_bags/foo/blarghle.json
-    Created remote/data_bags/foom/
-    Created remote/data_bags/foom/x.json
-    Created remote/data_bags/widdle/
-    Created remote/data_bags/widdle/blank.json
-    Created remote/data_bags/widdle/wow.json
-    Created remote/environments/desert.json
-    Created remote/environments/rainforest.json
-    Created remote/environments/semi_arid_plains.json
+    Created nodes/desktop.json
+    Created data_bags/dns
+    Created environments/production.json
+    Created nodes/lb.json
+    Created nodes/dns.json
+    Created nodes/ldap.json
+    Created nodes/www.json
+    Created data_bags/dns/services.json
+    Created environments/staging.json
+    Created data_bags/passwords
+    Created data_bags/users
+    Created data_bags/users/jkeiser.json
+    Created data_bags/passwords/github.json
+    Created data_bags/passwords/twitter.json
+    Created data_bags/users/schisamo.json
+    Created data_bags/users/sethvargo.json
+    Created cookbooks/apache2
+    Created cookbooks/php
 
     chef-zero/playground> knife environment list
     _default
-    desert
-    rainforest
-    semi_arid_plains
+    production
+    staging
 
 To use it in your own repository, create a `knife.rb` like so:
 

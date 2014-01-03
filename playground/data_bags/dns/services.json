@@ -1,0 +1,5 @@
+{
+  "id": "services",
+  "payment_gateway": "money.example.com",
+  "authentication": "auth.example.com"
+}
