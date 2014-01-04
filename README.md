@@ -80,7 +80,7 @@ You may currently pass the following options to the initializer:
 - `debug` - run in debug mode to see all requests and responses (Default: false)
 
 
-CLI (Comand Line)
+CLI (Command Line)
 -----------------
 If you don't want to use Chef Zero as a library, you can simply start an instance
 with the included `chef-zero` executable:
