@@ -73,8 +73,8 @@ module ChefZero
         end
       end
 
-      def from_json(filepath)
-        self.merge!(JSON.parse(File.read(filepath)))
+      def from_json(json)
+        self.merge!(JSON.parse(json))
       end
 
       private
