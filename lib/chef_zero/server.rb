@@ -70,7 +70,6 @@ module ChefZero
 
     def initialize(options = {})
       @options = DEFAULT_OPTIONS.merge(options)
-      @options[:host] = "[#{@options[:host]}]" if @options[:host].include?(':')
       @options.freeze
 
       ChefZero::Log.level = @options[:log_level].to_sym
@@ -85,12 +84,19 @@ module ChefZero
     include ChefZero::Endpoints
 
     #
-    # The URL for this Chef Zero server.
+    # The URL for this Chef Zero server. If the given host is an IPV6 address,
+    # it is escaped in brackets according to RFC-2732.
+    #
+    # @see http://www.ietf.org/rfc/rfc2732.txt RFC-2732
     #
     # @return [String]
     #
     def url
-      "http://#{@options[:host]}:#{@options[:port]}"
+      @url ||= if @options[:host].include?(':')
+                 "http://[#{@options[:host]}]:#{@options[:port]}"
+               else
+                 "http://#{@options[:host]}:#{@options[:port]}"
+               end
     end
 
     #
