@@ -1,6 +1,13 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.0.2 (1/20/2014)
+
+- Fix a series of typos in the README
+- Read JSON, not a file path in `from_json`
+- Fix IPV6 support
+- Remove moneta as a dependency
+
 # 2.0.1 (1/3/2014)
 
 - Make playground items more semantic
