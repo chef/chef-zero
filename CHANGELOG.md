@@ -20,6 +20,10 @@ Chef Zero CHANGELOG
 - Use a cleaner threading approach
 - Implement a better `running?` check
 
+# 1.7.3
+
+- (Backport) Read JSON, not a file path in `from_json`
+
 # 1.5.5
 
 - Fix issue with - in term (name:a-b)
