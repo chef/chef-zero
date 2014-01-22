@@ -1,3 +1,7 @@
+# 1.7.3
+
+- Read JSON, not a file path in `from_json`
+
 # 1.5.5
 
 - Fix issue with - in term (name:a-b)
