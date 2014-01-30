@@ -39,7 +39,7 @@ module ChefZero
           ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n  #{$!.backtrace.join("\n  ")}")
         end
       elsif has_child(directory, 'metadata.json')
-        metadata.from_json(read_file(directory, 'metadata.json'))
+        metadata.from_json(filename(directory, 'metadata.json'))
       end
       result = {}
       metadata.to_hash.each_pair do |key,value|
