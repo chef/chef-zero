@@ -24,6 +24,10 @@ Chef Zero CHANGELOG
 
 - (Backport) Read JSON, not a file path in `from_json`
 
+# 1.6.3
+
+- (Backport) Read JSON, not a file path in `from_json`
+
 # 1.5.5
 
 - Fix issue with - in term (name:a-b)
