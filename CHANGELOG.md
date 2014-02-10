@@ -1,3 +1,6 @@
+# 1.6.3
+- Backport JSON file parsing
+
 # 1.5.5
 
 - Fix issue with - in term (name:a-b)
