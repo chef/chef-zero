@@ -41,6 +41,10 @@ chef_server 'http://127.0.0.1:8889'
 # differs significantly from this.
 maximum_search_time 0
 
+# OSC sends erchef a host header with a port, so this option needs
+# # to be enabled for Pedant tests to work correctly
+explicit_port_url true
+
 # We're starting to break tests up into groups based on different
 # criteria.  The proper API tests (the results of which are viewable
 # to OPC customers) should be the only ones run by Pedant embedded in

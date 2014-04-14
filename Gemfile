@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => '2c58a3736ba880503394f66c4435b063dececdc5'
+gem 'rest-client', :git => 'git://github.com/opscode/rest-client.git'
+gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => 'dbacba4f85e944bd71ea4e9d5324d266750ffc10'
 gem 'chef', '>= 11.0'

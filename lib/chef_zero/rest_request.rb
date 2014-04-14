@@ -53,4 +53,3 @@ module ChefZero
     end
   end
 end
-

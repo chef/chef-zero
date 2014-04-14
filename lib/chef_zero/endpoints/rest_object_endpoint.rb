@@ -31,10 +31,11 @@ module ChefZero
             return error(409, "Cannot rename '#{request.rest_path[-1]}' to '#{key}': '#{key}' already exists")
           end
           delete_data(request)
+          already_json_response(201, populate_defaults(request, request.body))
         else
           set_data(request, request.rest_path, request.body)
+          already_json_response(200, populate_defaults(request, request.body))
         end
-        already_json_response(200, populate_defaults(request, request.body))
       end
 
       def delete(request)
@@ -58,4 +59,3 @@ module ChefZero
     end
   end
 end
-
