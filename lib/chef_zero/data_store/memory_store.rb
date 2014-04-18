@@ -30,8 +30,6 @@ module ChefZero
         @data = {}
 
         create_dir([], 'organizations')
-        # TODO this should only be automatic when multi_org is false
-        create_dir([ 'organizations' ], 'chef')
       end
 
       def create_org

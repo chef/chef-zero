@@ -66,7 +66,7 @@ module ChefZero
       :port => 8889,
       :log_level => :info,
       :generate_real_keys => true,
-      :multi_org => true
+      :single_org => 'chef'
     }.freeze
 
     def initialize(options = {})
@@ -106,7 +106,13 @@ module ChefZero
     # @return [~ChefZero::DataStore]
     #
     def data_store
-      @data_store ||= @options[:data_store] || DataStore::MemoryStore.new
+      @data_store ||= begin
+        result = @options[:data_store] || DataStore::MemoryStore.new
+        if options[:single_org]
+          result.create_dir([ 'organizations' ], options[:single_org])
+        end
+        result
+      end
     end
 
     #
@@ -267,7 +273,7 @@ module ChefZero
     #   }
     # }
     def load_data(contents, org_name = 'chef')
-      create_dir('organizations', org_name)
+      data_store.create_dir('organizations', org_name)
       %w(clients environments nodes roles users).each do |data_type|
         if contents[data_type]
           dejsonize_children(contents[data_type]).each_pair do |name, data|
@@ -305,6 +311,9 @@ module ChefZero
 
     def clear_data
       data_store.clear
+      if options[:single_org]
+        data_store.create_dir([ 'organizations' ], options[:single_org])
+      end
     end
 
     def request_handler(&block)
@@ -362,10 +371,10 @@ module ChefZero
       router = RestRouter.new(open_source_endpoints)
       router.not_found = NotFoundEndpoint.new
 
-      if options[:multi_org]
-        rest_base_prefix = []
-      else
+      if options[:single_org]
         rest_base_prefix = [ 'organizations', 'chef' ]
+      else
+        rest_base_prefix = []
       end
       return proc do |env|
         request = RestRequest.new(env, rest_base_prefix)

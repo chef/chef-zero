@@ -61,14 +61,14 @@ module ChefZero
       environment
     end
 
-    def self.normalize_cookbook(org_prefix, cookbook, name, version, base_uri, method)
+    def self.normalize_cookbook(endpoint, org_prefix, cookbook, name, version, base_uri, method)
       # TODO I feel dirty
       if method != 'PUT'
         cookbook.each_pair do |key, value|
           if value.is_a?(Array)
             value.each do |file|
               if file.is_a?(Hash) && file.has_key?('checksum')
-                file['url'] ||= RestBase::build_uri(base_uri, org_prefix + ['file_store', 'checksums', file['checksum']])
+                file['url'] ||= endpoint.build_uri(base_uri, org_prefix + ['file_store', 'checksums', file['checksum']])
               end
             end
           end

@@ -49,7 +49,7 @@ module ChefZero
         result = {}
         solved.each_pair do |name, versions|
           cookbook = JSON.parse(get_data(request, request.rest_path[0..1] + ['cookbooks', name, versions[0]]), :create_additions => false)
-          result[name] = DataNormalizer.normalize_cookbook(request.rest_path[0..1], cookbook, name, versions[0], request.base_uri, 'MIN')
+          result[name] = DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, name, versions[0], request.base_uri, 'MIN')
         end
         json_response(200, result)
       end
