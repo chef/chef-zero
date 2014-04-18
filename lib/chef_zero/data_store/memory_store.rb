@@ -29,23 +29,33 @@ module ChefZero
       def clear
         @data = {}
 
-        # Create containers
-        create_dir([], 'clients')
-        create_dir([], 'cookbooks')
-        create_dir([], 'data')
-        create_dir([], 'environments')
-        create_dir([], 'file_store')
-        create_dir(['file_store'], 'checksums')
-        create_dir([], 'nodes')
-        create_dir([], 'roles')
-        create_dir([], 'sandboxes')
-        create_dir([], 'users')
+        create_dir([], 'organizations')
+        # TODO this should only be automatic when multi_org is false
+        create_dir([ 'organizations' ], 'chef')
+      end
 
-        # Set defaults
-        create(['clients'], 'chef-validator', '{ "validator": true }')
-        create(['clients'], 'chef-webui', '{ "admin": true }')
-        create(['environments'], '_default', '{ "description": "The default Chef environment" }')
-        create(['users'], 'admin', '{ "admin": true }')
+      def create_org
+        # Create containers
+        org = {
+          'clients' => {
+            'chef-validator' => '{ "validator": true }',
+            'chef-webui' => '{ "admin": true }'
+          },
+          'cookbooks' => {},
+          'data' => {},
+          'environments' => {
+            '_default' => '{ "description": "The default Chef environment" }'
+          },
+          'file_store' => {
+            'checksums' => {}
+          },
+          'nodes' => {},
+          'roles' => {},
+          'sandboxes' => {},
+          'users' => {
+            'admin' => '{ "admin": "true" }'
+          }
+        }
       end
 
       def create_dir(path, name, *options)
@@ -56,7 +66,7 @@ module ChefZero
             raise DataAlreadyExistsError.new(path + [name])
           end
         else
-          parent[name] = {}
+          _create_dir(path, parent, name)
         end
       end
 
@@ -153,7 +163,7 @@ module ChefZero
         path.each_with_index do |path_part, index|
           if !value.has_key?(path_part)
             if create_dir
-              value[path_part] = {}
+              _create_dir(path[0,index], value, path_part)
             else
               raise DataNotFoundError.new(path[0,index+1])
             end
@@ -161,6 +171,14 @@ module ChefZero
           value = value[path_part]
         end
         value
+      end
+
+      def _create_dir(parent_path, parent, name)
+        if parent_path == [ 'organizations' ]
+          parent[name] = create_org
+        else
+          parent[name] = {}
+        end
       end
     end
   end

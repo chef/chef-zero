@@ -21,7 +21,7 @@
 ################################################################################
 # You MUST specify the address of the server the API requests will be
 # sent to.  Only specify protocol, hostname, and port.
-chef_server 'http://127.0.0.1:8889'
+chef_server 'http://127.0.0.1:8889/organizations/chef'
 
 # If you are doing development testing, you can specify the address of
 # the Solr server.  The presence of this parameter will enable tests

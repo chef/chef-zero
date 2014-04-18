@@ -40,7 +40,7 @@ module ChefZero
         if result[0] == 200 || result[0] == 201
           response = JSON.parse(result[2], :create_additions => false)
           response['private_key'] = private_key if private_key
-          response.delete('public_key') if !updating_public_key && request.rest_path[0] == 'users'
+          response.delete('public_key') if !updating_public_key && request.rest_path[2] == 'users'
           response.delete('password')
           json_response(result[0], response)
         else
@@ -50,10 +50,10 @@ module ChefZero
 
       def populate_defaults(request, response_json)
         response = JSON.parse(response_json, :create_additions => false)
-        if request.rest_path[0] == 'clients'
-          response = DataNormalizer.normalize_client(response, request.rest_path[1])
+        if request.rest_path[2] == 'clients'
+          response = DataNormalizer.normalize_client(response, request.rest_path[3])
         else
-          response = DataNormalizer.normalize_user(response, request.rest_path[1])
+          response = DataNormalizer.normalize_user(response, request.rest_path[3])
         end
         JSON.pretty_generate(response)
       end

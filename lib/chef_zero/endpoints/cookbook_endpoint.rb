@@ -5,21 +5,21 @@ module ChefZero
     # /cookbooks/NAME
     class CookbookEndpoint < CookbooksBase
       def get(request)
-        filter = request.rest_path[1]
+        filter = request.rest_path[3]
         case filter
         when '_latest'
           result = {}
-          filter_cookbooks(all_cookbooks_list, {}, 1) do |name, versions|
+          filter_cookbooks(all_cookbooks_list(request), {}, 1) do |name, versions|
             if versions.size > 0
-              result[name] = build_uri(request.base_uri, ['cookbooks', name, versions[0]])
+              result[name] = build_uri(request.base_uri, request.rest_path[0..1] + ['cookbooks', name, versions[0]])
             end
           end
           json_response(200, result)
         when '_recipes'
           result = []
-          filter_cookbooks(all_cookbooks_list, {}, 1) do |name, versions|
+          filter_cookbooks(all_cookbooks_list(request), {}, 1) do |name, versions|
             if versions.size > 0
-              cookbook = JSON.parse(get_data(request, ['cookbooks', name, versions[0]]), :create_additions => false)
+              cookbook = JSON.parse(get_data(request, request.rest_path[0..1] + ['cookbooks', name, versions[0]]), :create_additions => false)
               result += recipe_names(name, cookbook)
             end
           end

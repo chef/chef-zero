@@ -9,17 +9,17 @@ module ChefZero
     # /cookbooks/NAME/VERSION
     class CookbookVersionEndpoint < RestObjectEndpoint
       def get(request)
-        if request.rest_path[2] == "_latest" || request.rest_path[2] == "latest"
-          request.rest_path[2] = latest_version(list_data(request, request.rest_path[0..1]))
+        if request.rest_path[4] == "_latest" || request.rest_path[4] == "latest"
+          request.rest_path[4] = latest_version(list_data(request, request.rest_path[0..3]))
         end
         super(request)
       end
 
       def put(request)
-        name = request.rest_path[1]
-        version = request.rest_path[2]
+        name = request.rest_path[3]
+        version = request.rest_path[4]
         existing_cookbook = get_data(request, request.rest_path, :nil)
-        
+
         # Honor frozen
         if existing_cookbook
           existing_cookbook_json = JSON.parse(existing_cookbook, :create_additions => false)
@@ -37,7 +37,7 @@ module ChefZero
         end
 
         # Set the cookbook
-        set_data(request, ['cookbooks', name, version], request.body, :create_dir, :create)
+        set_data(request, request.rest_path[0..1] + ['cookbooks', name, version], request.body, :create_dir, :create)
 
         # If the cookbook was updated, check for deleted files and clean them up
         if existing_cookbook
@@ -51,16 +51,16 @@ module ChefZero
       end
 
       def delete(request)
-        if request.rest_path[2] == "_latest" || request.rest_path[2] == "latest"
-          request.rest_path[2] = latest_version(list_data(request, request.rest_path[0..1]))
+        if request.rest_path[4] == "_latest" || request.rest_path[4] == "latest"
+          request.rest_path[4] = latest_version(list_data(request, request.rest_path[0..3]))
         end
 
         deleted_cookbook = get_data(request)
 
         response = super(request)
-        cookbook_name = request.rest_path[1]
-        if exists_data_dir?(request, [ 'cookbooks', cookbook_name ]) && list_data(request, ['cookbooks', cookbook_name]).size == 0
-          delete_data_dir(request, ['cookbooks', cookbook_name])
+        cookbook_name = request.rest_path[3]
+        if exists_data_dir?(request, request.rest_path[0..1] + [ 'cookbooks', cookbook_name ]) && list_data(request, request.rest_path[0..1] + ['cookbooks', cookbook_name]).size == 0
+          delete_data_dir(request, request.rest_path[0..1] + ['cookbooks', cookbook_name])
         end
 
         # Hoover deleted files, if they exist
@@ -85,9 +85,9 @@ module ChefZero
       private
 
       def hoover_unused_checksums(deleted_checksums, request)
-        data_store.list(['cookbooks']).each do |cookbook_name|
-          data_store.list(['cookbooks', cookbook_name]).each do |version|
-            cookbook = data_store.get(['cookbooks', cookbook_name, version], request)
+        data_store.list(request.rest_path[0..1] + ['cookbooks']).each do |cookbook_name|
+          data_store.list(request.rest_path[0..1] + ['cookbooks', cookbook_name]).each do |version|
+            cookbook = data_store.get(request.rest_path[0..1] + ['cookbooks', cookbook_name, version], request)
             deleted_checksums = deleted_checksums - get_checksums(cookbook)
           end
         end
@@ -96,7 +96,7 @@ module ChefZero
           # This deals with an exception on delete, but things can still get deleted
           # that shouldn't be.
           begin
-            data_store.delete(['file_store', 'checksums', checksum])
+            data_store.delete(request.rest_path[0..1] + ['file_store', 'checksums', checksum])
           rescue ChefZero::DataStore::DataNotFoundError
           end
         end
@@ -105,7 +105,7 @@ module ChefZero
       def populate_defaults(request, response_json)
         # Inject URIs into each cookbook file
         cookbook = JSON.parse(response_json, :create_additions => false)
-        cookbook = DataNormalizer.normalize_cookbook(cookbook, request.rest_path[1], request.rest_path[2], request.base_uri, request.method)
+        cookbook = DataNormalizer.normalize_cookbook(request.rest_path[0..1], cookbook, request.rest_path[3], request.rest_path[4], request.base_uri, request.method)
         JSON.pretty_generate(cookbook)
       end
 

@@ -2,11 +2,13 @@ require 'rack/request'
 
 module ChefZero
   class RestRequest
-    def initialize(env)
+    def initialize(env, rest_base_prefix = [])
       @env = env
+      @rest_base_prefix = rest_base_prefix
     end
 
     attr_reader :env
+    attr_reader :rest_base_prefix
 
     def base_uri
       @base_uri ||= "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}#{env['SCRIPT_NAME']}"
@@ -17,7 +19,7 @@ module ChefZero
     end
 
     def rest_path
-      @rest_path ||= env['PATH_INFO'].split('/').select { |part| part != "" }
+      @rest_path ||= rest_base_prefix + env['PATH_INFO'].split('/').select { |part| part != "" }
     end
 
     def body=(body)

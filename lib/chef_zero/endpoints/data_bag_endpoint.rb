@@ -15,7 +15,7 @@ module ChefZero
         key = JSON.parse(request.body, :create_additions => false)[identity_key]
         response = super(request)
         if response[0] == 201
-          already_json_response(201, DataBagItemEndpoint::populate_defaults(request, request.body, request.rest_path[1], key))
+          already_json_response(201, DataBagItemEndpoint::populate_defaults(request, request.body, request.rest_path[3], key))
         else
           response
         end
@@ -31,7 +31,7 @@ module ChefZero
       end
 
       def delete(request)
-        key = request.rest_path[1]
+        key = request.rest_path[3]
         delete_data_dir(request, request.rest_path, :recursive)
         json_response(200, {
           'chef_type' => 'data_bag',

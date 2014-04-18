@@ -12,7 +12,7 @@ module ChefZero
       end
 
       def populate_defaults(request, response_json)
-        DataBagItemEndpoint::populate_defaults(request, response_json, request.rest_path[1], request.rest_path[2])
+        DataBagItemEndpoint::populate_defaults(request, response_json, request.rest_path[3], request.rest_path[4])
       end
 
       def self.populate_defaults(request, response_json, data_bag, data_bag_item)

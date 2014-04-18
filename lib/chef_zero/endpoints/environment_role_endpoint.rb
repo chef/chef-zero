@@ -8,18 +8,18 @@ module ChefZero
     class EnvironmentRoleEndpoint < CookbooksBase
       def get(request)
         # 404 if environment does not exist
-        if request.rest_path[0] == 'environments'
-          environment_path = request.rest_path[0..1]
-          role_path = request.rest_path[2..3]
+        if request.rest_path[2] == 'environments'
+          environment_path = request.rest_path[0..1] + request.rest_path[2..3]
+          role_path = request.rest_path[0..1] + request.rest_path[4..5]
         else
-          environment_path = request.rest_path[2..3]
-          role_path = request.rest_path[0..1]
+          environment_path = request.rest_path[0..1] + request.rest_path[4..5]
+          role_path = request.rest_path[0..1] + request.rest_path[2..3]
         end
         # Verify that the environment exists
         get_data(request, environment_path)
 
         role = JSON.parse(get_data(request, role_path), :create_additions => false)
-        environment_name = environment_path[1]
+        environment_name = environment_path[3]
         if environment_name == '_default'
           run_list = role['run_list']
         else

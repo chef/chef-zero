@@ -8,7 +8,7 @@ module ChefZero
     class RoleEndpoint < RestObjectEndpoint
       def populate_defaults(request, response_json)
         role = JSON.parse(response_json, :create_additions => false)
-        role = DataNormalizer.normalize_role(role, request.rest_path[1])
+        role = DataNormalizer.normalize_role(role, request.rest_path[3])
         JSON.pretty_generate(role)
       end
     end
