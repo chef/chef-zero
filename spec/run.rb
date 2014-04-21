@@ -8,12 +8,12 @@ require 'rspec/core'
 tmpdir = nil
 
 def start_server(chef_repo_path)
-  # Create the chef repo
-  Dir.mkdir(chef_repo_path)
+  Dir.mkdir(chef_repo_path) if !File.exists?(chef_repo_path)
+
   # 11.6 and below had a bug where it couldn't create the repo children automatically
   if Chef::VERSION.to_f < 11.8
     %w(clients cookbooks data_bags environments nodes roles users).each do |child|
-      Dir.mkdir("#{chef_repo_path}/#{child}")
+      Dir.mkdir("#{chef_repo_path}/#{child}") if !File.exists?("#{chef_repo_path}/#{child}")
     end
   end
 
@@ -22,7 +22,7 @@ def start_server(chef_repo_path)
   Chef::Config.chef_repo_path = chef_repo_path
   chef_fs = Chef::ChefFS::Config.new.local_fs
   data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs)
-  server = ChefZero::Server.new(:port => 8889, :data_store => data_store)
+  server = ChefZero::Server.new(:port => 8889, :data_store => data_store)#, :log_level => :debug)
   server.start_background
   server
 end
@@ -38,21 +38,9 @@ begin
     # Create chef repository
     tmpdir = Dir.mktmpdir
     chef_repo_path = "#{tmpdir}/repo"
+
+    # Capture setup data into master_chef_repo_path
     server = start_server(chef_repo_path)
-
-    # Delete everything before each test
-    RSpec.configure do |config|
-      config.before(:each) do
-        # Stop the old server
-        if server
-          server.stop
-          server = nil
-          FileUtils.rm_rf(chef_repo_path)
-        end
-
-        server = start_server(chef_repo_path)
-      end
-    end
 
   else
     server = ChefZero::Server.new(:port => 8889)
@@ -62,6 +50,8 @@ begin
   unless ENV['SKIP_PEDANT']
     require 'pedant'
     require 'pedant/opensource'
+
+    #Pedant::Config.rerun = true
 
     Pedant.config.suite = 'api'
     Pedant.config[:config_file] = 'spec/support/pedant.rb'
@@ -85,7 +75,7 @@ begin
     end
   end
 
-  server.stop
+  server.stop if server.running?
 ensure
   FileUtils.remove_entry_secure(tmpdir) if tmpdir
 end
