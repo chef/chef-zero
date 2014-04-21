@@ -29,6 +29,7 @@ require 'chef_zero'
 require 'chef_zero/cookbook_data'
 require 'chef_zero/rest_router'
 require 'chef_zero/data_store/memory_store'
+require 'chef_zero/data_store/v1_to_v2_adapter'
 require 'chef_zero/version'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
@@ -103,14 +104,23 @@ module ChefZero
     #
     # The data store for this server (default is in-memory).
     #
-    # @return [~ChefZero::DataStore]
+    # @return [ChefZero::DataStore]
     #
     def data_store
       @data_store ||= begin
         result = @options[:data_store] || DataStore::MemoryStore.new
         if options[:single_org]
-          result.create_dir([ 'organizations' ], options[:single_org])
+          if result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3
+            result.create_dir([ 'organizations' ], options[:single_org])
+          else
+            result = ChefZero::DataStore::V1ToV2Adapter.new(result, options[:single_org])
+          end
+        else
+          if !(result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3)
+            raise "Multi-org not supported by data store #{result}!"
+          end
         end
+
         result
       end
     end
@@ -407,7 +417,7 @@ module ChefZero
     def dejsonize_children(hash)
       result = {}
       hash.each_pair do |key, value|
-        result[key] = value.is_a?(Hash)  ? JSON.pretty_generate(value) : value
+        result[key] = value.is_a?(Hash) ? JSON.pretty_generate(value) : value
       end
       result
     end

@@ -5,33 +5,89 @@ require 'bundler/setup'
 require 'chef_zero/server'
 require 'rspec/core'
 
-server = ChefZero::Server.new(:port => 8889)
-server.start_background
+tmpdir = nil
 
-unless ENV['SKIP_PEDANT']
-  require 'pedant'
-  require 'pedant/opensource'
-
-  Pedant.config.suite = 'api'
-  Pedant.config[:config_file] = 'spec/support/pedant.rb'
-  Pedant.setup([
-    '--skip-validation',
-    '--skip-authentication',
-    '--skip-authorization',
-    '--skip-omnibus'
-  ])
-
-  result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
-else
-  require 'net/http'
-  response = Net::HTTP.new('127.0.0.1', 8889).get("/environments", { 'Accept' => 'application/json'}).body
-  if response =~ /_default/
-    result = 0
-  else
-    puts "GET /environments returned #{response}.  Expected _default!"
-    result = 1
+def start_server(chef_repo_path)
+  # Create the chef repo
+  Dir.mkdir(chef_repo_path)
+  # 11.6 and below had a bug where it couldn't create the repo children automatically
+  if Chef::VERSION.to_f < 11.8
+    %w(clients cookbooks data_bags environments nodes roles users).each do |child|
+      Dir.mkdir("#{chef_repo_path}/#{child}")
+    end
   end
+
+  # Start the new server
+  Chef::Config.repo_mode = 'everything'
+  Chef::Config.chef_repo_path = chef_repo_path
+  chef_fs = Chef::ChefFS::Config.new.local_fs
+  data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs)
+  server = ChefZero::Server.new(:port => 8889, :data_store => data_store)
+  server.start_background
+  server
 end
 
-server.stop
+begin
+  if ENV['CHEF_FS']
+    require 'chef/chef_fs/chef_fs_data_store'
+    require 'chef/chef_fs/config'
+    require 'tmpdir'
+    require 'fileutils'
+    require 'chef/version'
+
+    # Create chef repository
+    tmpdir = Dir.mktmpdir
+    chef_repo_path = "#{tmpdir}/repo"
+    server = start_server(chef_repo_path)
+
+    # Delete everything before each test
+    RSpec.configure do |config|
+      config.before(:each) do
+        # Stop the old server
+        if server
+          server.stop
+          server = nil
+          FileUtils.rm_rf(chef_repo_path)
+        end
+
+        server = start_server(chef_repo_path)
+      end
+    end
+
+  else
+    server = ChefZero::Server.new(:port => 8889)
+    server.start_background
+  end
+
+  unless ENV['SKIP_PEDANT']
+    require 'pedant'
+    require 'pedant/opensource'
+
+    Pedant.config.suite = 'api'
+    Pedant.config[:config_file] = 'spec/support/pedant.rb'
+    Pedant.setup([
+      '--skip-knife',
+      '--skip-validation',
+      '--skip-authentication',
+      '--skip-authorization',
+      '--skip-omnibus'
+    ])
+
+    result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
+  else
+    require 'net/http'
+    response = Net::HTTP.new('127.0.0.1', 8889).get("/environments", { 'Accept' => 'application/json'}).body
+    if response =~ /_default/
+      result = 0
+    else
+      puts "GET /environments returned #{response}.  Expected _default!"
+      result = 1
+    end
+  end
+
+  server.stop
+ensure
+  FileUtils.remove_entry_secure(tmpdir) if tmpdir
+end
+
 exit(result)

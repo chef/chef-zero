@@ -18,12 +18,17 @@
 
 require 'chef_zero/data_store/data_already_exists_error'
 require 'chef_zero/data_store/data_not_found_error'
+require 'chef_zero/data_store/interface_v2'
 
 module ChefZero
   module DataStore
-    class MemoryStore
+    class MemoryStore < ChefZero::DataStore::InterfaceV2
       def initialize
         clear
+      end
+
+      def interface_version
+        2
       end
 
       def clear
@@ -33,7 +38,6 @@ module ChefZero
       end
 
       def create_org
-        # Create containers
         org = {
           'clients' => {
             'chef-validator' => '{ "validator": true }',
