@@ -130,14 +130,17 @@ module ChefZero
       def list(path)
         dir = _get(path)
         if !dir.is_a? Hash
-          raise "list only works with directories (#{path} = #{dir.class}"
+          raise "list only works with directories (#{path} = #{dir.class})"
         end
         dir.keys.sort
       end
 
-      def exists?(path)
+      def exists?(path, options = {})
         begin
-          get(path)
+          value = _get(path)
+          if value.is_a?(Hash) && !options[:allow_dirs]
+            raise "exists? does not work with directories (#{path} = #{dir.class})"
+          end
           return true
         rescue DataNotFoundError
           return false
@@ -148,7 +151,7 @@ module ChefZero
         begin
           dir = _get(path)
           if !dir.is_a? Hash
-            raise "exists_dir? only works with directories (#{path} = #{dir.class}"
+            raise "exists_dir? only works with directories (#{path} = #{dir.class})"
           end
           return true
         rescue DataNotFoundError
