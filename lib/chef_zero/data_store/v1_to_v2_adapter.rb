@@ -33,7 +33,7 @@ module ChefZero
       end
 
       def create_dir(path, name, *options)
-        return nil if skip_organizations(path, name)
+        return nil if skip_organizations?(path, name)
         if using_default?(path, name)
           raise DataAlreadyExistsError.new(path + [name])
         end
@@ -43,7 +43,7 @@ module ChefZero
       end
 
       def create(path, name, data, *options)
-        return nil if skip_organizations(path, name)
+        return nil if skip_organizations?(path, name)
         if using_default?(path, name)
           raise DataAlreadyExistsError.new(path + [name])
         end
@@ -55,7 +55,7 @@ module ChefZero
       end
 
       def get(path, request=nil)
-        return nil if skip_organizations(path)
+        return nil if skip_organizations?(path)
         if using_default?(path)
           get_default(path)
         else
@@ -66,7 +66,7 @@ module ChefZero
       end
 
       def set(path, data, *options)
-        return nil if skip_organizations(path)
+        return nil if skip_organizations?(path)
         remove_default(path)
         fix_exceptions do
           real_store.set(path[2..-1], data, *options)
@@ -74,7 +74,7 @@ module ChefZero
       end
 
       def delete(path)
-        return nil if skip_organizations(path)
+        return nil if skip_organizations?(path)
         remove_default(path)
         fix_exceptions do
           real_store.delete(path[2..-1])
@@ -82,14 +82,14 @@ module ChefZero
       end
 
       def delete_dir(path, *options)
-        return nil if skip_organizations(path)
+        return nil if skip_organizations?(path)
         fix_exceptions do
           real_store.delete_dir(path[2..-1], *options)
         end
       end
 
       def list(path)
-        return nil if skip_organizations(path)
+        return nil if skip_organizations?(path)
         fix_exceptions do
           result = real_store.list(path[2..-1])
           if using_default?(path)
@@ -103,7 +103,7 @@ module ChefZero
       end
 
       def exists?(path)
-        return nil if skip_organizations(path)
+        return nil if skip_organizations?(path)
         if using_default?(path)
           true
         else
@@ -114,7 +114,7 @@ module ChefZero
       end
 
       def exists_dir?(path)
-        return nil if skip_organizations(path)
+        return nil if skip_organizations?(path)
         if using_default?(path)
           true
         else
@@ -170,7 +170,7 @@ module ChefZero
         end
       end
 
-      def skip_organizations(path, name = nil)
+      def skip_organizations?(path, name = nil)
         if path == []
           raise "" if name == nil || name != 'organizations'
           true
