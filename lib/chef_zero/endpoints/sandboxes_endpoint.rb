@@ -16,12 +16,12 @@ module ChefZero
         needed_checksums = JSON.parse(request.body, :create_additions => false)['checksums']
         result_checksums = {}
         needed_checksums.keys.each do |needed_checksum|
-          if list_data(request, ['file_store', 'checksums']).include?(needed_checksum)
+          if list_data(request, request.rest_path[0..1] + ['file_store', 'checksums']).include?(needed_checksum)
             result_checksums[needed_checksum] = { :needs_upload => false }
           else
             result_checksums[needed_checksum] = {
               :needs_upload => true,
-              :url => build_uri(request.base_uri, ['file_store', 'checksums', needed_checksum])
+              :url => build_uri(request.base_uri, request.rest_path[0..1] + ['file_store', 'checksums', needed_checksum])
             }
             sandbox_checksums << needed_checksum
           end
@@ -48,4 +48,3 @@ module ChefZero
     end
   end
 end
-

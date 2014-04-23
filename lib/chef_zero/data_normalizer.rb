@@ -6,8 +6,10 @@ module ChefZero
     def self.normalize_client(client, name)
       client['name'] ||= name
       client['admin'] ||= false
+      client['admin'] = !!client['admin']
       client['public_key'] ||= PUBLIC_KEY
       client['validator'] ||= false
+      client['validator'] = !!client['validator']
       client['json_class'] ||= "Chef::ApiClient"
       client['chef_type'] ||= "client"
       client
@@ -16,6 +18,8 @@ module ChefZero
     def self.normalize_user(user, name)
       user['name'] ||= name
       user['admin'] ||= false
+      user['admin'] = !!user['admin']
+      user['openid'] ||= nil
       user['public_key'] ||= PUBLIC_KEY
       user
     end
@@ -57,14 +61,14 @@ module ChefZero
       environment
     end
 
-    def self.normalize_cookbook(cookbook, name, version, base_uri, method)
+    def self.normalize_cookbook(endpoint, org_prefix, cookbook, name, version, base_uri, method)
       # TODO I feel dirty
       if method != 'PUT'
         cookbook.each_pair do |key, value|
           if value.is_a?(Array)
             value.each do |file|
               if file.is_a?(Hash) && file.has_key?('checksum')
-                file['url'] ||= RestBase::build_uri(base_uri, ['file_store', 'checksums', file['checksum']])
+                file['url'] ||= endpoint.build_uri(base_uri, org_prefix + ['file_store', 'checksums', file['checksum']])
               end
             end
           end

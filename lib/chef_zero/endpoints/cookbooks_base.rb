@@ -11,23 +11,23 @@ module ChefZero
         filter_cookbooks(cookbooks_list, constraints, num_versions) do |name, versions|
           versions_list = versions.map do |version|
             {
-              'url' => build_uri(request.base_uri, ['cookbooks', name, version]),
+              'url' => build_uri(request.base_uri, request.rest_path[0..1] + ['cookbooks', name, version]),
               'version' => version
             }
           end
           results[name] = {
-            'url' => build_uri(request.base_uri, ['cookbooks', name]),
+            'url' => build_uri(request.base_uri, request.rest_path[0..1] + ['cookbooks', name]),
             'versions' => versions_list
           }
         end
         results
       end
 
-      def all_cookbooks_list
+      def all_cookbooks_list(request)
         result = {}
         # Race conditions exist here (if someone deletes while listing).  I don't care.
-        data_store.list(['cookbooks']).each do |name|
-          result[name] = data_store.list(['cookbooks', name])
+        data_store.list(request.rest_path[0..1] + ['cookbooks']).each do |name|
+          result[name] = data_store.list(request.rest_path[0..1] + ['cookbooks', name])
         end
         result
       end

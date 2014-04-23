@@ -8,7 +8,7 @@ module ChefZero
     class EnvironmentCookbookVersionsEndpoint < RestBase
 
       def post(request)
-        cookbook_names = list_data(request, ['cookbooks'])
+        cookbook_names = list_data(request, request.rest_path[0..1] + ['cookbooks'])
 
         # Get the list of cookbooks and versions desired by the runlist
         desired_versions = {}
@@ -16,17 +16,17 @@ module ChefZero
         run_list.each do |run_list_entry|
           if run_list_entry =~ /(.+)::.+\@(.+)/ || run_list_entry =~ /(.+)\@(.+)/
             raise RestErrorResponse.new(412, "No such cookbook: #{$1}") if !cookbook_names.include?($1)
-            raise RestErrorResponse.new(412, "No such cookbook version for cookbook #{$1}: #{$2}") if !list_data(request, ['cookbooks', $1]).include?($2)
+            raise RestErrorResponse.new(412, "No such cookbook version for cookbook #{$1}: #{$2}") if !list_data(request, request.rest_path[0..1] + ['cookbooks', $1]).include?($2)
             desired_versions[$1] = [ $2 ]
           else
             desired_cookbook = run_list_entry.split('::')[0]
             raise RestErrorResponse.new(412, "No such cookbook: #{desired_cookbook}") if !cookbook_names.include?(desired_cookbook)
-            desired_versions[desired_cookbook] = list_data(request, ['cookbooks', desired_cookbook])
+            desired_versions[desired_cookbook] = list_data(request, request.rest_path[0..1] + ['cookbooks', desired_cookbook])
           end
         end
 
         # Filter by environment constraints
-        environment = JSON.parse(get_data(request, request.rest_path[0..1]), :create_additions => false)
+        environment = JSON.parse(get_data(request, request.rest_path[0..3]), :create_additions => false)
         environment_constraints = environment['cookbook_versions'] || {}
 
         desired_versions.each_key do |name|
@@ -48,8 +48,8 @@ module ChefZero
 
         result = {}
         solved.each_pair do |name, versions|
-          cookbook = JSON.parse(get_data(request, ['cookbooks', name, versions[0]]), :create_additions => false)
-          result[name] = DataNormalizer.normalize_cookbook(cookbook, name, versions[0], request.base_uri, 'MIN')
+          cookbook = JSON.parse(get_data(request, request.rest_path[0..1] + ['cookbooks', name, versions[0]]), :create_additions => false)
+          result[name] = DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, name, versions[0], request.base_uri, 'MIN')
         end
         json_response(200, result)
       end
@@ -74,7 +74,7 @@ module ChefZero
           new_unsolved = unsolved[1..-1]
 
           # Pick this cookbook, and add dependencies
-          cookbook_obj = JSON.parse(get_data(request, ['cookbooks', solve_for, desired_version]), :create_additions => false)
+          cookbook_obj = JSON.parse(get_data(request, request.rest_path[0..1] + ['cookbooks', solve_for, desired_version]), :create_additions => false)
           cookbook_metadata = cookbook_obj['metadata'] || {}
           cookbook_dependencies = cookbook_metadata['dependencies'] || {}
           dep_not_found = false
@@ -84,12 +84,12 @@ module ChefZero
             if !new_desired_versions.has_key?(dep_name)
               new_unsolved = new_unsolved + [dep_name]
               # If the dep is missing, we will try other versions of the cookbook that might not have the bad dep.
-              if !exists_data_dir?(request, ['cookbooks', dep_name])
+              if !exists_data_dir?(request, request.rest_path[0..1] + ['cookbooks', dep_name])
                 @last_missing_dep = dep_name.to_s
                 dep_not_found = true
                 break
               end
-              new_desired_versions[dep_name] = list_data(request, ['cookbooks', dep_name])
+              new_desired_versions[dep_name] = list_data(request, request.rest_path[0..1] + ['cookbooks', dep_name])
               new_desired_versions = filter_by_constraint(new_desired_versions, dep_name, environment_constraints[dep_name])
             end
             new_desired_versions = filter_by_constraint(new_desired_versions, dep_name, dep_constraint)

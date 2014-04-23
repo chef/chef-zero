@@ -6,7 +6,7 @@ module ChefZero
     # /environments/NAME/cookbooks
     class EnvironmentCookbooksEndpoint < CookbooksBase
       def get(request)
-        environment = JSON.parse(get_data(request, request.rest_path[0..1]), :create_additions => false)
+        environment = JSON.parse(get_data(request, request.rest_path[0..3]), :create_additions => false)
         constraints = environment['cookbook_versions'] || {}
         if request.query_params['num_versions'] == 'all'
           num_versions = nil
@@ -15,7 +15,7 @@ module ChefZero
         else
           num_versions = 1
         end
-        json_response(200, format_cookbooks_list(request, all_cookbooks_list, constraints, num_versions))
+        json_response(200, format_cookbooks_list(request, all_cookbooks_list(request), constraints, num_versions))
       end
     end
   end

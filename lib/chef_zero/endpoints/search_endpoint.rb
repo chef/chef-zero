@@ -46,18 +46,22 @@ module ChefZero
       private
 
       def search_container(request, index)
-        case index
+        relative_parts, normalize_proc = case index
         when 'client'
-          [ ['clients'], Proc.new { |client, name| DataNormalizer.normalize_client(client, name) }, build_uri(request.base_uri, [ 'clients' ]) ]
+          [ ['clients'], Proc.new { |client, name| DataNormalizer.normalize_client(client, name) } ]
         when 'node'
-          [ ['nodes'], Proc.new { |node, name| DataNormalizer.normalize_node(node, name) }, build_uri(request.base_uri, [ 'nodes' ]) ]
+          [ ['nodes'], Proc.new { |node, name| DataNormalizer.normalize_node(node, name) } ]
         when 'environment'
-          [ ['environments'], Proc.new { |environment, name| DataNormalizer.normalize_environment(environment, name) }, build_uri(request.base_uri, [ 'environments' ]) ]
+          [ ['environments'], Proc.new { |environment, name| DataNormalizer.normalize_environment(environment, name) } ]
         when 'role'
-          [ ['roles'], Proc.new { |role, name| DataNormalizer.normalize_role(role, name) }, build_uri(request.base_uri, [ 'roles' ]) ]
+          [ ['roles'], Proc.new { |role, name| DataNormalizer.normalize_role(role, name) } ]
         else
-          [ ['data', index], Proc.new { |data_bag_item, id| DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') }, build_uri(request.base_uri, [ 'data', index ]) ]
+          [ ['data', index], Proc.new { |data_bag_item, id| DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') } ]
         end
+        [
+          request.rest_path[0..1] + relative_parts,
+          normalize_proc
+        ]
       end
 
       def expand_for_indexing(value, index, id)
@@ -90,7 +94,7 @@ module ChefZero
 
       def search(request)
         # Extract parameters
-        index = request.rest_path[1]
+        index = request.rest_path[3]
         query_string = request.query_params['q'] || '*:*'
         solr_query = ChefZero::Solr::SolrParser.new(query_string).parse
         sort_string = request.query_params['sort']
@@ -100,14 +104,14 @@ module ChefZero
         rows = rows.to_i if rows
 
         # Get the search container
-        container, expander, base_uri = search_container(request, index)
+        container, expander = search_container(request, index)
 
         # Search!
         result = []
         list_data(request, container).each do |name|
           value = get_data(request, container + [name])
           expanded = expander.call(JSON.parse(value, :create_additions => false), name)
-          result << [ name, build_uri(base_uri, [name]), expanded, expand_for_indexing(expanded, index, name) ]
+          result << [ name, build_uri(request.base_uri, container + [name]), expanded, expand_for_indexing(expanded, index, name) ]
         end
         result = result.select do |name, uri, value, search_value|
           solr_query.matches_doc?(ChefZero::Solr::SolrDoc.new(search_value, name))

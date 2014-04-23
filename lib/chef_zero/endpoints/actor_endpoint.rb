@@ -37,17 +37,12 @@ module ChefZero
         result = super(request)
 
         # Inject private_key into response, delete public_key/password if applicable
-        if result[0] == 200
+        if result[0] == 200 || result[0] == 201
           response = JSON.parse(result[2], :create_additions => false)
           response['private_key'] = private_key if private_key
-          response.delete('public_key') if !updating_public_key && request.rest_path[0] == 'users'
+          response.delete('public_key') if !updating_public_key && request.rest_path[2] == 'users'
           response.delete('password')
-          # For PUT /clients, a rename returns 201.
-          if request_body['name'] && request.rest_path[1] != request_body['name']
-            json_response(201, response)
-          else
-            json_response(200, response)
-          end
+          json_response(result[0], response)
         else
           result
         end
@@ -55,14 +50,13 @@ module ChefZero
 
       def populate_defaults(request, response_json)
         response = JSON.parse(response_json, :create_additions => false)
-        if request.rest_path[0] == 'clients'
-          response = DataNormalizer.normalize_client(response, request.rest_path[1])
+        if request.rest_path[2] == 'clients'
+          response = DataNormalizer.normalize_client(response, request.rest_path[3])
         else
-          response = DataNormalizer.normalize_user(response, request.rest_path[1])
+          response = DataNormalizer.normalize_user(response, request.rest_path[3])
         end
         JSON.pretty_generate(response)
       end
     end
   end
 end
-

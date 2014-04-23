@@ -29,6 +29,7 @@ require 'chef_zero'
 require 'chef_zero/cookbook_data'
 require 'chef_zero/rest_router'
 require 'chef_zero/data_store/memory_store'
+require 'chef_zero/data_store/v1_to_v2_adapter'
 require 'chef_zero/version'
 
 require 'chef_zero/endpoints/authenticate_user_endpoint'
@@ -65,7 +66,8 @@ module ChefZero
       :host => '127.0.0.1',
       :port => 8889,
       :log_level => :info,
-      :generate_real_keys => true
+      :generate_real_keys => true,
+      :single_org => 'chef'
     }.freeze
 
     def initialize(options = {})
@@ -102,10 +104,25 @@ module ChefZero
     #
     # The data store for this server (default is in-memory).
     #
-    # @return [~ChefZero::DataStore]
+    # @return [ChefZero::DataStore]
     #
     def data_store
-      @data_store ||= @options[:data_store] || DataStore::MemoryStore.new
+      @data_store ||= begin
+        result = @options[:data_store] || DataStore::MemoryStore.new
+        if options[:single_org]
+          if result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3
+            result.create_dir([ 'organizations' ], options[:single_org])
+          else
+            result = ChefZero::DataStore::V1ToV2Adapter.new(result, options[:single_org])
+          end
+        else
+          if !(result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3)
+            raise "Multi-org not supported by data store #{result}!"
+          end
+        end
+
+        result
+      end
     end
 
     #
@@ -265,19 +282,20 @@ module ChefZero
     #     }
     #   }
     # }
-    def load_data(contents)
+    def load_data(contents, org_name = 'chef')
+      data_store.create_dir('organizations', org_name)
       %w(clients environments nodes roles users).each do |data_type|
         if contents[data_type]
           dejsonize_children(contents[data_type]).each_pair do |name, data|
-            data_store.set([data_type, name], data, :create)
+            data_store.set(['organizations', org_name, data_type, name], data, :create)
           end
         end
       end
       if contents['data']
         contents['data'].each_pair do |key, data_bag|
-          data_store.create_dir(['data'], key, :recursive)
+          data_store.create_dir(['organizations', org_name, 'data'], key, :recursive)
           dejsonize_children(data_bag).each do |item_name, item|
-            data_store.set(['data', key, item_name], item, :create)
+            data_store.set(['organizations', org_name, 'data', key, item_name], item, :create)
           end
         end
       end
@@ -289,12 +307,12 @@ module ChefZero
             cookbook_data = CookbookData.to_hash(cookbook, name_version)
           end
           raise "No version specified" if !cookbook_data[:version]
-          data_store.create_dir(['cookbooks'], cookbook_data[:cookbook_name], :recursive)
-          data_store.set(['cookbooks', cookbook_data[:cookbook_name], cookbook_data[:version]], JSON.pretty_generate(cookbook_data), :create)
+          data_store.create_dir(['organizations', org_name, 'cookbooks'], cookbook_data[:cookbook_name], :recursive)
+          data_store.set(['organizations', org_name, 'cookbooks', cookbook_data[:cookbook_name], cookbook_data[:version]], JSON.pretty_generate(cookbook_data), :create)
           cookbook_data.values.each do |files|
             next unless files.is_a? Array
             files.each do |file|
-              data_store.set(['file_store', 'checksums', file[:checksum]], get_file(cookbook, file[:path]), :create)
+              data_store.set(['organizations', org_name, 'file_store', 'checksums', file[:checksum]], get_file(cookbook, file[:path]), :create)
             end
           end
         end
@@ -303,6 +321,9 @@ module ChefZero
 
     def clear_data
       data_store.clear
+      if options[:single_org]
+        data_store.create_dir([ 'organizations' ], options[:single_org])
+      end
     end
 
     def request_handler(&block)
@@ -319,45 +340,54 @@ module ChefZero
 
     private
 
-    def app
-      router = RestRouter.new([
-        [ '/authenticate_user', AuthenticateUserEndpoint.new(self) ],
-        [ '/clients', ActorsEndpoint.new(self) ],
-        [ '/clients/*', ActorEndpoint.new(self) ],
-        [ '/cookbooks', CookbooksEndpoint.new(self) ],
-        [ '/cookbooks/*', CookbookEndpoint.new(self) ],
-        [ '/cookbooks/*/*', CookbookVersionEndpoint.new(self) ],
-        [ '/data', DataBagsEndpoint.new(self) ],
-        [ '/data/*', DataBagEndpoint.new(self) ],
-        [ '/data/*/*', DataBagItemEndpoint.new(self) ],
-        [ '/environments', RestListEndpoint.new(self) ],
-        [ '/environments/*', EnvironmentEndpoint.new(self) ],
-        [ '/environments/*/cookbooks', EnvironmentCookbooksEndpoint.new(self) ],
-        [ '/environments/*/cookbooks/*', EnvironmentCookbookEndpoint.new(self) ],
-        [ '/environments/*/cookbook_versions', EnvironmentCookbookVersionsEndpoint.new(self) ],
-        [ '/environments/*/nodes', EnvironmentNodesEndpoint.new(self) ],
-        [ '/environments/*/recipes', EnvironmentRecipesEndpoint.new(self) ],
-        [ '/environments/*/roles/*', EnvironmentRoleEndpoint.new(self) ],
-        [ '/nodes', RestListEndpoint.new(self) ],
-        [ '/nodes/*', NodeEndpoint.new(self) ],
-        [ '/principals/*', PrincipalEndpoint.new(self) ],
-        [ '/roles', RestListEndpoint.new(self) ],
-        [ '/roles/*', RoleEndpoint.new(self) ],
-        [ '/roles/*/environments', RoleEnvironmentsEndpoint.new(self) ],
-        [ '/roles/*/environments/*', EnvironmentRoleEndpoint.new(self) ],
-        [ '/sandboxes', SandboxesEndpoint.new(self) ],
-        [ '/sandboxes/*', SandboxEndpoint.new(self) ],
-        [ '/search', SearchesEndpoint.new(self) ],
-        [ '/search/*', SearchEndpoint.new(self) ],
-        [ '/users', ActorsEndpoint.new(self) ],
-        [ '/users/*', ActorEndpoint.new(self) ],
+    def open_source_endpoints
+      [
+        [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+        [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
+        [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
+        [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
+        [ "/organizations/*/cookbooks/*", CookbookEndpoint.new(self) ],
+        [ "/organizations/*/cookbooks/*/*", CookbookVersionEndpoint.new(self) ],
+        [ "/organizations/*/data", DataBagsEndpoint.new(self) ],
+        [ "/organizations/*/data/*", DataBagEndpoint.new(self) ],
+        [ "/organizations/*/data/*/*", DataBagItemEndpoint.new(self) ],
+        [ "/organizations/*/environments", RestListEndpoint.new(self) ],
+        [ "/organizations/*/environments/*", EnvironmentEndpoint.new(self) ],
+        [ "/organizations/*/environments/*/cookbooks", EnvironmentCookbooksEndpoint.new(self) ],
+        [ "/organizations/*/environments/*/cookbooks/*", EnvironmentCookbookEndpoint.new(self) ],
+        [ "/organizations/*/environments/*/cookbook_versions", EnvironmentCookbookVersionsEndpoint.new(self) ],
+        [ "/organizations/*/environments/*/nodes", EnvironmentNodesEndpoint.new(self) ],
+        [ "/organizations/*/environments/*/recipes", EnvironmentRecipesEndpoint.new(self) ],
+        [ "/organizations/*/environments/*/roles/*", EnvironmentRoleEndpoint.new(self) ],
+        [ "/organizations/*/nodes", RestListEndpoint.new(self) ],
+        [ "/organizations/*/nodes/*", NodeEndpoint.new(self) ],
+        [ "/organizations/*/principals/*", PrincipalEndpoint.new(self) ],
+        [ "/organizations/*/roles", RestListEndpoint.new(self) ],
+        [ "/organizations/*/roles/*", RoleEndpoint.new(self) ],
+        [ "/organizations/*/roles/*/environments", RoleEnvironmentsEndpoint.new(self) ],
+        [ "/organizations/*/roles/*/environments/*", EnvironmentRoleEndpoint.new(self) ],
+        [ "/organizations/*/sandboxes", SandboxesEndpoint.new(self) ],
+        [ "/organizations/*/sandboxes/*", SandboxEndpoint.new(self) ],
+        [ "/organizations/*/search", SearchesEndpoint.new(self) ],
+        [ "/organizations/*/search/*", SearchEndpoint.new(self) ],
+        [ "/organizations/*/users", ActorsEndpoint.new(self) ],
+        [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
 
-        [ '/file_store/**', FileStoreFileEndpoint.new(self) ],
-      ])
+        [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ],
+      ]
+    end
+
+    def app
+      router = RestRouter.new(open_source_endpoints)
       router.not_found = NotFoundEndpoint.new
 
+      if options[:single_org]
+        rest_base_prefix = [ 'organizations', 'chef' ]
+      else
+        rest_base_prefix = []
+      end
       return proc do |env|
-        request = RestRequest.new(env)
+        request = RestRequest.new(env, rest_base_prefix)
         if @on_request_proc
           @on_request_proc.call(request)
         end
@@ -387,7 +417,7 @@ module ChefZero
     def dejsonize_children(hash)
       result = {}
       hash.each_pair do |key, value|
-        result[key] = value.is_a?(Hash)  ? JSON.pretty_generate(value) : value
+        result[key] = value.is_a?(Hash) ? JSON.pretty_generate(value) : value
       end
       result
     end

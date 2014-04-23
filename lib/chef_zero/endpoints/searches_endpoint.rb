@@ -7,7 +7,7 @@ module ChefZero
       def get(request)
         # Get the result
         result_hash = {}
-        indices = (%w(client environment node role) + data_store.list(['data'])).sort
+        indices = (%w(client environment node role) + data_store.list(request.rest_path[0..1] + ['data'])).sort
         indices.each do |index|
           result_hash[index] = build_uri(request.base_uri, request.rest_path + [index])
         end

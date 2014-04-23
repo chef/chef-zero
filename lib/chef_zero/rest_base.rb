@@ -28,6 +28,7 @@ module ChefZero
       begin
         self.send(method, request)
       rescue RestErrorResponse => e
+        ChefZero::Log.debug("#{e.inspect}\n#{e.backtrace.join("\n")}")
         error(e.response_code, e.error)
       end
     end
@@ -119,11 +120,18 @@ module ChefZero
     end
 
     def build_uri(base_uri, rest_path)
-      RestBase::build_uri(base_uri, rest_path)
+      if server.options[:single_org]
+        # Strip off /organizations/chef if we are in single org mode
+        if rest_path[0..1] != [ 'organizations', 'chef' ]
+          raise "Unexpected URL #{rest_path[0..1]} passed to build_uri in single org mode"
+        end
+        "#{base_uri}/#{rest_path[2..-1].join('/')}"
+      else
+        "#{base_uri}/#{rest_path.join('/')}"
+      end
     end
 
     def self.build_uri(base_uri, rest_path)
-      "#{base_uri}/#{rest_path.join('/')}"
     end
 
     def populate_defaults(request, response)

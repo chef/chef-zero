@@ -8,7 +8,7 @@ module ChefZero
     class NodeEndpoint < RestObjectEndpoint
       def populate_defaults(request, response_json)
         node = JSON.parse(response_json, :create_additions => false)
-        node = DataNormalizer.normalize_node(node, request.rest_path[1])
+        node = DataNormalizer.normalize_node(node, request.rest_path[3])
         JSON.pretty_generate(node)
       end
     end
