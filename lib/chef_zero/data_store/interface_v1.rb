@@ -14,35 +14,35 @@ module ChefZero
       end
 
       def create(path, name, data, *options)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "create not implemented by class #{self.class}"
       end
 
       def get(path, request=nil)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "get not implemented by class #{self.class}"
       end
 
       def set(path, data, *options)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "set not implemented by class #{self.class}"
       end
 
       def delete(path)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "delete not implemented by class #{self.class}"
       end
 
       def delete_dir(path, *options)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "delete_dir not implemented by class #{self.class}"
       end
 
       def list(path)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "list not implemented by class #{self.class}"
       end
 
       def exists?(path)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "exists? not implemented by class #{self.class}"
       end
 
       def exists_dir?(path)
-        raise "create_dir not implemented by class #{self.class}"
+        raise "exists_dir? not implemented by class #{self.class}"
       end
     end
   end
