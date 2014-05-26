@@ -1,7 +1,7 @@
 Chef Zero CHANGELOG
 ===================
 
-# Unreleased
+# 2.1 (5/26/2014)
 
 - **Multi-tenancy!**  If you set :single_org => nil when starting the server, you will gain /organizations/* at the beginning of all URLs.  Internally, all endpoints are rooted at /organizations/ORG anyway, there is just a translation that goes on to add /organizations/single_org to the URL when someone hits chef-zero.
 - Fixes to support chef-zero local mode passing pedant
