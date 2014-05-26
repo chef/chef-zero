@@ -28,7 +28,7 @@ require 'webrick'
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
 require 'chef_zero/rest_router'
-require 'chef_zero/data_store/memory_store'
+require 'chef_zero/data_store/memory_store_v2'
 require 'chef_zero/data_store/v1_to_v2_adapter'
 require 'chef_zero/version'
 
@@ -108,7 +108,7 @@ module ChefZero
     #
     def data_store
       @data_store ||= begin
-        result = @options[:data_store] || DataStore::MemoryStore.new
+        result = @options[:data_store] || DataStore::MemoryStoreV2.new
         if options[:single_org]
           if result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3
             result.create_dir([ 'organizations' ], options[:single_org])
@@ -140,8 +140,8 @@ module ChefZero
     # Start a Chef Zero server in the current thread. You can stop this server
     # by canceling the current thread.
     #
-    # @param [Boolean] publish
-    #   publish the server information to STDOUT
+    # @param [Boolean|IO] publish
+    #   publish the server information to the publish parameter or to STDOUT if it's "true"
     #
     # @return [nil]
     #   this method will block the main thread until interrupted
@@ -150,7 +150,8 @@ module ChefZero
       publish = publish[:publish] if publish.is_a?(Hash) # Legacy API
 
       if publish
-        puts <<-EOH.gsub(/^ {10}/, '')
+        output = publish.respond_to?(:puts) ? publish : STDOUT
+        output.puts <<-EOH.gsub(/^ {10}/, '')
           >> Starting Chef Zero (v#{ChefZero::VERSION})...
           >> WEBrick (v#{WEBrick::VERSION}) on Rack (v#{Rack.release}) is listening at #{url}
           >> Press CTRL+C to stop
@@ -225,9 +226,9 @@ module ChefZero
     #   server
     #
     def stop(wait = 5)
-      Timeout.timeout(wait) do
+      if @thread
         @server.shutdown
-        @thread.join(wait) if @thread
+        @thread.join(wait)
       end
     rescue Timeout::Error
       if @thread
