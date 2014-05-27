@@ -1,6 +1,11 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.1.3 (5/27/2014)
+
+- rspec: default port to 8900 to not conflict with normal default port
+- rspec: when chef_zero_opts is set, check if current server has those options before continuing
+
 # 2.1.2 (5/27/2014)
 
 - fix build_uri (and thus cookbook downloads)
