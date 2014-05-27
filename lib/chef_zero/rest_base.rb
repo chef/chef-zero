@@ -119,6 +119,7 @@ module ChefZero
       [response_code, {"Content-Type" => "application/json"}, json_text]
     end
 
+    # To be called from inside rest endpoints
     def build_uri(base_uri, rest_path)
       if server.options[:single_org]
         # Strip off /organizations/chef if we are in single org mode
@@ -132,6 +133,7 @@ module ChefZero
     end
 
     def self.build_uri(base_uri, rest_path)
+      "#{base_uri}/#{rest_path.join('/')}"
     end
 
     def populate_defaults(request, response)
