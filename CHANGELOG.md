@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.1.2 (5/27/2014)
+
+- fix build_uri (and thus cookbook downloads)
+
 # 2.1.1 (5/26/2014)
 
 - flip defaults off in V1ToV2Adapater, allowing most chef tests to pass against 2.1.1
