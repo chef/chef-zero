@@ -6,20 +6,22 @@ module ChefZero
       def initialize(real_store, single_org, options = {})
         @real_store = real_store
         @single_org = single_org
-        org_defaults = options[:org_defaults] || {
-          'clients' => {
-            'chef-validator' => '{ "validator": true }',
-            'chef-webui' => '{ "admin": true }'
-          },
-          'environments' => {
-            '_default' => '{ "description": "The default Chef environment" }'
-          },
-          'users' => {
-            'admin' => '{ "admin": "true" }'
-          }
-        }
+        org_defaults = options[:org_defaults] || {}
         @defaults = { 'organizations' => { single_org => org_defaults }}
       end
+
+      ORG_DEFAULTS = {
+        'clients' => {
+          'chef-validator' => '{ "validator": true }',
+          'chef-webui' => '{ "admin": true }'
+        },
+        'environments' => {
+          '_default' => '{ "description": "The default Chef environment" }'
+        },
+        'users' => {
+          'admin' => '{ "admin": "true" }'
+        }
+      }
 
       attr_reader :real_store
       attr_reader :single_org
