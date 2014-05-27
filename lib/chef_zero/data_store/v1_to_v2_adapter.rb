@@ -6,8 +6,8 @@ module ChefZero
       def initialize(real_store, single_org, options = {})
         @real_store = real_store
         @single_org = single_org
-        org_defaults = options[:org_defaults] || {}
-        @defaults = { 'organizations' => { single_org => org_defaults }}
+        @options = options
+        clear
       end
 
       ORG_DEFAULTS = {
@@ -27,7 +27,12 @@ module ChefZero
       attr_reader :single_org
 
       def clear
-        real_store.clear
+        if @options[:org_defaults]
+          @defaults = { 'organizations' => { @single_org => @options[:org_defaults] }}
+        else
+          @defaults = {}
+        end
+        real_store.clear if real_store.respond_to?(:clear)
       end
 
       def create_dir(path, name, *options)
