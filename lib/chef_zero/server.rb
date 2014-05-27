@@ -95,9 +95,9 @@ module ChefZero
     #
     def url
       @url ||= if @options[:host].include?(':')
-                 "http://[#{@options[:host]}]:#{@options[:port]}"
+                 URI("http://[#{@options[:host]}]:#{@options[:port]}").to_s
                else
-                 "http://#{@options[:host]}:#{@options[:port]}"
+                 URI("http://#{@options[:host]}:#{@options[:port]}").to_s
                end
     end
 
@@ -284,7 +284,6 @@ module ChefZero
     #   }
     # }
     def load_data(contents, org_name = 'chef')
-      data_store.create_dir('organizations', org_name)
       %w(clients environments nodes roles users).each do |data_type|
         if contents[data_type]
           dejsonize_children(contents[data_type]).each_pair do |name, data|
