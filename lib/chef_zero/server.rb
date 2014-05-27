@@ -188,12 +188,25 @@ module ChefZero
         :BindAddress => @options[:host],
         :Port        => @options[:port],
         :AccessLog   => [],
-        :Logger      => WEBrick::Log.new(StringIO.new, 7)
+        :Logger      => WEBrick::Log.new(StringIO.new, 7),
+        :StartCallback => proc {
+          @running = true
+        }
       )
       @server.mount('/', Rack::Handler::WEBrick, app)
 
-      @thread = Thread.new { @server.start }
-      @thread.abort_on_exception = true
+      @thread = Thread.new do
+        begin
+          Thread.abort_on_exception = true
+          @server.start
+        ensure
+          @running = false
+        end
+      end
+      # Do not return until the web server is genuinely started.
+      while !@running && @thread.alive?
+        sleep(0.01)
+      end
       @thread
     end
 
@@ -206,16 +219,7 @@ module ChefZero
     #   true if the server is accepting requests, false otherwise
     #
     def running?
-      if @server.nil? || @server.status != :Running
-        return false
-      end
-
-      uri     = URI.join(url, 'cookbooks')
-      headers = { 'Accept' => 'application/json' }
-
-      Timeout.timeout(0.1) { !open(uri, headers).nil? }
-    rescue SocketError, Errno::ECONNREFUSED, Timeout::Error
-      false
+      !@server.nil? && @running && @server.status == :Running
     end
 
     #
@@ -226,7 +230,7 @@ module ChefZero
     #   server
     #
     def stop(wait = 5)
-      if @thread
+      if @running
         @server.shutdown
         @thread.join(wait)
       end
