@@ -3,26 +3,22 @@ require 'chef_zero/data_store/interface_v2'
 module ChefZero
   module DataStore
     class V1ToV2Adapter < ChefZero::DataStore::InterfaceV2
-      def initialize(real_store, single_org)
+      def initialize(real_store, single_org, options = {})
         @real_store = real_store
         @single_org = single_org
-        # Handle defaults per V2 specification
-        @defaults = {
-          'organizations' => {
-            single_org => {
-              'clients' => {
-                'chef-validator' => '{ "validator": true }',
-                'chef-webui' => '{ "admin": true }'
-              },
-              'environments' => {
-                '_default' => '{ "description": "The default Chef environment" }'
-              },
-              'users' => {
-                'admin' => '{ "admin": "true" }'
-              }
-            }
+        org_defaults = options[:org_defaults] || {
+          'clients' => {
+            'chef-validator' => '{ "validator": true }',
+            'chef-webui' => '{ "admin": true }'
+          },
+          'environments' => {
+            '_default' => '{ "description": "The default Chef environment" }'
+          },
+          'users' => {
+            'admin' => '{ "admin": "true" }'
           }
         }
+        @defaults = { 'organizations' => { single_org => org_defaults }}
       end
 
       attr_reader :real_store
