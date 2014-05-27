@@ -27,14 +27,19 @@ module ChefZero
       context "When the Chef server #{description}", *tags do
         before :each do
 
-          unless ChefZero::RSpec.server
-            default_opts = {:port => 8889, :signals => false, :log_requests => true}
-            server_opts = if self.respond_to?(:chef_zero_opts)
-              default_opts.merge(chef_zero_opts)
-            else
-              default_opts
-            end
+          default_opts = {:port => 8900, :signals => false, :log_requests => true}
+          server_opts = if self.respond_to?(:chef_zero_opts)
+            default_opts.merge(chef_zero_opts)
+          else
+            default_opts
+          end
 
+          if ChefZero::RSpec.server && server_opts.any? { |opt, value| ChefZero::RSpec.server.options[opt] != value }
+            ChefZero::RSpec.server.stop
+            ChefZero::RSpec.server = nil
+          end
+
+          unless ChefZero::RSpec.server
             # TODO: can this be logged easily?
             # pp :zero_opts => server_opts
 
