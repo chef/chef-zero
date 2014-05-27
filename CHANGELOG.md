@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.1.1 (5/26/2014)
+
+- flip defaults off in V1ToV2Adapater, allowing most chef tests to pass against 2.1.1
+
 # 2.1 (5/26/2014)
 
 - **Multi-tenancy!**  If you set :single_org => nil when starting the server, you will gain /organizations/* at the beginning of all URLs.  Internally, all endpoints are rooted at /organizations/ORG anyway, there is just a translation that goes on to add /organizations/single_org to the URL when someone hits chef-zero.
