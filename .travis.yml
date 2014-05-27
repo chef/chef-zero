@@ -7,28 +7,30 @@ script: bundle exec rake spec
 matrix:
   include:
     - rvm: 1.8.7
-      gemfile: Gemfile
     - rvm: 1.8.7
       env: SKIP_PEDANT=true
       gemfile: gemfiles/no-pedant.gemfile
     - rvm: 1.9.3
       gemfile: gemfiles/latest-pedant.gemfile
     - rvm: jruby-19mode
-      gemfile: Gemfile
     - rvm: jruby-19mode
       env: SKIP_PEDANT=true
       gemfile: gemfiles/no-pedant.gemfile
     - rvm: 2.0.0
-      gemfile: Gemfile
     - rvm: 2.1.1
-      gemfile: Gemfile
     - rvm: 2.1.1
       env: CHEF_FS=true
-      gemfile: Gemfile
+    - rvm: 2.1.1
+      script: bundle exec rake chef_spec
+
   allow_failures:
     - rvm: 1.8.7
-      gemfile: Gemfile
     - rvm: jruby-19mode
-      gemfile: Gemfile
-    - rvm: 1.9.3
+    - rvm: 2.1.1
       gemfile: gemfiles/latest-pedant.gemfile
+    - rvm: 2.1.1
+      gemfile: gemfiles/latest-chef.gemfile
+      script: bundle exec rake chef_spec
+#    - rvm: 2.1.1
+#      gemfile: gemfiles/berkshelf.gemfile
+#      script: bundle exec rake berkshelf_spec

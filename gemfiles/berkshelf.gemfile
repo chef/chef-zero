@@ -1,0 +1,15 @@
+source 'https://rubygems.org'
+
+gemspec :path => "../"
+
+gem 'berkshelf', :github => 'berkshelf'
+
+# development dependencies of berkshelf
+gem 'aruba',         '~> 0.5'
+gem 'fuubar',        '~> 1.1'
+gem 'rake',          '~> 0.9'
+gem 'rspec',         '~> 2.13'
+gem 'spork',         '~> 0.9'
+gem 'test-kitchen',  '~> 1.2'
+gem 'webmock',       '~> 1.11'
+gem 'yard',          '~> 0.8'
