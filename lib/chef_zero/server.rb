@@ -197,7 +197,7 @@ module ChefZero
 
       @thread = Thread.new do
         begin
-          Thread.abort_on_exception = true
+          Thread.current.abort_on_exception = true
           @server.start
         ensure
           @running = false
