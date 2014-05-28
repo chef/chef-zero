@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.1.4 (5/27/2014)
+
+- fix issue with global Thread.exit_on_exception being set
+
 # 2.1.3 (5/27/2014)
 
 - rspec: default port to 8900 to not conflict with normal default port
