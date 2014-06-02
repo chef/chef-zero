@@ -19,6 +19,8 @@ matrix:
     - rvm: 2.0.0
     - rvm: 2.1.1
     - rvm: 2.1.1
+      env: SINGLE_ORG=true
+    - rvm: 2.1.1
       env: CHEF_FS=true
     - rvm: 2.1.1
       script: bundle exec rake chef_spec
