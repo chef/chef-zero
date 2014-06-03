@@ -386,35 +386,42 @@ module ChefZero
       router.not_found = NotFoundEndpoint.new
 
       if options[:single_org]
-        rest_base_prefix = [ 'organizations', 'chef' ]
+        rest_base_prefix = [ 'organizations', options[:single_org] ]
       else
         rest_base_prefix = []
       end
       return proc do |env|
-        request = RestRequest.new(env, rest_base_prefix)
-        if @on_request_proc
-          @on_request_proc.call(request)
-        end
-        response = nil
-        if @request_handler
-          response = @request_handler.call(request)
-        end
-        unless response
-          response = router.call(request)
-        end
-        if @on_response_proc
-          @on_response_proc.call(request, response)
-        end
+        begin
+          request = RestRequest.new(env, rest_base_prefix)
+          if @on_request_proc
+            @on_request_proc.call(request)
+          end
+          response = nil
+          if @request_handler
+            response = @request_handler.call(request)
+          end
+          unless response
+            response = router.call(request)
+          end
+          if @on_response_proc
+            @on_response_proc.call(request, response)
+          end
 
-        # Insert Server header
-        response[1]['Server'] = 'chef-zero'
+          # Insert Server header
+          response[1]['Server'] = 'chef-zero'
 
-        # Puma expects the response to be an array (chunked responses). Since
-        # we are statically generating data, we won't ever have said chunked
-        # response, so fake it.
-        response[-1] = Array(response[-1])
+          # Puma expects the response to be an array (chunked responses). Since
+          # we are statically generating data, we won't ever have said chunked
+          # response, so fake it.
+          response[-1] = Array(response[-1])
 
-        response
+          response
+        rescue
+          if options[:log_level] == :debug
+            STDERR.puts "Request Error: #{$!}"
+            STDERR.puts $!.backtrace.join("\n")
+          end
+        end
       end
     end
 

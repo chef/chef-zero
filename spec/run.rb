@@ -7,7 +7,7 @@ require 'rspec/core'
 
 tmpdir = nil
 
-def start_server(chef_repo_path)
+def start_local_server(chef_repo_path)
   Dir.mkdir(chef_repo_path) if !File.exists?(chef_repo_path)
 
   # 11.6 and below had a bug where it couldn't create the repo children automatically
@@ -43,10 +43,15 @@ begin
     chef_repo_path = "#{tmpdir}/repo"
 
     # Capture setup data into master_chef_repo_path
-    server = start_server(chef_repo_path)
+    server = start_local_server(chef_repo_path)
+
+  elsif ENV['SINGLE_ORG']
+    server = ChefZero::Server.new(:port => 8889, :single_org => 'singleorg')
+    server.start_background
 
   else
-    server = ChefZero::Server.new(:port => 8889)
+    server = ChefZero::Server.new(:port => 8889, :single_org => false)
+    server.data_store.create_dir([ 'organizations' ], 'pedant')
     server.start_background
   end
 
