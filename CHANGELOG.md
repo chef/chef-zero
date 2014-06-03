@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.1.5 (6/2/2014)
+
+- fix issue with :single_org => <value> not being honored
+
 # 2.1.4 (5/27/2014)
 
 - fix issue with global Thread.exit_on_exception being set
