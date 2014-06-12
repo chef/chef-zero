@@ -10,6 +10,19 @@ require 'chef_zero/version'
 require 'chef_zero/server'
 require 'optparse'
 
+def parse_port(port)
+  array = []
+  port.split(',').each do |part|
+    a,b = part.split('-',2)
+    if b
+      array = array.concat(a.to_i.upto(b.to_i).to_a)
+    else
+      array = array.concat([a.to_i])
+    end
+  end
+  array
+end
+
 options = {}
 
 OptionParser.new do |opts|
@@ -19,8 +32,9 @@ OptionParser.new do |opts|
     options[:host] = value
   end
 
-  opts.on("-p", "--port PORT", Integer, "Port to listen on") do |value|
-    options[:port] = value
+  opts.on("-p", "--port PORT", "Port to listen on (e.g. 8889, or 8500-8600 or 8885,8888)") do |value|
+    options[:port] ||= []
+    options[:port] += parse_port(value)
   end
 
   opts.on("--[no-]generate-keys", "Whether to generate actual keys or fake it (faster).  Default: false.") do |value|

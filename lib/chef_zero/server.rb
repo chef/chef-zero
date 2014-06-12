@@ -80,6 +80,17 @@ module ChefZero
     # @return [Hash]
     attr_reader :options
 
+    # @return [Integer]
+    def port
+      if @port
+        @port
+      elsif !options[:port].respond_to?(:each)
+        options[:port]
+      else
+        raise "port cannot be determined until server is started"
+      end
+    end
+
     # @return [WEBrick::HTTPServer]
     attr_reader :server
 
@@ -95,9 +106,9 @@ module ChefZero
     #
     def url
       @url ||= if @options[:host].include?(':')
-                 URI("http://[#{@options[:host]}]:#{@options[:port]}").to_s
+                 URI("http://[#{@options[:host]}]:#{port}").to_s
                else
-                 URI("http://#{@options[:host]}:#{@options[:port]}").to_s
+                 URI("http://#{@options[:host]}:#{port}").to_s
                end
     end
 
@@ -153,13 +164,19 @@ module ChefZero
         output = publish.respond_to?(:puts) ? publish : STDOUT
         output.puts <<-EOH.gsub(/^ {10}/, '')
           >> Starting Chef Zero (v#{ChefZero::VERSION})...
+        EOH
+      end
+
+      thread = start_background
+
+      if publish
+        output = publish.respond_to?(:puts) ? publish : STDOUT
+        output.puts <<-EOH.gsub(/^ {10}/, '')
           >> WEBrick (v#{WEBrick::VERSION}) on Rack (v#{Rack.release}) is listening at #{url}
           >> Press CTRL+C to stop
 
         EOH
       end
-
-      thread = start_background
 
       %w[INT TERM].each do |signal|
         Signal.trap(signal) do
@@ -185,8 +202,7 @@ module ChefZero
     #
     def start_background(wait = 5)
       @server = WEBrick::HTTPServer.new(
-        :BindAddress => @options[:host],
-        :Port        => @options[:port],
+        :DoNotListen => true,
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new(StringIO.new, 7),
         :StartCallback => proc {
@@ -195,18 +211,40 @@ module ChefZero
       )
       @server.mount('/', Rack::Handler::WEBrick, app)
 
+      # Pick a port
+      if options[:port].respond_to?(:each)
+        options[:port].each do |port|
+          begin
+            @server.listen(options[:host], port)
+            @port = port
+            break
+          rescue Errno::EADDRINUSE
+          end
+        end
+        if !@port
+          raise Errno::EADDRINUSE, "No port in :port range is available"
+        end
+      else
+        @server.listen(options[:host], options[:port])
+        @port = options[:port]
+      end
+
+      # Start the server in the background
       @thread = Thread.new do
         begin
           Thread.current.abort_on_exception = true
           @server.start
         ensure
+          @port = nil
           @running = false
         end
       end
+
       # Do not return until the web server is genuinely started.
       while !@running && @thread.alive?
         sleep(0.01)
       end
+
       @thread
     end
 

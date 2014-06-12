@@ -3,7 +3,13 @@ require 'bundler/gem_tasks'
 
 require 'chef_zero/version'
 
+task :default => :pedant
+
 task :spec do
+  system('rspec spec/*_spec.rb')
+end
+
+task :pedant do
   require File.expand_path('spec/run')
 end
 
