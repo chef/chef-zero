@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 2.2 (6/18/2014)
+
+- allow port ranges to be passed in as enumerables, which will be tried in sequence until one works: `ChefZero::Server.new(:port => 80.upto(100))`
+
 # 2.1.5 (6/2/2014)
 
 - fix issue with :single_org => <value> not being honored
