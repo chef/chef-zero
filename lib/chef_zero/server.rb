@@ -219,10 +219,11 @@ module ChefZero
             @port = port
             break
           rescue Errno::EADDRINUSE
+            ChefZero::Log.info("Port #{port} in use: #{$!}")
           end
         end
         if !@port
-          raise Errno::EADDRINUSE, "No port in :port range is available"
+          raise Errno::EADDRINUSE, "No port in :port range #{options[:port]} is available"
         end
       else
         @server.listen(options[:host], options[:port])
