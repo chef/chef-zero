@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/opscode/chef-zero.png?label=ready&title=Ready)](https://waffle.io/opscode/chef-zero)
 Chef Zero
 =========
 
