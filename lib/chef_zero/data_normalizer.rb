@@ -114,6 +114,15 @@ module ChefZero
       node
     end
 
+    def self.normalize_organization(org, name)
+      org['name'] ||= name
+      org['full_name'] ||= name
+      org['org_type'] ||= 'Business'
+      org['clientname'] ||= "#{name}-validator"
+      org['billing_plan'] ||= 'platform-free'
+      org
+    end
+
     def self.normalize_role(role, name)
       role['name'] ||= name
       role['description'] ||= ''
