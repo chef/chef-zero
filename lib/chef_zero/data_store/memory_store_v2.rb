@@ -35,11 +35,11 @@ module ChefZero
         create_dir([], 'organizations')
       end
 
-      def create_org
+      def create_org(name)
         org = {
           'clients' => {
-            'chef-validator' => '{ "validator": true }',
-            'chef-webui' => '{ "admin": true }'
+            "#{name}-validator" => '{ "validator": true }',
+            "#{name}-webui" => '{ "admin": true }'
           },
           'cookbooks' => {},
           'data' => {},
@@ -178,7 +178,7 @@ module ChefZero
 
       def _create_dir(parent_path, parent, name)
         if parent_path == [ 'organizations' ]
-          parent[name] = create_org
+          parent[name] = create_org(name)
         else
           parent[name] = {}
         end

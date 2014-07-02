@@ -50,6 +50,9 @@ require 'chef_zero/endpoints/environment_nodes_endpoint'
 require 'chef_zero/endpoints/environment_recipes_endpoint'
 require 'chef_zero/endpoints/environment_role_endpoint'
 require 'chef_zero/endpoints/node_endpoint'
+require 'chef_zero/endpoints/organizations_endpoint'
+require 'chef_zero/endpoints/organization_endpoint'
+require 'chef_zero/endpoints/organization_validator_key_endpoint'
 require 'chef_zero/endpoints/principal_endpoint'
 require 'chef_zero/endpoints/role_endpoint'
 require 'chef_zero/endpoints/role_environments_endpoint'
@@ -385,7 +388,40 @@ module ChefZero
 
     def open_source_endpoints
       [
-        [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+        # if options[:server_type] == 'osc'
+        #   # OSC-only
+          [ "/organizations/*/users", ActorsEndpoint.new(self) ],
+          [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
+        # else
+        #   # EC-only
+        #   [ "/organizations/*/users", EcUsersEndpoint.new(self) ],
+        #   [ "/organizations/*/users/*", EcUserEndpoint.new(self) ],
+        #   [ "/users", ActorsEndpoint.new(self) ],
+        #   [ "/users/*", ActorEndpoint.new(self) ],
+        # end
+
+        # Both
+        [ "/organizations", OrganizationsEndpoint.new(self) ],
+        [ "/organizations/*", OrganizationEndpoint.new(self) ],
+        [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
+        # [ "/organizations/*/members", RestObjectEndpoint.new(self) ],
+        # [ "/organizations/*/association_requests", AssociationRequestsEndpoint.new(self) ],
+        # [ "/organizations/*/association_requests/count", AssociationRequestsCountEndpoint.new(self) ],
+        # [ "/organizations/*/association_requests/*", AssociationRequestEndpoint.new(self) ],
+        # [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+        # [ "/organizations/*/containers", RestListEndpoint.new(self) ],
+        # [ "/organizations/*/containers/*", RestObjectEndpoint.new(self) ],
+        # [ "/organizations/*/groups", RestListEndpoint.new(self) ],
+        # [ "/organizations/*/groups/*", RestObjectEndpoint.new(self) ],
+        # [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
+        # [ "/users/*/association_requests", UserAssocationRequestsEndpoint.new(self) ],
+        # [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
+        # [ "/**/_acls", AclsEndpoint.new(self) ],
+        # [ "/**/_acls/*", AclEndpoint.new(self) ],
+        # [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
+        # [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+        # [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
+
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
@@ -413,9 +449,8 @@ module ChefZero
         [ "/organizations/*/sandboxes/*", SandboxEndpoint.new(self) ],
         [ "/organizations/*/search", SearchesEndpoint.new(self) ],
         [ "/organizations/*/search/*", SearchEndpoint.new(self) ],
-        [ "/organizations/*/users", ActorsEndpoint.new(self) ],
-        [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
 
+        # Internal
         [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ],
       ]
     end

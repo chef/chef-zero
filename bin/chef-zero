@@ -49,6 +49,10 @@ OptionParser.new do |opts|
     options[:log_level] = value
   end
 
+  opts.on("--multi-org", "Whether to run in multi-org mode") do |value|
+    options[:single_org] = nil
+  end
+
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit

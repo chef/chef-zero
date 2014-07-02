@@ -10,18 +10,22 @@ module ChefZero
         clear
       end
 
-      ORG_DEFAULTS = {
-        'clients' => {
-          'chef-validator' => '{ "validator": true }',
-          'chef-webui' => '{ "admin": true }'
-        },
-        'environments' => {
-          '_default' => '{ "description": "The default Chef environment" }'
-        },
-        'users' => {
-          'admin' => '{ "admin": "true" }'
+      def self.org_defaults(name)
+        {
+          'clients' => {
+            "#{name}-validator" => '{ "validator": true }',
+            "#{name}-webui" => '{ "admin": true }'
+          },
+          'environments' => {
+            '_default' => '{ "description": "The default Chef environment" }'
+          },
+          'users' => {
+            'admin' => '{ "admin": "true" }'
+          }
         }
-      }
+      end
+
+      ORG_DEFAULTS = org_defaults('chef')
 
       attr_reader :real_store
       attr_reader :single_org
