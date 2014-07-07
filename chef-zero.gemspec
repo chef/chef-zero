@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'mixlib-log',    '~> 1.3'
   s.add_dependency 'hashie',        '~> 2.0'
+  s.add_dependency 'uuidtools', '~> 2.1'
   s.add_dependency 'json'
   s.add_dependency 'rack'
 

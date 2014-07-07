@@ -80,9 +80,20 @@ module ChefZero
     def set_data(request, rest_path, data, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.set(rest_path, request.body, *options)
+        data_store.set(rest_path, data, *options)
       rescue DataStore::DataNotFoundError
         raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+      end
+    end
+
+    def create_data_dir(request, rest_path, name, *options)
+      rest_path ||= request.rest_path
+      begin
+        data_store.create_dir(rest_path, name, *options)
+      rescue DataStore::DataNotFoundError
+        raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+      rescue DataStore::DataAlreadyExistsError
+        raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
       end
     end
 
