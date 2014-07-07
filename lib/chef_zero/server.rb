@@ -408,7 +408,6 @@ module ChefZero
         # [ "/organizations/*/association_requests", AssociationRequestsEndpoint.new(self) ],
         # [ "/organizations/*/association_requests/count", AssociationRequestsCountEndpoint.new(self) ],
         # [ "/organizations/*/association_requests/*", AssociationRequestEndpoint.new(self) ],
-        # [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
         # [ "/organizations/*/containers", RestListEndpoint.new(self) ],
         # [ "/organizations/*/containers/*", RestObjectEndpoint.new(self) ],
         # [ "/organizations/*/groups", RestListEndpoint.new(self) ],
@@ -422,6 +421,7 @@ module ChefZero
         # [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
         # [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
 
+        [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
