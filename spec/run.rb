@@ -46,7 +46,7 @@ begin
     server = start_local_server(chef_repo_path)
 
   elsif ENV['SINGLE_ORG']
-    server = ChefZero::Server.new(:port => 8889, :single_org => 'singleorg')
+    server = ChefZero::Server.new(:port => 8889, :single_org => 'chef')
     server.start_background
 
   else
