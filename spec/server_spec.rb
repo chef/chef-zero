@@ -1,4 +1,5 @@
 require 'chef_zero/server'
+require 'uri'
 
 describe ChefZero::Server do
   context 'with a server bound to port 8889' do
@@ -23,6 +24,59 @@ describe ChefZero::Server do
 
     it 'a server bound to range 8889-8889 throws an exception' do
       expect { ChefZero::Server.new(:port => 8889.upto(8889)).start_background }.to raise_error Errno::EADDRINUSE
+    end
+
+    context 'accept headers' do
+      def get_nodes(accepts)
+        uri = URI(@server.url)
+        httpcall = Net::HTTP.new(uri.host, uri.port)
+        httpcall.get('/nodes', 'Accept' => accepts)
+      end
+
+      it 'accepts requests with no accept header' do
+        request = Net::HTTP::Get.new('/nodes')
+        request.delete('Accept')
+        uri = URI(@server.url)
+        response = Net::HTTP.new(uri.host, uri.port).request(request)
+        expect(response.code).to eq '200'
+      end
+
+      it 'accepts requests with accept: application/json' do
+        expect(get_nodes('application/json').code).to eq '200'
+      end
+
+      it 'accepts requests with accept: application/*' do
+        expect(get_nodes('application/*').code).to eq '200'
+      end
+
+      it 'accepts requests with accept: application/*' do
+        expect(get_nodes('*/*').code).to eq '200'
+      end
+
+      it 'denies requests with accept: application/blah' do
+        expect(get_nodes('application/blah').code).to eq '406'
+      end
+
+      it 'denies requests with accept: blah/json' do
+        expect(get_nodes('blah/json').code).to eq '406'
+      end
+
+      it 'denies requests with accept: blah/*' do
+        expect(get_nodes('blah/*').code).to eq '406'
+      end
+
+      it 'denies requests with accept: blah/*' do
+        expect(get_nodes('blah/*').code).to eq '406'
+      end
+
+      it 'denies requests with accept: <empty string>' do
+        expect(get_nodes('').code).to eq '406'
+      end
+
+      it 'accepts requests with accept: a/b;a=b;c=d, application/json;a=b, application/xml;a=b' do
+        expect(get_nodes('a/b;a=b;c=d, application/json;a=b, application/xml;a=b').code).to eq '200'
+      end
+
     end
   end
 end
