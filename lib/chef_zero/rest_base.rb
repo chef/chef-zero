@@ -14,6 +14,15 @@ module ChefZero
       server.data_store
     end
 
+    def accepts?(request, category, type)
+      # If HTTP_ACCEPT is not sent at all, assume it accepts anything
+      return true if !request.env['HTTP_ACCEPT']
+      accepts = request.env['HTTP_ACCEPT'].split(/,\s*/).map { |x| x.split(';',2)[0].strip }
+      puts accepts.inspect
+      puts "#{category}/#{type}? #{accepts.include?("#{category}/#{type}")}"
+      return accepts.include?("#{category}/#{type}") || accepts.include?("${category}/*") || accepts.include?('*/*')
+    end
+
     def call(request)
       method = request.method.downcase.to_sym
       if !self.respond_to?(method)
@@ -21,7 +30,7 @@ module ChefZero
         accept_methods_str = accept_methods.map { |m| m.to_s.upcase }.join(', ')
         return [405, {"Content-Type" => "text/plain", "Allow" => accept_methods_str}, "Bad request method for '#{request.env['REQUEST_PATH']}': #{request.env['REQUEST_METHOD']}"]
       end
-      if json_only && request.env['HTTP_ACCEPT'] && !request.env['HTTP_ACCEPT'].split(';').include?('application/json')
+      if json_only && !accepts?(request, 'application', 'json')
         return [406, {"Content-Type" => "text/plain"}, "Must accept application/json"]
       end
       # Dispatch to get()/post()/put()/delete()
