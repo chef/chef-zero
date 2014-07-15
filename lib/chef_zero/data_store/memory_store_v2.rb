@@ -49,6 +49,8 @@ module ChefZero
           'file_store' => {
             'checksums' => {}
           },
+          'org' => '{}',
+          'groups' => {},
           'nodes' => {},
           'roles' => {},
           'sandboxes' => {},

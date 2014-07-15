@@ -32,6 +32,7 @@ require 'chef_zero/data_store/memory_store_v2'
 require 'chef_zero/data_store/v1_to_v2_adapter'
 require 'chef_zero/version'
 
+require 'chef_zero/endpoints/rest_list_endpoint'
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
 require 'chef_zero/endpoints/actor_endpoint'
@@ -41,7 +42,8 @@ require 'chef_zero/endpoints/cookbook_version_endpoint'
 require 'chef_zero/endpoints/data_bags_endpoint'
 require 'chef_zero/endpoints/data_bag_endpoint'
 require 'chef_zero/endpoints/data_bag_item_endpoint'
-require 'chef_zero/endpoints/rest_list_endpoint'
+require 'chef_zero/endpoints/groups_endpoint'
+require 'chef_zero/endpoints/group_endpoint'
 require 'chef_zero/endpoints/environment_endpoint'
 require 'chef_zero/endpoints/environment_cookbooks_endpoint'
 require 'chef_zero/endpoints/environment_cookbook_endpoint'
@@ -410,8 +412,8 @@ module ChefZero
         # [ "/organizations/*/association_requests/*", AssociationRequestEndpoint.new(self) ],
         # [ "/organizations/*/containers", RestListEndpoint.new(self) ],
         # [ "/organizations/*/containers/*", RestObjectEndpoint.new(self) ],
-        # [ "/organizations/*/groups", RestListEndpoint.new(self) ],
-        # [ "/organizations/*/groups/*", RestObjectEndpoint.new(self) ],
+        [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
+        [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
         # [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
         # [ "/users/*/association_requests", UserAssocationRequestsEndpoint.new(self) ],
         # [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],

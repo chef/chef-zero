@@ -50,17 +50,6 @@ module ChefZero
       data_bag_item
     end
 
-    def self.normalize_environment(environment, name)
-      environment['name'] ||= name
-      environment['description'] ||= ''
-      environment['cookbook_versions'] ||= {}
-      environment['json_class'] ||= "Chef::Environment"
-      environment['chef_type'] ||= "environment"
-      environment['default_attributes'] ||= {}
-      environment['override_attributes'] ||= {}
-      environment
-    end
-
     def self.normalize_cookbook(endpoint, org_prefix, cookbook, name, version, base_uri, method)
       # TODO I feel dirty
       if method != 'PUT'
@@ -98,6 +87,28 @@ module ChefZero
         cookbook['metadata'].delete('long_description')
       end
       cookbook
+    end
+
+    def self.normalize_environment(environment, name)
+      environment['name'] ||= name
+      environment['description'] ||= ''
+      environment['cookbook_versions'] ||= {}
+      environment['json_class'] ||= "Chef::Environment"
+      environment['chef_type'] ||= "environment"
+      environment['default_attributes'] ||= {}
+      environment['override_attributes'] ||= {}
+      environment
+    end
+
+    def self.normalize_group(group, name, orgname)
+      group['actors'] ||= []
+      group['users'] ||= []
+      group['clients'] ||= []
+      group['groups'] ||= []
+      group['orgname'] ||= orgname if orgname
+      group['name'] ||= name
+      group['groupname'] ||= name
+      group
     end
 
     def self.normalize_node(node, name)
