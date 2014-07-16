@@ -60,6 +60,8 @@ require 'chef_zero/endpoints/node_endpoint'
 require 'chef_zero/endpoints/organizations_endpoint'
 require 'chef_zero/endpoints/organization_endpoint'
 require 'chef_zero/endpoints/organization_validator_key_endpoint'
+require 'chef_zero/endpoints/organization_association_requests_endpoint'
+require 'chef_zero/endpoints/organization_association_request_endpoint'
 require 'chef_zero/endpoints/principal_endpoint'
 require 'chef_zero/endpoints/role_endpoint'
 require 'chef_zero/endpoints/role_environments_endpoint'
@@ -404,8 +406,8 @@ module ChefZero
       else
         [
       #   # EC-only
-      #   [ "/organizations/*/users", EcUsersEndpoint.new(self) ],
-      #   [ "/organizations/*/users/*", EcUserEndpoint.new(self) ],
+          # [ "/organizations/*/users", EcOrgUsersEndpoint.new(self) ],
+          # [ "/organizations/*/users/*", EcOrgUserEndpoint.new(self) ],
           [ "/users", ActorsEndpoint.new(self) ],
           [ "/users/*", ActorEndpoint.new(self) ],
           [ "/users/_acl", AclsEndpoint.new(self) ],
@@ -422,16 +424,17 @@ module ChefZero
         [ "/organizations/*", OrganizationEndpoint.new(self) ],
         [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
         # [ "/organizations/*/members", RestObjectEndpoint.new(self) ],
-        # [ "/organizations/*/association_requests", AssociationRequestsEndpoint.new(self) ],
-        # [ "/organizations/*/association_requests/count", AssociationRequestsCountEndpoint.new(self) ],
-        # [ "/organizations/*/association_requests/*", AssociationRequestEndpoint.new(self) ],
+        [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
+        [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
+        # [ "/users/*/association_requests", UserAssocationRequestsEndpoint.new(self) ],
+        # [ "/users/*/association_requests/count", UserAssocationRequestsCountEndpoint.new(self) ],
+        # [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
+
         [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
         [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
         [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
         [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
         # [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
-        # [ "/users/*/association_requests", UserAssocationRequestsEndpoint.new(self) ],
-        # [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
         [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
         [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
         [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],

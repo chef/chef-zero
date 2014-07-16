@@ -29,7 +29,7 @@ module ChefZero
             "assigned_at" => Time.now.to_s
           }
           org_path = request.rest_path + [ name ]
-          create_data(request, org_path, 'org', JSON.pretty_generate(org))
+          set_data(request, org_path + [ 'org' ], JSON.pretty_generate(org))
 
           if server.generate_real_keys?
             # Create the validator client

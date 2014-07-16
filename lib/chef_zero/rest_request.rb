@@ -15,7 +15,7 @@ module ChefZero
     end
 
     def requestor
-      @env['HTTP_X_OPS_USERID'] || 'mr_nobody'
+      @env['HTTP_X_OPS_USERID']
     end
 
     def method
