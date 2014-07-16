@@ -36,6 +36,7 @@ require 'chef_zero/version'
 require 'chef_zero/endpoints/rest_list_endpoint'
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/acls_endpoint'
+require 'chef_zero/endpoints/acl_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
 require 'chef_zero/endpoints/actor_endpoint'
 require 'chef_zero/endpoints/cookbooks_endpoint'
@@ -422,7 +423,8 @@ module ChefZero
         # [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
         [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
         [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
-        # [ "/*/*/_acls/*", AclEndpoint.new(self) ],
+        [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
+        [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ],
         # [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
         # [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
         # [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
