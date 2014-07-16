@@ -258,7 +258,7 @@ module ChefZero
                 "create": { "groups": [ ] },
                 "read":   { "groups": [ "billing-admins" ] },
                 "update": { "groups": [ "billing-admins" ] },
-                "delete": { "groups": [ ] }
+                "delete": { "groups": [ ] },
                 "grant": { "groups": [ ] }
               }',
             },
