@@ -4,19 +4,13 @@ require 'chef_zero/rest_base'
 module ChefZero
   class DataNormalizer
     def self.normalize_acls(acls, path, container_acls)
-      defaults = {}
+      acls = container_acls.merge(acls)
       %w(create read update delete grant).each do |perm|
         acls[perm] ||= {}
-        default_perm = { 'actors' => [], 'groups' => [ 'admins' ] }
-        default_perm.merge!(container_acls[perm]) if container_acls[perm]
-        default_perm.merge!(get_org_default_acls(path, perm)) # Bring in what Chef Server would have filled in on initial org setup
-        if acls[perm]
-          acls[perm] = default_perm.merge(acls[perm])
-        else
-          acls[perm] = default_perm
-        end
+        acls[perm]['actors'] ||= []
+        acls[perm]['groups'] ||= [ 'admins' ]
       end
-      defaults.merge(acls)
+      acls
     end
 
     def self.normalize_client(client, name)
@@ -180,38 +174,6 @@ module ChefZero
     end
 
     private
-
-    DEFAULT_ACL_GROUPS = {
-      # https://github.com/opscode/mixlib-authorization/blob/master/lib/mixlib/authorization/default_organization_policy.rb
-      'containers' => {
-        %w(cookbooks roles environments) => {
-          %w(create update delete) => %w(admins users),
-          %w(read) => %w(admins users clients),
-        },
-        %w(data) => {
-          %w(create read update delete) => %w(admins users clients),
-        },
-        %w(nodes) => {
-          %w(create read) => %w(admins users clients),
-          %w(update delete) => %w(admins users),
-        },
-        %w(clients) => {
-          %w(read delete) => %w(admins users),
-        },
-        %w(groups containers) => {
-          %w(read) => %w(admins users),
-        },
-        %w(sandboxes) => {
-          %w(create) => %w(admins users)
-        }
-      },
-      'groups' => {
-        %w(billing-admins) => {
-          %w(read update) => %w(billing-admins),
-          %w(grant create delete) => [],
-        }
-      }
-    }
 
     def self.get_org_default_acls(path, perm)
       name_lists = DEFAULT_ACL_GROUPS[path[2]]
