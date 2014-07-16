@@ -407,7 +407,9 @@ module ChefZero
       #   [ "/organizations/*/users", EcUsersEndpoint.new(self) ],
       #   [ "/organizations/*/users/*", EcUserEndpoint.new(self) ],
           [ "/users", ActorsEndpoint.new(self) ],
-          [ "/users/*", ActorEndpoint.new(self) ]
+          [ "/users/*", ActorEndpoint.new(self) ],
+          [ "/users/_acl", AclsEndpoint.new(self) ],
+          [ "/users/_acl/*", AclEndpoint.new(self) ]
       #   [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
       #   [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
       #   [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],

@@ -9,6 +9,7 @@ module ChefZero
     #   groups, roles, nodes, users
     # or
     # /organizations/ORG/organization/_acl
+    # /users/NAME/_acl
     class AclsEndpoint < AclBase
       def get(request)
         path = request.rest_path[0..-2] # Strip off _acl

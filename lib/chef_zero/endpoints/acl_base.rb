@@ -6,7 +6,11 @@ module ChefZero
     # Extended by AclEndpoint and AclsEndpoint
     class AclBase < RestBase
       def acl_path(path)
-        acl_path = path[0..1] + [ 'acls' ] + path[2..-1]
+        if path[0] == 'organizations' && path.size > 1
+          acl_path = path[0..1] + [ 'acls' ] + path[2..-1]
+        else
+          acl_path = [ 'acls' ] + path
+        end
       end
 
       def get_acls(request, path)
@@ -21,9 +25,11 @@ module ChefZero
       end
 
       def get_container_acls(request, path)
-        if %w(clients containers cookbooks environments groups nodes roles sandboxes).include?(path[2])
-          if path[2..3] != ['containers', 'containers']
-            return get_acls(request, path[0..1] + [ 'containers', path[2] ])
+        if path[0] == 'organizations'
+          if %w(clients containers cookbooks environments groups nodes roles sandboxes).include?(path[2])
+            if path[2..3] != ['containers', 'containers']
+              return get_acls(request, path[0..1] + [ 'containers', path[2] ])
+            end
           end
         end
         return nil

@@ -9,6 +9,8 @@ module ChefZero
     # groups, roles, nodes, users
     # or
     # /organizations/ORG/organization/_acl/PERM
+    # or
+    # /users/NAME/_acl/PERM
     #
     # Where PERM is create,read,update,delete,grant
     class AclEndpoint < AclBase
