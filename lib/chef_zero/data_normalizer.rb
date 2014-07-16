@@ -3,12 +3,20 @@ require 'chef_zero/rest_base'
 
 module ChefZero
   class DataNormalizer
-    def self.normalize_acls(acls, path, container_acls)
-      acls = container_acls.merge(acls)
+    def self.normalize_acls(acls)
       %w(create read update delete grant).each do |perm|
         acls[perm] ||= {}
         acls[perm]['actors'] ||= []
         acls[perm]['groups'] ||= [ 'admins' ]
+      end
+      acls
+    end
+
+    def self.merge_container_acls(acls, container_acls)
+      container_acls.each_pair do |perm, who|
+        acls[perm] ||= {}
+        acls[perm]['actors'] ||= container_acls[perm]['actors']
+        acls[perm]['groups'] ||= container_acls[perm]['groups']
       end
       acls
     end

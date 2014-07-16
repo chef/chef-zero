@@ -3,7 +3,7 @@ require 'chef_zero/endpoints/acl_base'
 
 module ChefZero
   module Endpoints
-    # /organizations/ORG/<thing>/NAME/_acls/PERM
+    # /organizations/ORG/<thing>/NAME/_acl/PERM
     # Where thing is:
     # clients, data, containers, cookbooks, environments
     # groups, roles, nodes, users
@@ -12,18 +12,27 @@ module ChefZero
     #
     # Where PERM is create,read,update,delete,grant
     class AclEndpoint < AclBase
-      def get(request)
-        # Generate 404 if it doesn't exist
-        object_path = request.rest_path[0..-3] # strip off _acl/PERM
+      def validate_request(request)
+        path = acl_path(request.rest_path[0..-3]) # Strip off _acl/PERM
         perm = request.rest_path[-1]
-        require_existence(request, object_path)
-
         if !%w(read create update delete grant).include?(perm)
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
+        [path, perm]
+      end
 
-        acls = get_acls(request, object_path)
-        already_json_response(200, populate_defaults(request, JSON.pretty_generate({ perm => acls[perm] })))
+      def get(request)
+        path, perm = validate_request(request)
+        acls = DataNormalizer.normalize_acls(get_acls(request, path))
+        json_response(200, { perm => acls[perm] })
+      end
+
+      def put(request)
+        path, perm = validate_request(request)
+        acls = JSON.parse(get_data(request, path), :create_additions => false)
+        acls[perm] = JSON.parse(request.body, :create_additions => false)[perm]
+        set_data(request, path, JSON.pretty_generate(acls))
+        json_response(200, {'uri' => "#{build_uri(request.base_uri, request.rest_path)}"})
       end
     end
   end

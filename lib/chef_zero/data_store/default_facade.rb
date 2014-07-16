@@ -20,7 +20,27 @@ module ChefZero
         if value.is_a?(Proc)
           return value.call(self, path)
         else
+          # ACLs are a special case: defaults for them exist as long as the
+          # underlying object does
+          if value.nil? && path[2] == 'acls' && target_object_exists?(path)
+            return '{}'
+          end
           return value
+        end
+      end
+
+      def target_object_exists?(acl_path)
+        org_path = acl_path[0..1]
+        object_part = acl_path[3..-1]
+        if object_part == [ 'organization' ]
+          exists_dir?(org_path)
+        else
+          path = org_path + object_part
+          if object_part.size == 2 && %w(cookbooks data).include?(object_part[0])
+            exists_dir?(path)
+          else
+            exists?(path)
+          end
         end
       end
 
@@ -109,7 +129,7 @@ module ChefZero
           real_store.set(path, data, *options)
         rescue DataNotFoundError
           if default(path)
-            real_store.create(path[0..-2], path[-1], data, *options)
+            real_store.create(path[0..-2], path[-1], data, :create_dir, *options)
           else
             raise
           end
