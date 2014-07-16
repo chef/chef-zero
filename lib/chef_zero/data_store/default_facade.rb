@@ -3,12 +3,14 @@ require 'chef_zero/data_store/interface_v2'
 module ChefZero
   module DataStore
     class DefaultFacade < ChefZero::DataStore::InterfaceV2
-      def initialize(real_store)
+      def initialize(real_store, single_org)
         @real_store = real_store
+        @single_org = single_org
         clear
       end
 
       attr_reader :real_store
+      attr_reader :single_org
 
       def default(path, name=nil)
         value = @defaults
@@ -60,8 +62,14 @@ module ChefZero
       def clear
         real_store.clear if real_store.respond_to?(:clear)
         @defaults = {
-          'organizations' => {}
+          'organizations' => {},
+          'acls' => {}
         }
+        if !single_org
+          @defaults['users'] = {
+            'pivotal' => '{}'
+          }
+        end
       end
 
       def create_dir(path, name, *options)
@@ -188,7 +196,7 @@ module ChefZero
       end
 
       def org_defaults(name)
-        {
+        result = {
           'clients' => {
             "#{name}-validator" => '{ "validator": true }',
             "#{name}-webui" => '{ "admin": true }'
@@ -204,9 +212,6 @@ module ChefZero
           'nodes' => {},
           'roles' => {},
           'sandboxes' => {},
-          'users' => {
-            'admin' => '{ "admin": "true" }'
-          },
 
           'org' => '{}',
           'containers' => {
@@ -287,6 +292,14 @@ module ChefZero
             'sandboxes' => {}
           }
         }
+
+        if single_org
+          result['users'] = {
+            'admin' => '{ "admin": "true" }'
+          }
+        end
+
+        result
       end
 
       def admins_group
