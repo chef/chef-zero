@@ -42,6 +42,8 @@ require 'chef_zero/endpoints/actor_endpoint'
 require 'chef_zero/endpoints/cookbooks_endpoint'
 require 'chef_zero/endpoints/cookbook_endpoint'
 require 'chef_zero/endpoints/cookbook_version_endpoint'
+require 'chef_zero/endpoints/containers_endpoint'
+require 'chef_zero/endpoints/container_endpoint'
 require 'chef_zero/endpoints/data_bags_endpoint'
 require 'chef_zero/endpoints/data_bag_endpoint'
 require 'chef_zero/endpoints/data_bag_item_endpoint'
@@ -414,8 +416,8 @@ module ChefZero
         # [ "/organizations/*/association_requests", AssociationRequestsEndpoint.new(self) ],
         # [ "/organizations/*/association_requests/count", AssociationRequestsCountEndpoint.new(self) ],
         # [ "/organizations/*/association_requests/*", AssociationRequestEndpoint.new(self) ],
-        # [ "/organizations/*/containers", RestListEndpoint.new(self) ],
-        # [ "/organizations/*/containers/*", RestObjectEndpoint.new(self) ],
+        [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
+        [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
         [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
         [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
         # [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],

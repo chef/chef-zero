@@ -33,6 +33,12 @@ module ChefZero
       client
     end
 
+    def self.normalize_container(container, name)
+      container['containername'] ||= name
+      container['containerpath'] ||= name
+      container
+    end
+
     def self.normalize_user(user, name)
       user['name'] ||= name
       user['admin'] ||= false
