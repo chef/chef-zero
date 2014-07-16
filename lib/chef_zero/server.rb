@@ -129,13 +129,13 @@ module ChefZero
     #
     def data_store
       @data_store ||= begin
-        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new)
+        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:single_org])
         if options[:single_org]
           if result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3
             result.create_dir([ 'organizations' ], options[:single_org])
           else
             result = ChefZero::DataStore::V1ToV2Adapter.new(result, options[:single_org])
-            result = ChefZero::DataStore::DefaultFacade.new(result)
+            result = ChefZero::DataStore::DefaultFacade.new(result, options[:single_org])
           end
         else
           if !(result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3)
@@ -395,19 +395,26 @@ module ChefZero
     private
 
     def open_source_endpoints
-      [
-        # if options[:server_type] == 'osc'
-        #   # OSC-only
+      result = if options[:single_org]
+        # OSC-only
+        [
           [ "/organizations/*/users", ActorsEndpoint.new(self) ],
-          [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
-        # else
-        #   # EC-only
-        #   [ "/organizations/*/users", EcUsersEndpoint.new(self) ],
-        #   [ "/organizations/*/users/*", EcUserEndpoint.new(self) ],
-        #   [ "/users", ActorsEndpoint.new(self) ],
-        #   [ "/users/*", ActorEndpoint.new(self) ],
-        # end
-
+          [ "/organizations/*/users/*", ActorEndpoint.new(self) ]
+        ]
+      else
+        [
+      #   # EC-only
+      #   [ "/organizations/*/users", EcUsersEndpoint.new(self) ],
+      #   [ "/organizations/*/users/*", EcUserEndpoint.new(self) ],
+          [ "/users", ActorsEndpoint.new(self) ],
+          [ "/users/*", ActorEndpoint.new(self) ]
+      #   [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
+      #   [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+      #   [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
+        ]
+      end
+      result +
+      [
         # Both
         [ "/organizations", OrganizationsEndpoint.new(self) ],
         [ "/organizations/*", OrganizationEndpoint.new(self) ],
@@ -427,9 +434,6 @@ module ChefZero
         [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
         [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
         [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ],
-        # [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
-        # [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
-        # [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
 
         [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
