@@ -1,22 +1,20 @@
 require 'json'
-require 'chef_zero/endpoints/acl_base'
+require 'chef_zero/rest_base'
 
 module ChefZero
   module Endpoints
-    # /organizations/ORG/THING/NAME/_acls
-    # Where THING is:
-    # - clients, data, containers, cookbooks, environments
-    #   groups, roles, nodes, users
-    # or
-    # /organizations/ORG/organization/_acl
-    class AclsEndpoint < AclBase
-      def get(request)
-        # Generate 404 if it doesn't exist
-        object_path = request.rest_path[0..-2] # Strip off _acl
-        require_existence(request, object_path)
-
-        acls = get_acls(request, object_path) # Strip off _acl
-        already_json_response(200, populate_defaults(request, JSON.pretty_generate(acls)))
+    # Extended by AclEndpoint and AclsEndpoint
+    class AclBase < RestBase
+      def require_existence(request, path)
+        if path[2] == 'organization' && path.length == 3
+          if !exists_data_dir?(request, path[0..1])
+            raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          end
+        else
+          if !exists_data?(request, path)
+            raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          end
+        end
       end
 
       def get_acls(request, path)
