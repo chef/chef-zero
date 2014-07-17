@@ -1,5 +1,5 @@
 require 'json'
-require 'chef_zero/endpoints/rest_list_endpoint'
+require 'chef_zero/rest_base'
 
 module ChefZero
   module Endpoints
@@ -10,16 +10,19 @@ module ChefZero
         username = json['user']
         orgname = request.rest_path[1]
         id = "#{username}-#{orgname}"
-        create_data(request, request.rest_path, id, '{}')
+
+        if !exists_data?(request, [ 'organizations', orgname, 'members', username ])
+          RestErrorResponse.new(409, "User #{username} is already in organization #{orgname}")
+        end
+
+        create_data(request, request.rest_path, username, '{}')
         json_response(201, { "uri" => build_uri(request.base_uri, request.rest_path + [ id ]) })
       end
 
       def get(request)
         requests = list_data(request)
-        result = list_data(request).map do |id|
-          json = JSON.parse(get_data(request, request.rest_path + [ id ]), :create_additions => false)
-          DataNormalizer.normalize_association_request(json, id, nil, request.rest_path[1])
-        end
+        orgname = request.rest_path[1]
+        result = list_data(request).map { |username| { "id" => "#{username}-#{orgname}", 'username' => username } }
         json_response(200, result)
       end
     end
