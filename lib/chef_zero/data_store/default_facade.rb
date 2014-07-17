@@ -144,7 +144,7 @@ module ChefZero
           real_store.set(path, data, *options)
         rescue DataNotFoundError
           if default(path)
-            real_store.create(path[0..-2], path[-1], data, :create_dir, *options)
+            real_store.set(path, data, :create, :create_dir, *options)
           else
             raise
           end

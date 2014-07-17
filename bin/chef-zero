@@ -8,6 +8,7 @@ $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
 require 'chef_zero/version'
 require 'chef_zero/server'
+require 'chef_zero/data_store/raw_file_store'
 require 'optparse'
 
 def parse_port(port)
@@ -53,6 +54,10 @@ OptionParser.new do |opts|
     options[:single_org] = nil
   end
 
+  opts.on("--file-store PATH", "Persist data to files at the given path") do |value|
+    options[:data_store] = ChefZero::DataStore::RawFileStore.new(value)
+  end
+
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit
@@ -63,6 +68,10 @@ OptionParser.new do |opts|
     exit
   end
 end.parse!
+
+if options[:data_store]
+  options[:data_store] = ChefZero::DataStore::DefaultFacade.new(options[:data_store], options[:single_org])
+end
 
 server = ChefZero::Server.new(options)
 
