@@ -219,6 +219,7 @@ module ChefZero
           'nodes' => {},
           'roles' => {},
           'sandboxes' => {},
+          'users' => {},
 
           'org' => '{}',
           'containers' => {
@@ -299,13 +300,10 @@ module ChefZero
             'sandboxes' => {}
           },
           'association_requests' => {},
-          'members' => {}
         }
 
         if single_org
-          result['users'] = {
-            'admin' => '{ "admin": "true" }'
-          }
+          result['users']['admin'] = '{ "admin": "true" }'
         end
 
         result

@@ -15,7 +15,7 @@ module ChefZero
 
         json = JSON.parse(request.body, :create_additions => false)
         if json['response'] == 'accept'
-          create_data(request, [ 'organizations', orgname, 'members' ], username, '{}')
+          create_data(request, [ 'organizations', orgname, 'users' ], username, '{}')
           delete_data(request, [ 'organizations', orgname, 'association_requests', username ])
         elsif json['response'] == 'reject'
           delete_data(request, [ 'organizations', orgname, 'association_requests', username ])
