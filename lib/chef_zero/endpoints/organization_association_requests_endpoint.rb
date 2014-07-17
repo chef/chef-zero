@@ -11,7 +11,7 @@ module ChefZero
         orgname = request.rest_path[1]
         id = "#{username}-#{orgname}"
 
-        if !exists_data?(request, [ 'organizations', orgname, 'members', username ])
+        if !exists_data?(request, [ 'organizations', orgname, 'users', username ])
           RestErrorResponse.new(409, "User #{username} is already in organization #{orgname}")
         end
 
@@ -20,7 +20,6 @@ module ChefZero
       end
 
       def get(request)
-        requests = list_data(request)
         orgname = request.rest_path[1]
         result = list_data(request).map { |username| { "id" => "#{username}-#{orgname}", 'username' => username } }
         json_response(200, result)

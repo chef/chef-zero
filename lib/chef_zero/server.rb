@@ -59,6 +59,8 @@ require 'chef_zero/endpoints/environment_role_endpoint'
 require 'chef_zero/endpoints/node_endpoint'
 require 'chef_zero/endpoints/organizations_endpoint'
 require 'chef_zero/endpoints/organization_endpoint'
+require 'chef_zero/endpoints/organization_users_endpoint'
+require 'chef_zero/endpoints/organization_user_endpoint'
 require 'chef_zero/endpoints/organization_validator_key_endpoint'
 require 'chef_zero/endpoints/organization_association_requests_endpoint'
 require 'chef_zero/endpoints/organization_association_request_endpoint'
@@ -409,8 +411,8 @@ module ChefZero
       else
         [
       #   # EC-only
-          # [ "/organizations/*/users", EcOrgUsersEndpoint.new(self) ],
-          # [ "/organizations/*/users/*", EcOrgUserEndpoint.new(self) ],
+          [ "/organizations/*/users", OrganizationUsersEndpoint.new(self) ],
+          [ "/organizations/*/users/*", OrganizationUserEndpoint.new(self) ],
           [ "/users", ActorsEndpoint.new(self) ],
           [ "/users/*", ActorEndpoint.new(self) ],
           [ "/users/_acl", AclsEndpoint.new(self) ],
@@ -426,7 +428,6 @@ module ChefZero
         [ "/organizations", OrganizationsEndpoint.new(self) ],
         [ "/organizations/*", OrganizationEndpoint.new(self) ],
         [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
-        # [ "/organizations/*/members", RestObjectEndpoint.new(self) ],
         [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
         [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
         [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
