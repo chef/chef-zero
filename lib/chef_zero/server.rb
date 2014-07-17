@@ -59,11 +59,12 @@ require 'chef_zero/endpoints/environment_role_endpoint'
 require 'chef_zero/endpoints/node_endpoint'
 require 'chef_zero/endpoints/organizations_endpoint'
 require 'chef_zero/endpoints/organization_endpoint'
+require 'chef_zero/endpoints/organization_association_requests_endpoint'
+require 'chef_zero/endpoints/organization_association_request_endpoint'
+require 'chef_zero/endpoints/organization_authenticate_user_endpoint'
 require 'chef_zero/endpoints/organization_users_endpoint'
 require 'chef_zero/endpoints/organization_user_endpoint'
 require 'chef_zero/endpoints/organization_validator_key_endpoint'
-require 'chef_zero/endpoints/organization_association_requests_endpoint'
-require 'chef_zero/endpoints/organization_association_request_endpoint'
 require 'chef_zero/endpoints/principal_endpoint'
 require 'chef_zero/endpoints/role_endpoint'
 require 'chef_zero/endpoints/role_environments_endpoint'
@@ -71,6 +72,7 @@ require 'chef_zero/endpoints/sandboxes_endpoint'
 require 'chef_zero/endpoints/sandbox_endpoint'
 require 'chef_zero/endpoints/searches_endpoint'
 require 'chef_zero/endpoints/search_endpoint'
+require 'chef_zero/endpoints/system_recovery_endpoint'
 require 'chef_zero/endpoints/user_association_requests_endpoint'
 require 'chef_zero/endpoints/user_association_requests_count_endpoint'
 require 'chef_zero/endpoints/user_association_request_endpoint'
@@ -407,7 +409,8 @@ module ChefZero
         # OSC-only
         [
           [ "/organizations/*/users", ActorsEndpoint.new(self) ],
-          [ "/organizations/*/users/*", ActorEndpoint.new(self) ]
+          [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
+          [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
         ]
       else
         # EC-only
@@ -421,10 +424,9 @@ module ChefZero
           [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
           [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
           [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
-          [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ]
-      #   [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
-      #   [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
-      #   [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
+          [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
+          [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+          [ "/system_recovery", SystemRecoveryEndpoint.new(self) ]
         ]
       end
       result +
@@ -445,7 +447,6 @@ module ChefZero
         [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
         [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ],
 
-        [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
@@ -475,7 +476,7 @@ module ChefZero
         [ "/organizations/*/search/*", SearchEndpoint.new(self) ],
 
         # Internal
-        [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ],
+        [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ]
       ]
     end
 
