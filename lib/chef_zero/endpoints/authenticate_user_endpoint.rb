@@ -10,14 +10,18 @@ module ChefZero
         name = request_json['name']
         password = request_json['password']
         begin
-          user = data_store.get(request.rest_path[0..1] + ['users', name])
-          verified = JSON.parse(user, :create_additions => false)['password'] == password
-        rescue DataStore::DataNotFoundError
-          verified = false
+          user = data_store.get(request.rest_path[0..-2] + ['users', name])
+        rescue ChefZero::DataStore::DataNotFoundError
+          raise RestErrorResponse.new(401, "Bad username or password")
+        end
+        user = JSON.parse(user, :create_additions => false)
+        user = DataNormalizer.normalize_user(user, name)
+        if user['password'] != password
+          raise RestErrorResponse.new(401, "Bad username or password")
         end
         json_response(200, {
-          'name' => name,
-          'verified' => !!verified
+          'status' => 'linked',
+          'user' => user
         })
       end
     end

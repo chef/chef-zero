@@ -14,6 +14,10 @@ module ChefZero
       @base_uri ||= "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}#{env['SCRIPT_NAME']}"
     end
 
+    def requestor
+      @env['HTTP_X_OPS_USERID']
+    end
+
     def method
       @env['REQUEST_METHOD']
     end

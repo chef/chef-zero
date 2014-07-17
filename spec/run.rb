@@ -23,7 +23,7 @@ def start_local_server(chef_repo_path)
   Chef::Config.versioned_cookbooks = true
   chef_fs = Chef::ChefFS::Config.new.local_fs
   data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs)
-  data_store = ChefZero::DataStore::V1ToV2Adapter.new(data_store, 'chef', :org_defaults => ChefZero::DataStore::V1ToV2Adapter::ORG_DEFAULTS)
+  data_store = ChefZero::DataStore::V1ToV2Adapter.new(data_store, 'chef')
   server = ChefZero::Server.new(:port => 8889, :data_store => data_store)#, :log_level => :debug)
   server.start_background
   server
@@ -50,7 +50,7 @@ begin
     server.start_background
 
   else
-    server = ChefZero::Server.new(:port => 8889, :single_org => false)
+    server = ChefZero::Server.new(:port => 8889, :single_org => false, :osc_compat => true)
     server.data_store.create_dir([ 'organizations' ], 'pedant')
     server.start_background
   end

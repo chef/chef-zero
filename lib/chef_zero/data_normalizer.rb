@@ -3,6 +3,24 @@ require 'chef_zero/rest_base'
 
 module ChefZero
   class DataNormalizer
+    def self.normalize_acls(acls)
+      %w(create read update delete grant).each do |perm|
+        acls[perm] ||= {}
+        acls[perm]['actors'] ||= []
+        acls[perm]['groups'] ||= [ 'admins' ]
+      end
+      acls
+    end
+
+    def self.merge_container_acls(acls, container_acls)
+      container_acls.each_pair do |perm, who|
+        acls[perm] ||= {}
+        acls[perm]['actors'] ||= container_acls[perm]['actors']
+        acls[perm]['groups'] ||= container_acls[perm]['groups']
+      end
+      acls
+    end
+
     def self.normalize_client(client, name)
       client['name'] ||= name
       client['admin'] ||= false
@@ -13,6 +31,12 @@ module ChefZero
       client['json_class'] ||= "Chef::ApiClient"
       client['chef_type'] ||= "client"
       client
+    end
+
+    def self.normalize_container(container, name)
+      container['containername'] ||= name
+      container['containerpath'] ||= name
+      container
     end
 
     def self.normalize_user(user, name)
@@ -161,6 +185,27 @@ module ChefZero
           "recipe[#{item}]"
         end
       }.uniq
+    end
+
+    private
+
+    def self.get_org_default_acls(path, perm)
+      name_lists = DEFAULT_ACL_GROUPS[path[2]]
+      if name_lists
+        name_lists.each do |names, perm_lists|
+          if names.include?(path[3])
+            perm_lists.each do |perms, perm_groups|
+              if perms.include?(perm)
+                return { 'groups' => perm_groups }
+              end
+            end
+          end
+        end
+      end
+      if path[2] == 'organization' && perm == 'read'
+        return { 'groups' => [ 'admins', 'users' ] }
+      end
+      {}
     end
   end
 end

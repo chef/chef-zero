@@ -30,15 +30,20 @@ require 'chef_zero/cookbook_data'
 require 'chef_zero/rest_router'
 require 'chef_zero/data_store/memory_store_v2'
 require 'chef_zero/data_store/v1_to_v2_adapter'
+require 'chef_zero/data_store/default_facade'
 require 'chef_zero/version'
 
 require 'chef_zero/endpoints/rest_list_endpoint'
 require 'chef_zero/endpoints/authenticate_user_endpoint'
+require 'chef_zero/endpoints/acls_endpoint'
+require 'chef_zero/endpoints/acl_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
 require 'chef_zero/endpoints/actor_endpoint'
 require 'chef_zero/endpoints/cookbooks_endpoint'
 require 'chef_zero/endpoints/cookbook_endpoint'
 require 'chef_zero/endpoints/cookbook_version_endpoint'
+require 'chef_zero/endpoints/containers_endpoint'
+require 'chef_zero/endpoints/container_endpoint'
 require 'chef_zero/endpoints/data_bags_endpoint'
 require 'chef_zero/endpoints/data_bag_endpoint'
 require 'chef_zero/endpoints/data_bag_item_endpoint'
@@ -54,6 +59,11 @@ require 'chef_zero/endpoints/environment_role_endpoint'
 require 'chef_zero/endpoints/node_endpoint'
 require 'chef_zero/endpoints/organizations_endpoint'
 require 'chef_zero/endpoints/organization_endpoint'
+require 'chef_zero/endpoints/organization_association_requests_endpoint'
+require 'chef_zero/endpoints/organization_association_request_endpoint'
+require 'chef_zero/endpoints/organization_authenticate_user_endpoint'
+require 'chef_zero/endpoints/organization_users_endpoint'
+require 'chef_zero/endpoints/organization_user_endpoint'
 require 'chef_zero/endpoints/organization_validator_key_endpoint'
 require 'chef_zero/endpoints/principal_endpoint'
 require 'chef_zero/endpoints/role_endpoint'
@@ -62,6 +72,11 @@ require 'chef_zero/endpoints/sandboxes_endpoint'
 require 'chef_zero/endpoints/sandbox_endpoint'
 require 'chef_zero/endpoints/searches_endpoint'
 require 'chef_zero/endpoints/search_endpoint'
+require 'chef_zero/endpoints/system_recovery_endpoint'
+require 'chef_zero/endpoints/user_association_requests_endpoint'
+require 'chef_zero/endpoints/user_association_requests_count_endpoint'
+require 'chef_zero/endpoints/user_association_request_endpoint'
+require 'chef_zero/endpoints/user_organizations_endpoint'
 require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
 
@@ -77,6 +92,9 @@ module ChefZero
 
     def initialize(options = {})
       @options = DEFAULT_OPTIONS.merge(options)
+      if @options[:single_org] && !@options.has_key?(:osc_compat)
+        @options[:osc_compat] = true
+      end
       @options.freeze
 
       ChefZero::Log.level = @options[:log_level].to_sym
@@ -124,12 +142,13 @@ module ChefZero
     #
     def data_store
       @data_store ||= begin
-        result = @options[:data_store] || DataStore::MemoryStoreV2.new
+        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:osc_compat])
         if options[:single_org]
           if result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3
             result.create_dir([ 'organizations' ], options[:single_org])
           else
             result = ChefZero::DataStore::V1ToV2Adapter.new(result, options[:single_org])
+            result = ChefZero::DataStore::DefaultFacade.new(result, options[:osc_compat])
           end
         else
           if !(result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3)
@@ -389,41 +408,47 @@ module ChefZero
     private
 
     def open_source_endpoints
-      [
-        # if options[:server_type] == 'osc'
-        #   # OSC-only
+      result = if options[:osc_compat]
+        # OSC-only
+        [
           [ "/organizations/*/users", ActorsEndpoint.new(self) ],
           [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
-        # else
-        #   # EC-only
-        #   [ "/organizations/*/users", EcUsersEndpoint.new(self) ],
-        #   [ "/organizations/*/users/*", EcUserEndpoint.new(self) ],
-        #   [ "/users", ActorsEndpoint.new(self) ],
-        #   [ "/users/*", ActorEndpoint.new(self) ],
-        # end
+          [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
+        ]
+      else
+        # EC-only
+        [
+          [ "/organizations/*/users", OrganizationUsersEndpoint.new(self) ],
+          [ "/organizations/*/users/*", OrganizationUserEndpoint.new(self) ],
+          [ "/users", ActorsEndpoint.new(self) ],
+          [ "/users/*", ActorEndpoint.new(self) ],
+          [ "/users/_acl", AclsEndpoint.new(self) ],
+          [ "/users/_acl/*", AclEndpoint.new(self) ],
+          [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
+          [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
+          [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
+          [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
+          [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+          [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
 
+          [ "/organizations", OrganizationsEndpoint.new(self) ],
+          [ "/organizations/*", OrganizationEndpoint.new(self) ],
+          [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
+          [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
+          [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
+          [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
+          [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
+          [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
+          [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
+          [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
+          [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
+          [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
+          [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ]
+        ]
+      end
+      result +
+      [
         # Both
-        [ "/organizations", OrganizationsEndpoint.new(self) ],
-        [ "/organizations/*", OrganizationEndpoint.new(self) ],
-        [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
-        # [ "/organizations/*/members", RestObjectEndpoint.new(self) ],
-        # [ "/organizations/*/association_requests", AssociationRequestsEndpoint.new(self) ],
-        # [ "/organizations/*/association_requests/count", AssociationRequestsCountEndpoint.new(self) ],
-        # [ "/organizations/*/association_requests/*", AssociationRequestEndpoint.new(self) ],
-        # [ "/organizations/*/containers", RestListEndpoint.new(self) ],
-        # [ "/organizations/*/containers/*", RestObjectEndpoint.new(self) ],
-        [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
-        [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
-        # [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
-        # [ "/users/*/association_requests", UserAssocationRequestsEndpoint.new(self) ],
-        # [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
-        # [ "/**/_acls", AclsEndpoint.new(self) ],
-        # [ "/**/_acls/*", AclEndpoint.new(self) ],
-        # [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
-        # [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
-        # [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
-
-        [ "/organizations/*/authenticate_user", AuthenticateUserEndpoint.new(self) ],
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
@@ -453,7 +478,7 @@ module ChefZero
         [ "/organizations/*/search/*", SearchEndpoint.new(self) ],
 
         # Internal
-        [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ],
+        [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ]
       ]
     end
 
