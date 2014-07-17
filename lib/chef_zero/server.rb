@@ -69,6 +69,9 @@ require 'chef_zero/endpoints/sandboxes_endpoint'
 require 'chef_zero/endpoints/sandbox_endpoint'
 require 'chef_zero/endpoints/searches_endpoint'
 require 'chef_zero/endpoints/search_endpoint'
+require 'chef_zero/endpoints/user_association_requests_endpoint'
+require 'chef_zero/endpoints/user_association_requests_count_endpoint'
+require 'chef_zero/endpoints/user_association_request_endpoint'
 require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
 
@@ -426,9 +429,9 @@ module ChefZero
         # [ "/organizations/*/members", RestObjectEndpoint.new(self) ],
         [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
         [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
-        # [ "/users/*/association_requests", UserAssocationRequestsEndpoint.new(self) ],
-        # [ "/users/*/association_requests/count", UserAssocationRequestsCountEndpoint.new(self) ],
-        # [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
+        [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
+        [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
+        [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
 
         [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
         [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],

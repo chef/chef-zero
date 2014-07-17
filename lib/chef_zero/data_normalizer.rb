@@ -39,14 +39,6 @@ module ChefZero
       container
     end
 
-    def self.normalize_association_request(request, id, username, orgname)
-      request['id'] ||= id || "#{username}-#{orgname}"
-      request['name'] ||= username || if id =~ /(.+)-#{orgname}$/
-        $1
-      end
-      request
-    end
-
     def self.normalize_user(user, name)
       user['name'] ||= name
       user['admin'] ||= false

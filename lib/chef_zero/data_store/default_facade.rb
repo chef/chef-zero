@@ -298,7 +298,8 @@ module ChefZero
             'roles' => {},
             'sandboxes' => {}
           },
-          'association_requests' => {}
+          'association_requests' => {},
+          'members' => {}
         }
 
         if single_org
