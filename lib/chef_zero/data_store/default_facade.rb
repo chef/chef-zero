@@ -3,14 +3,14 @@ require 'chef_zero/data_store/interface_v2'
 module ChefZero
   module DataStore
     class DefaultFacade < ChefZero::DataStore::InterfaceV2
-      def initialize(real_store, single_org)
+      def initialize(real_store, osc_compat)
         @real_store = real_store
-        @single_org = single_org
+        @osc_compat = osc_compat
         clear
       end
 
       attr_reader :real_store
-      attr_reader :single_org
+      attr_reader :osc_compat
 
       def default(path, name=nil)
         value = @defaults
@@ -72,7 +72,7 @@ module ChefZero
           'organizations' => {},
           'acls' => {}
         }
-        if !single_org
+        if !osc_compat
           @defaults['users'] = {
             'pivotal' => '{}'
           }
@@ -302,7 +302,7 @@ module ChefZero
           'association_requests' => {},
         }
 
-        if single_org
+        if osc_compat
           result['users']['admin'] = '{ "admin": "true" }'
         end
 

@@ -50,7 +50,7 @@ begin
     server.start_background
 
   else
-    server = ChefZero::Server.new(:port => 8889, :single_org => false)
+    server = ChefZero::Server.new(:port => 8889, :single_org => false, :osc_compat => true)
     server.data_store.create_dir([ 'organizations' ], 'pedant')
     server.start_background
   end

@@ -92,6 +92,9 @@ module ChefZero
 
     def initialize(options = {})
       @options = DEFAULT_OPTIONS.merge(options)
+      if @options[:single_org] && !@options.has_key?(:osc_compat)
+        @options[:osc_compat] = true
+      end
       @options.freeze
 
       ChefZero::Log.level = @options[:log_level].to_sym
@@ -139,13 +142,13 @@ module ChefZero
     #
     def data_store
       @data_store ||= begin
-        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:single_org])
+        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:osc_compat])
         if options[:single_org]
           if result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3
             result.create_dir([ 'organizations' ], options[:single_org])
           else
             result = ChefZero::DataStore::V1ToV2Adapter.new(result, options[:single_org])
-            result = ChefZero::DataStore::DefaultFacade.new(result, options[:single_org])
+            result = ChefZero::DataStore::DefaultFacade.new(result, options[:osc_compat])
           end
         else
           if !(result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3)
@@ -405,7 +408,7 @@ module ChefZero
     private
 
     def open_source_endpoints
-      result = if options[:single_org]
+      result = if options[:osc_compat]
         # OSC-only
         [
           [ "/organizations/*/users", ActorsEndpoint.new(self) ],
@@ -426,27 +429,26 @@ module ChefZero
           [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
           [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
           [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
-          [ "/system_recovery", SystemRecoveryEndpoint.new(self) ]
+          [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
+
+          [ "/organizations", OrganizationsEndpoint.new(self) ],
+          [ "/organizations/*", OrganizationEndpoint.new(self) ],
+          [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
+          [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
+          [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
+          [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
+          [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
+          [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
+          [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
+          [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
+          [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
+          [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
+          [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ]
         ]
       end
       result +
       [
         # Both
-        [ "/organizations", OrganizationsEndpoint.new(self) ],
-        [ "/organizations/*", OrganizationEndpoint.new(self) ],
-        [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
-        [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
-        [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
-
-        [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
-        [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
-        [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
-        [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
-        [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
-        [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
-        [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
-        [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ],
-
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
