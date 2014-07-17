@@ -49,6 +49,15 @@ begin
     server = ChefZero::Server.new(:port => 8889, :single_org => 'chef')
     server.start_background
 
+  elsif ENV['FILE_STORE']
+    require 'tmpdir'
+    require 'chef_zero/data_store/raw_file_store'
+    tmpdir = Dir.mktmpdir
+    data_store = ChefZero::DataStore::RawFileStore.new(tmpdir, true)
+    data_store = ChefZero::DataStore::DefaultFacade.new(data_store, true)
+    server = ChefZero::Server.new(:port => 8889, :single_org => 'chef', :data_store => data_store)
+    server.start_background
+
   else
     server = ChefZero::Server.new(:port => 8889, :single_org => false, :osc_compat => true)
     server.data_store.create_dir([ 'organizations' ], 'pedant')

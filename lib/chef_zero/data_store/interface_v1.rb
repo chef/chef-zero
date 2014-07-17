@@ -29,6 +29,9 @@ module ChefZero
       end
 
       # Set a file's value.
+      # options is a list of symbols, including:
+      #    :create - create the file if it does not exist
+      #    :create_dir - create the directory if it does not exist
       def set(path, data, *options)
         raise "set not implemented by class #{self.class}"
       end
@@ -39,6 +42,8 @@ module ChefZero
       end
 
       # Delete a directory.
+      # options is a list of symbols, including:
+      #   :recursive - delete even if empty
       def delete_dir(path, *options)
         raise "delete_dir not implemented by class #{self.class}"
       end
