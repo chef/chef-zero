@@ -72,7 +72,7 @@ module ChefZero
           'organizations' => {},
           'acls' => {}
         }
-        if !osc_compat
+        unless osc_compat
           @defaults['users'] = {
             'pivotal' => '{}'
           }
@@ -128,7 +128,7 @@ module ChefZero
 
       def get(path, request=nil)
         begin
-          real_store.get(path, request=nil)
+          real_store.get(path, request)
         rescue DataNotFoundError
           result = default(path)
           if result
