@@ -144,14 +144,14 @@ module ChefZero
       @data_store ||= begin
         result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:osc_compat])
         if options[:single_org]
-          if result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3
-            result.create_dir([ 'organizations' ], options[:single_org])
-          else
+
+          if !result.respond_to?(:interface_version) || result.interface_version == 1
             result = ChefZero::DataStore::V1ToV2Adapter.new(result, options[:single_org])
             result = ChefZero::DataStore::DefaultFacade.new(result, options[:osc_compat])
           end
+
         else
-          if !(result.respond_to?(:interface_version) && result.interface_version >= 2 && result.interface_version < 3)
+          if !result.respond_to?(:interface_version) || result.interface_version == 1
             raise "Multi-org not supported by data store #{result}!"
           end
         end
