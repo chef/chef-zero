@@ -14,6 +14,15 @@ module ChefZero
       server.data_store
     end
 
+    def accepts?(request, category, type)
+      # If HTTP_ACCEPT is not sent at all, assume it accepts anything
+      return true if !request.env['HTTP_ACCEPT']
+      accepts = request.env['HTTP_ACCEPT'].split(/,\s*/).map { |x| x.split(';',2)[0].strip }
+      puts accepts.inspect
+      puts "#{category}/#{type}? #{accepts.include?("#{category}/#{type}")}"
+      return accepts.include?("#{category}/#{type}") || accepts.include?("${category}/*") || accepts.include?('*/*')
+    end
+
     def call(request)
       method = request.method.downcase.to_sym
       if !self.respond_to?(method)
