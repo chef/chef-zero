@@ -10,7 +10,11 @@ task :spec do
 end
 
 task :pedant do
-  require File.expand_path('spec/run')
+  require File.expand_path('spec/run_pedant')
+end
+
+task :oc_pedant do
+  require File.expand_path('spec/run_oc_pedant')
 end
 
 task :chef_spec do
