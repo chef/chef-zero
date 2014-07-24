@@ -37,7 +37,8 @@ begin
     '--skip-validation',
     '--skip-authentication',
     '--skip-authorization',
-    '--skip-omnibus'
+    '--skip-omnibus',
+    '--skip-usags'
   ])
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
