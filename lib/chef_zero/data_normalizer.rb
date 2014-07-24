@@ -125,6 +125,12 @@ module ChefZero
     end
 
     def self.normalize_group(group, name, orgname)
+      if group['actors'].is_a?(Hash)
+        group['users'] ||= group['actors']['users']
+        group['clients'] ||= group['actors']['clients']
+        group['groups'] ||= group['actors']['groups']
+        group['actors'] = nil
+      end
       group['users'] ||= []
       group['clients'] ||= []
       group['actors'] ||= (group['clients'] + group['users'])
