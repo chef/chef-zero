@@ -15,7 +15,7 @@ module ChefZero
           raise RestErrorResponse.new(401, "Bad username or password")
         end
         user = JSON.parse(user, :create_additions => false)
-        user = DataNormalizer.normalize_user(user, name)
+        user = DataNormalizer.normalize_user(user, name, 'username')
         if user['password'] != password
           raise RestErrorResponse.new(401, "Bad username or password")
         end

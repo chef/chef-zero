@@ -11,7 +11,7 @@ module ChefZero
         password = request_json['password']
         user = get_data(request, request.rest_path[0..-2] + ['users', name])
         user = JSON.parse(user, :create_additions => false)
-        user = DataNormalizer.normalize_user(user, name)
+        user = DataNormalizer.normalize_user(user, name, 'username')
         if !user['recovery_authentication_enabled']
           raise RestErrorResponse.new(403, "Only users with recovery_authentication_enabled=true may use /system_recovery to log in")
         end

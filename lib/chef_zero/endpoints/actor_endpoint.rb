@@ -55,7 +55,7 @@ module ChefZero
         if request.rest_path[2] == 'clients'
           response = DataNormalizer.normalize_client(response, request.rest_path[3])
         else
-          response = DataNormalizer.normalize_user(response, request.rest_path[3])
+          response = DataNormalizer.normalize_user(response, request.rest_path[3], identity_key)
         end
         JSON.pretty_generate(response)
       end

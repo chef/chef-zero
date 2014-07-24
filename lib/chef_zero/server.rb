@@ -425,8 +425,8 @@ module ChefZero
         [
           [ "/organizations/*/users", OrganizationUsersEndpoint.new(self) ],
           [ "/organizations/*/users/*", OrganizationUserEndpoint.new(self) ],
-          [ "/users", ActorsEndpoint.new(self) ],
-          [ "/users/*", ActorEndpoint.new(self) ],
+          [ "/users", ActorsEndpoint.new(self, 'username') ],
+          [ "/users/*", ActorEndpoint.new(self, 'username') ],
           [ "/users/_acl", AclsEndpoint.new(self) ],
           [ "/users/_acl/*", AclEndpoint.new(self) ],
           [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],

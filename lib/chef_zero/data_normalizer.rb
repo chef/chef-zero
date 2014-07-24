@@ -39,8 +39,8 @@ module ChefZero
       container
     end
 
-    def self.normalize_user(user, name)
-      user['name'] ||= name
+    def self.normalize_user(user, name, identity_key)
+      user[identity_key] ||= name
       user['admin'] ||= false
       user['admin'] = !!user['admin']
       user['openid'] ||= nil
