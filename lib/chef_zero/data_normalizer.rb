@@ -125,9 +125,9 @@ module ChefZero
     end
 
     def self.normalize_group(group, name, orgname)
-      group['actors'] ||= []
       group['users'] ||= []
       group['clients'] ||= []
+      group['actors'] ||= (group['clients'] + group['users'])
       group['groups'] ||= []
       group['orgname'] ||= orgname if orgname
       group['name'] ||= name

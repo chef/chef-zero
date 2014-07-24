@@ -205,8 +205,7 @@ module ChefZero
       def org_defaults(name)
         result = {
           'clients' => {
-            "#{name}-validator" => '{ "validator": true }',
-            "#{name}-webui" => '{ "admin": true }'
+            "#{name}-validator" => '{ "validator": true }'
           },
           'cookbooks' => {},
           'data' => {},
@@ -304,6 +303,7 @@ module ChefZero
 
         if osc_compat
           result['users']['admin'] = '{ "admin": "true" }'
+          result['clients']["#{name}-webui"] = '{ "admin": true }'
         end
 
         result
@@ -326,7 +326,7 @@ module ChefZero
       def clients_group
         proc do |data, path|
           clients = data.list(path[0..1] + [ 'clients' ])
-          JSON.pretty_generate({ 'actors' => clients })
+          JSON.pretty_generate({ 'clients' => clients })
         end
       end
 
@@ -345,7 +345,7 @@ module ChefZero
           end
 
           JSON.pretty_generate({
-            'create' => { "actors" => [ validators] },
+            'create' => { 'actors' => [ validators ] },
             'read' => { 'groups' => [ 'admins', 'users' ] },
             'delete' => { 'groups' => [ 'admins', 'users' ] }
           })
