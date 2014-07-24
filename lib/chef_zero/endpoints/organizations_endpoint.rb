@@ -22,7 +22,7 @@ module ChefZero
         elsif exists_data_dir?(request, request.rest_path + [ name ])
           error(409, "Organization already exists")
         else
-          create_data_dir(request, request.rest_path, name)
+          create_data_dir(request, request.rest_path, name, :requestor => request.requestor)
 
           org = {
             "guid" => UUIDTools::UUID.random_create,

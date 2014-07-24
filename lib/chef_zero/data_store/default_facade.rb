@@ -95,10 +95,12 @@ module ChefZero
 
         # If the org hasn't been created, create its defaults
         if path.size > 0 && path[0] == 'organizations'
+          options_hash = options.last
+          requestor = options_hash.is_a?(Hash) ? options_hash[:requestor] : nil
           if path.size == 1
-            @defaults['organizations'][name] ||= org_defaults(name)
+            @defaults['organizations'][name] ||= org_defaults(name, requestor)
           else
-            @defaults['organizations'][path[1]] ||= org_default(path[1])
+            @defaults['organizations'][path[1]] ||= org_default(path[1], requestor)
           end
         end
       end
@@ -118,10 +120,12 @@ module ChefZero
         end
         # If the org hasn't been created, create its defaults
         if path.size > 0 && path[0] == 'organizations'
+          options_hash = options.last
+          requestor = options_hash.is_a?(Hash) ? options_hash[:requestor] : nil
           if path.size == 1
-            @defaults['organizations'][name] ||= org_defaults(name)
+            @defaults['organizations'][name] ||= org_defaults(name, options[:requestor])
           else
-            @defaults['organizations'][path[1]] ||= org_defaults(path[1])
+            @defaults['organizations'][path[1]] ||= org_defaults(path[1], options[:requestor])
           end
         end
       end
@@ -202,7 +206,7 @@ module ChefZero
         real_store.exists_dir?(path) || default(path)
       end
 
-      def org_defaults(name)
+      def org_defaults(name, requestor)
         result = {
           'clients' => {
             "#{name}-validator" => '{ "validator": true }'
@@ -263,7 +267,7 @@ module ChefZero
                 "create": { "groups": [ "admins", "users", "clients" ] },
                 "read":   { "groups": [ "admins", "users", "clients" ] },
                 "update": { "groups": [ "admins", "users", "clients" ] },
-                "delete": { "groups": [ "admins", "users", "clients" ] },
+                "delete": { "groups": [ "admins", "users", "clients" ] }
               }',
               'nodes' => '{
                 "create": { "groups": [ "admins", "users", "clients" ] },
@@ -271,12 +275,16 @@ module ChefZero
                 "update": { "groups": [ "admins", "users" ] },
                 "delete": { "groups": [ "admins", "users" ] }
               }',
-              'clients' => client_container_acls,
+              'clients' => client_container_acls(requestor),
               'groups' => '{
                 "read":   { "groups": [ "admins", "users" ] }
               }',
-              'containers' => '{
-                "read":   { "groups": [ "admins", "users" ] }
+              'containers' => %'{
+                "create": { "actors": [ "#{requestor}" ] },
+                "read":   { "actors": [ "#{requestor}" ], "groups": [ "admins", "users" ] },
+                "update": { "actors": [ "#{requestor}" ] },
+                "delete": { "actors": [ "#{requestor}" ] },
+                "grant":  { "actors": [ "#{requestor}" ] }
               }',
               'sandboxes' => '{
                 "create":   { "groups": [ "admins", "users" ] }
@@ -307,6 +315,8 @@ module ChefZero
         if osc_compat
           result['users']['admin'] = '{ "admin": "true" }'
           result['clients']["#{name}-webui"] = '{ "admin": true }'
+        else
+          result['users'][requestor] = '{}'
         end
 
         result
@@ -340,7 +350,7 @@ module ChefZero
         end
       end
 
-      def client_container_acls
+      def client_container_acls(requestor)
         proc do |data, path|
           validators = data.list(path[0..1] + [ 'clients' ]).select do |name|
             client = JSON.parse(data.get(path[0..1] + [ 'clients', name ]), :create_additions => false)
@@ -348,7 +358,7 @@ module ChefZero
           end
 
           JSON.pretty_generate({
-            'create' => { 'actors' => [ validators ] },
+            'create' => { 'actors' => [ requestor ] + validators },
             'read' => { 'groups' => [ 'admins', 'users' ] },
             'delete' => { 'groups' => [ 'admins', 'users' ] }
           })
