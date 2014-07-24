@@ -31,33 +31,6 @@ module ChefZero
 
       def clear
         @data = {}
-
-        create_dir([], 'organizations')
-      end
-
-      def create_org(name)
-        org = {
-          'clients' => {
-            "#{name}-validator" => '{ "validator": true }',
-            "#{name}-webui" => '{ "admin": true }'
-          },
-          'cookbooks' => {},
-          'data' => {},
-          'environments' => {
-            '_default' => '{ "description": "The default Chef environment" }'
-          },
-          'file_store' => {
-            'checksums' => {}
-          },
-          'org' => '{}',
-          'groups' => {},
-          'nodes' => {},
-          'roles' => {},
-          'sandboxes' => {},
-          'users' => {
-            'admin' => '{ "admin": "true" }'
-          }
-        }
       end
 
       def create_dir(path, name, *options)
@@ -68,7 +41,7 @@ module ChefZero
             raise DataAlreadyExistsError.new(path + [name])
           end
         else
-          _create_dir(path, parent, name)
+          parent[name] = {}
         end
       end
 
@@ -168,7 +141,7 @@ module ChefZero
         path.each_with_index do |path_part, index|
           if !value.has_key?(path_part)
             if create_dir
-              _create_dir(path[0,index], value, path_part)
+              value[path_part] = {}
             else
               raise DataNotFoundError.new(path[0,index+1])
             end
@@ -176,14 +149,6 @@ module ChefZero
           value = value[path_part]
         end
         value
-      end
-
-      def _create_dir(parent_path, parent, name)
-        if parent_path == [ 'organizations' ]
-          parent[name] = create_org(name)
-        else
-          parent[name] = {}
-        end
       end
     end
   end

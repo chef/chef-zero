@@ -10,40 +10,15 @@ module ChefZero
         clear
       end
 
-      def self.org_defaults(name)
-        {
-          'clients' => {
-            "#{name}-validator" => '{ "validator": true }',
-            "#{name}-webui" => '{ "admin": true }'
-          },
-          'environments' => {
-            '_default' => '{ "description": "The default Chef environment" }'
-          },
-          'users' => {
-            'admin' => '{ "admin": "true" }'
-          }
-        }
-      end
-
-      ORG_DEFAULTS = org_defaults('chef')
-
       attr_reader :real_store
       attr_reader :single_org
 
       def clear
-        if @options[:org_defaults]
-          @defaults = { 'organizations' => { @single_org => @options[:org_defaults] }}
-        else
-          @defaults = {}
-        end
         real_store.clear if real_store.respond_to?(:clear)
       end
 
       def create_dir(path, name, *options)
         return nil if skip_organizations?(path, name)
-        if using_default?(path, name)
-          raise DataAlreadyExistsError.new(path + [name])
-        end
         fix_exceptions do
           real_store.create_dir(path[2..-1], name, *options)
         end
@@ -51,11 +26,6 @@ module ChefZero
 
       def create(path, name, data, *options)
         return nil if skip_organizations?(path, name)
-        if using_default?(path, name)
-          raise DataAlreadyExistsError.new(path + [name])
-        end
-        remove_default(path, name)
-
         fix_exceptions do
           real_store.create(path[2..-1], name, data, *options)
         end
@@ -63,18 +33,13 @@ module ChefZero
 
       def get(path, request=nil)
         return nil if skip_organizations?(path)
-        if using_default?(path)
-          get_default(path)
-        else
-          fix_exceptions do
-            real_store.get(path[2..-1], request)
-          end
+        fix_exceptions do
+          real_store.get(path[2..-1], request)
         end
       end
 
       def set(path, data, *options)
         return nil if skip_organizations?(path)
-        remove_default(path)
         fix_exceptions do
           real_store.set(path[2..-1], data, *options)
         end
@@ -82,7 +47,6 @@ module ChefZero
 
       def delete(path)
         return nil if skip_organizations?(path)
-        remove_default(path)
         fix_exceptions do
           real_store.delete(path[2..-1])
         end
@@ -98,74 +62,25 @@ module ChefZero
       def list(path)
         return nil if skip_organizations?(path)
         fix_exceptions do
-          result = real_store.list(path[2..-1])
-          if using_default?(path)
-            result ||= []
-            get_default(path).keys.each do |value|
-              result << value if !result.include?(value)
-            end
-          end
-          result
+          real_store.list(path[2..-1])
         end
       end
 
       def exists?(path)
         return nil if skip_organizations?(path)
-        if using_default?(path)
-          true
-        else
-          fix_exceptions do
-            real_store.exists?(path[2..-1])
-          end
+        fix_exceptions do
+          real_store.exists?(path[2..-1])
         end
       end
 
       def exists_dir?(path)
         return nil if skip_organizations?(path)
-        if using_default?(path)
-          true
-        else
-          fix_exceptions do
-            real_store.exists_dir?(path[2..-1])
-          end
+        fix_exceptions do
+          real_store.exists_dir?(path[2..-1])
         end
       end
 
       private
-
-      def using_default?(path, name = nil)
-        path = path + [name] if name
-        result = @defaults
-        path.each do |part|
-          return false if !result.has_key?(part)
-          result = result[part]
-        end
-        !result.nil?
-      end
-
-      def get_default(path, name = nil)
-        path = path + [name] if name
-        result = @defaults
-        path.each do |part|
-          return nil if !result.has_key?(part)
-          result = result[part]
-        end
-        result
-      end
-
-      def remove_default(path, name = nil)
-        dir = name ? path[0..-2] : path
-        default = @defaults
-        dir.each do |part|
-          return if !default.has_key?(part)
-          default = default[part]
-        end
-
-        name = name || path.last
-        if name
-          default.delete(name)
-        end
-      end
 
       def fix_exceptions
         begin

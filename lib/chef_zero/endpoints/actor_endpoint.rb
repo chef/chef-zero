@@ -4,7 +4,9 @@ require 'chef_zero/data_normalizer'
 
 module ChefZero
   module Endpoints
-    # /clients/* and /users/*
+    # /organizations/ORG/clients/NAME
+    # /organizations/ORG/users/NAME
+    # /users/NAME
     class ActorEndpoint < RestObjectEndpoint
       def put(request)
         # Find out if we're updating the public key.
