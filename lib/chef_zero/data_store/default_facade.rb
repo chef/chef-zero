@@ -3,14 +3,16 @@ require 'chef_zero/data_store/interface_v2'
 module ChefZero
   module DataStore
     class DefaultFacade < ChefZero::DataStore::InterfaceV2
-      def initialize(real_store, osc_compat)
+      def initialize(real_store, osc_compat, superusers = [ 'pivotal' ])
         @real_store = real_store
         @osc_compat = osc_compat
+        @superusers = superusers
         clear
       end
 
       attr_reader :real_store
       attr_reader :osc_compat
+      attr_reader :superusers
 
       def default(path, name=nil)
         value = @defaults
@@ -73,9 +75,10 @@ module ChefZero
           'acls' => {}
         }
         unless osc_compat
-          @defaults['users'] = {
-            'pivotal' => '{}'
-          }
+          @defaults['users'] = {}
+          superusers.each do |superuser|
+            @defaults['users'][superuser] = '{}'
+          end
         end
       end
 
@@ -310,8 +313,15 @@ module ChefZero
             },
             'nodes' => {},
             'roles' => {},
+            'organization' => %'{
+              "create": { "actors": #{superusers.inspect} },
+              "read": { "actors": #{superusers.inspect}, "groups": [ "admins", "users" ] },
+              "update": { "actors": #{superusers.inspect} },
+              "delete": { "actors": #{superusers.inspect} },
+              "grant": { "actors": #{superusers.inspect} }
+            }',
             'organizations' => '{
-              "read": { "groups": [ "admins", "users" ] }
+              "read": { "groups": [ "admins", "users" ]}
             }',
             'sandboxes' => {}
           },

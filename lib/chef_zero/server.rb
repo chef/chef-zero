@@ -445,8 +445,10 @@ module ChefZero
           [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
           [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
           [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
+          [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
           [ "/organizations/*/organizations/_acl", AclsEndpoint.new(self) ],
           [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
+          [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
           [ "/organizations/*/organizations/_acl/*", AclEndpoint.new(self) ],
           [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ]
         ]
