@@ -275,10 +275,11 @@ module ChefZero
                 "update": { "groups": [ "admins", "users" ] },
                 "delete": { "groups": [ "admins", "users" ] }
               }',
-              'clients' => client_container_acls(requestor),
-              'groups' => '{
-                "read":   { "groups": [ "admins", "users" ] }
+              'clients' => '{
+                "read": { "groups": [ "admins", "users" ] },
+                "delete": { "groups": [ "admins", "users" ] }
               }',
+              'groups' => '{}',
               'containers' => %'{
                 "create": { "actors": [ "#{requestor}" ] },
                 "read":   { "actors": [ "#{requestor}" ], "groups": [ "admins", "users" ] },
@@ -294,6 +295,11 @@ module ChefZero
             'data' => {},
             'environments' => {},
             'groups' => {
+              # It's a little weird that the default acls for groups
+              # allows users to read, but these groups don't.
+              'admins' => '{ "read": { "groups": [ "admins" ] } }',
+              'clients' => '{ "read": { "groups": [ "admins" ] } }',
+              'users' => '{ "read": { "groups": [ "admins" ] } }',
               'billing-admins' => '{
                 "create": { "groups": [ ] },
                 "read":   { "groups": [ "billing-admins" ] },
@@ -347,21 +353,6 @@ module ChefZero
         proc do |data, path|
           users = data.list(path[0..1] + [ 'users' ])
           JSON.pretty_generate({ 'users' => ([ requestor ] + users).uniq })
-        end
-      end
-
-      def client_container_acls(requestor)
-        proc do |data, path|
-          validators = data.list(path[0..1] + [ 'clients' ]).select do |name|
-            client = JSON.parse(data.get(path[0..1] + [ 'clients', name ]), :create_additions => false)
-            client['validator']
-          end
-
-          JSON.pretty_generate({
-            'create' => { 'actors' => [ requestor ] + validators },
-            'read' => { 'groups' => [ 'admins', 'users' ] },
-            'delete' => { 'groups' => [ 'admins', 'users' ] }
-          })
         end
       end
     end
