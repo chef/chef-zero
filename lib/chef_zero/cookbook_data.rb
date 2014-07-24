@@ -31,15 +31,15 @@ module ChefZero
       # If both .rb and .json exist, read .rb
       # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
       # the resulting recipe list have 1, or 3-4 recipes in it?
-      if has_child(directory, 'metadata.rb')
+      if has_child(directory, 'metadata.json')
+        metadata.from_json(File.join(directory.file_path, 'metadata.json'))
+      elsif has_child(directory, 'metadata.rb')
         begin
           file = filename(directory, 'metadata.rb') || "(#{name}/metadata.rb)"
           metadata.instance_eval(read_file(directory, 'metadata.rb'), file)
         rescue
           ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n  #{$!.backtrace.join("\n  ")}")
         end
-      elsif has_child(directory, 'metadata.json')
-        metadata.from_json(read_file(directory, 'metadata.json'))
       end
       result = {}
       metadata.to_hash.each_pair do |key,value|
