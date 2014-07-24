@@ -237,10 +237,10 @@ module ChefZero
             'sandboxes' => '{}'
           },
           'groups' => {
-            'admins' => admins_group,
+            'admins' => admins_group(requestor),
             'billing-admins' => '{}',
             'clients' => clients_group,
-            'users' => users_group,
+            'users' => users_group(requestor),
           },
           'acls' => {
             'clients' => {},
@@ -322,7 +322,7 @@ module ChefZero
         result
       end
 
-      def admins_group
+      def admins_group(requestor)
         proc do |data, path|
           admins = data.list(path[0..1] + [ 'users' ]).select do |name|
             user = JSON.parse(data.get(path[0..1] + [ 'users', name ]), :create_additions => false)
@@ -332,7 +332,7 @@ module ChefZero
             client = JSON.parse(data.get(path[0..1] + [ 'clients', name ]), :create_additions => false)
             client['admin']
           end
-          JSON.pretty_generate({ 'actors' => admins })
+          JSON.pretty_generate({ 'actors' => ([ requestor ] + admins).uniq })
         end
       end
 
@@ -343,10 +343,10 @@ module ChefZero
         end
       end
 
-      def users_group
+      def users_group(requestor)
         proc do |data, path|
           users = data.list(path[0..1] + [ 'users' ])
-          JSON.pretty_generate({ 'users' => users })
+          JSON.pretty_generate({ 'users' => ([ requestor ] + users).uniq })
         end
       end
 
