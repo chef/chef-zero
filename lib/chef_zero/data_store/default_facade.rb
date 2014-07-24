@@ -296,6 +296,9 @@ module ChefZero
             },
             'nodes' => {},
             'roles' => {},
+            'organizations' => '{
+              "read": { "groups": [ "admins", "users" ] }
+            }',
             'sandboxes' => {}
           },
           'association_requests' => {},
