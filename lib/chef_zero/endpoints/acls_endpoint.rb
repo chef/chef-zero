@@ -13,7 +13,7 @@ module ChefZero
     class AclsEndpoint < AclBase
       def get(request)
         path = request.rest_path[0..-2] # Strip off _acl
-        acls = DataNormalizer.normalize_acls(get_acls(request, path))
+        acls = DataNormalizer.normalize_acls(get_acls(request, path), request.requestor)
         json_response(200, acls)
       end
     end

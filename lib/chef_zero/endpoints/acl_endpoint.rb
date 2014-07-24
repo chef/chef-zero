@@ -25,7 +25,7 @@ module ChefZero
 
       def get(request)
         path, perm = validate_request(request)
-        acls = DataNormalizer.normalize_acls(get_acls(request, path))
+        acls = DataNormalizer.normalize_acls(get_acls(request, path), request.requestor)
         json_response(200, { perm => acls[perm] })
       end
 

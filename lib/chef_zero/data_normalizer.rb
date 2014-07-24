@@ -3,10 +3,10 @@ require 'chef_zero/rest_base'
 
 module ChefZero
   class DataNormalizer
-    def self.normalize_acls(acls)
+    def self.normalize_acls(acls, requestor)
       %w(create read update delete grant).each do |perm|
         acls[perm] ||= {}
-        acls[perm]['actors'] ||= []
+        acls[perm]['actors'] ||= [ requestor ]
         acls[perm]['groups'] ||= [ 'admins' ]
       end
       acls
@@ -185,27 +185,6 @@ module ChefZero
           "recipe[#{item}]"
         end
       }.uniq
-    end
-
-    private
-
-    def self.get_org_default_acls(path, perm)
-      name_lists = DEFAULT_ACL_GROUPS[path[2]]
-      if name_lists
-        name_lists.each do |names, perm_lists|
-          if names.include?(path[3])
-            perm_lists.each do |perms, perm_groups|
-              if perms.include?(perm)
-                return { 'groups' => perm_groups }
-              end
-            end
-          end
-        end
-      end
-      if path[2] == 'organization' && perm == 'read'
-        return { 'groups' => [ 'admins', 'users' ] }
-      end
-      {}
     end
   end
 end
