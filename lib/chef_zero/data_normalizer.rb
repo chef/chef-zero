@@ -3,10 +3,10 @@ require 'chef_zero/rest_base'
 
 module ChefZero
   class DataNormalizer
-    def self.normalize_acls(acls, requestor)
+    def self.normalize_acls(acls)
       %w(create read update delete grant).each do |perm|
         acls[perm] ||= {}
-        acls[perm]['actors'] ||= [ requestor ]
+        acls[perm]['actors'] ||= []
         acls[perm]['groups'] ||= [ 'admins' ]
       end
       acls

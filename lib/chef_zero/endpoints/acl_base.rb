@@ -33,6 +33,9 @@ module ChefZero
           acls[perm] ||= {}
           acls[perm]['actors'] ||= []
           acls[perm]['actors'] = owners | acls[perm]['actors']
+          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
+            acls[perm]['actors'] |= [ path[3] ]
+          end
         end
         acls
       end
