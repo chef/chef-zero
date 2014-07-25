@@ -11,11 +11,31 @@ module ChefZero
         acls = get_data(request, acl_path(path))
         acls = JSON.parse(acls, :create_additions => false)
 
-        container_acls = get_container_acls(request, path)
-        if container_acls
-          acls = merge_container_acls(acls, container_acls)
+        owners = nil
+        container_acls = nil
+        %w(create read update delete grant).each do |perm|
+          acls[perm] ||= {}
+          acls[perm]['actors'] ||= begin
+            # The owners of the org and of the server (the superusers) have rights too
+            owners ||= get_owners(path)
+            container_acls ||= get_container_acls(request, path)
+            if container_acls
+              owners | container_acls[perm]['actors']
+            else
+              owners
+            end
+          end
+          acls[perm]['groups'] ||= begin
+            container_acls ||= get_container_acls(request, path)
+            container_acls ? container_acls[perm]['groups'] : []
+          end
         end
+        acls
+      end
 
+      private
+
+      def get_owners(path)
         # We merge owners into every acl, because we're awesome like that.
         # The objects that were created with the org itself, and containers for
         # some reason, have the peculiar property of missing pivotal from their acls.
@@ -28,26 +48,7 @@ module ChefZero
             owners |= [ path[3] ]
           end
         end
-
-        %w(create read update delete grant).each do |perm|
-          acls[perm] ||= {}
-          acls[perm]['actors'] ||= []
-          # The owners of the org and of the server (the superusers) have rights too
-          acls[perm]['actors'] = owners | acls[perm]['actors']
-          acls[perm]['groups'] ||= []
-        end
-        acls
-      end
-
-      private
-
-      def merge_container_acls(acls, container_acls)
-        container_acls.each_pair do |perm, who|
-          acls[perm] ||= {}
-          acls[perm]['actors'] ||= container_acls[perm]['actors']
-          acls[perm]['groups'] ||= container_acls[perm]['groups']
-        end
-        acls
+        owners
       end
 
       def get_container_acls(request, path)
