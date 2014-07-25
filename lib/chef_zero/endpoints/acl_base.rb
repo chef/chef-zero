@@ -8,8 +8,10 @@ module ChefZero
     # Extended by AclEndpoint and AclsEndpoint
     class AclBase < RestBase
       def acl_path(path)
-        if path[0] == 'organizations' && path.size > 1
+        if path[0] == 'organizations' && path.size > 2
           acl_path = path[0..1] + [ 'acls' ] + path[2..-1]
+        elsif path[0] == 'organizations' && path.size == 2
+          acl_path = path + %w(acls organizations)
         else
           acl_path = [ 'acls' ] + path
         end
@@ -21,23 +23,16 @@ module ChefZero
         container_acls = get_container_acls(request, path)
         if container_acls
           acls = DataNormalizer.merge_container_acls(acls, container_acls)
-          # If we're grabbing our actors from the container, we still want to
-          # include superusers, but we don't want to include org owner (who
-          # should already be in the container anyway)
-          owners = DataStore::DefaultFacade.owners_of(data_store, [])
-        else
-          # We merge owners into every acl, because we're awesome like that.
-          owners = DataStore::DefaultFacade.owners_of(data_store, path)
         end
+
+        # We merge owners into every acl, because we're awesome like that.
+        owners = DataStore::DefaultFacade.owners_of(data_store, path)
+
         %w(create read update delete grant).each do |perm|
           acls[perm] ||= {}
           acls[perm]['actors'] ||= []
           # The owners of the org and of the server (the superusers) have rights too
           acls[perm]['actors'] = owners | acls[perm]['actors']
-          # Clients have access to themselves
-          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
-            acls[perm]['actors'] |= [ path[3] ]
-          end
         end
         acls
       end

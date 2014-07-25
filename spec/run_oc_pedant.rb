@@ -18,7 +18,7 @@ begin
     server.start_background
 
   else
-    server = ChefZero::Server.new(:port => 8889, :single_org => false, :log_level => :debug)
+    server = ChefZero::Server.new(:port => 8889, :single_org => false)#, :log_level => :debug)
     server.start_background
   end
 

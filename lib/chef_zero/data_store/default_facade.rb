@@ -243,11 +243,17 @@ module ChefZero
       end
 
       def self.owners_of(data, path)
-#        if is_created_with_org?(path, false)
-#          return owners_of(data, [])
-#        else
-          list_metadata(data, path, 'owners', :recurse_up)
-#        end
+        # The objects that were created with the org itself, and containers for
+        # some reason, have the peculiar property of missing pivotal from their acls.
+        if is_created_with_org?(path, false) || path[0] == 'organizations' && path[2] == 'containers'
+          list_metadata(data, path[0..1], 'owners')
+        else
+          result = list_metadata(data, path, 'owners', :recurse_up)
+          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
+            result |= [ path[3] ]
+          end
+          result
+        end
       end
 
       def self.org_defaults(name, creator, superusers, osc_compat)
