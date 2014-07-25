@@ -5,12 +5,13 @@ module ChefZero
   module Endpoints
     # Typical REST list endpoint (/roles or /data/BAG)
     class RestListEndpoint < RestBase
-      def initialize(server, identity_key = 'name')
+      def initialize(server, identity_keys = [ 'name' ])
         super(server)
-        @identity_key = identity_key
+        identity_keys = [ identity_keys ] if identity_keys.is_a?(String)
+        @identity_keys = identity_keys
       end
 
-      attr_reader :identity_key
+      attr_reader :identity_keys
 
       def get(request)
         # Get the result
@@ -25,7 +26,7 @@ module ChefZero
         contents = request.body
         key = get_key(contents)
         if key.nil?
-          error(400, "Must specify '#{identity_key}' in JSON")
+          error(400, "Must specify #{identity_keys.map { |k| k.inspect }.join(' or ')} in JSON")
         else
           create_data(request, request.rest_path, key, contents)
           json_response(201, {'uri' => "#{build_uri(request.base_uri, request.rest_path + [key])}"})
@@ -33,7 +34,8 @@ module ChefZero
       end
 
       def get_key(contents)
-        JSON.parse(contents, :create_additions => false)[identity_key]
+        json = JSON.parse(contents, :create_additions => false)
+        identity_keys.map { |k| json[k] }.select { |v| v }.first
       end
     end
   end

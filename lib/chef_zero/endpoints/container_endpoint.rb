@@ -7,7 +7,7 @@ module ChefZero
     # /organizations/ORG/containers/NAME
     class ContainerEndpoint < RestObjectEndpoint
       def initialize(server)
-        super(server, 'containername')
+        super(server, %w(id containername))
       end
 
       def populate_defaults(request, response_json)

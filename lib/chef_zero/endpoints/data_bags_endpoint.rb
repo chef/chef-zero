@@ -7,9 +7,10 @@ module ChefZero
     class DataBagsEndpoint < RestListEndpoint
       def post(request)
         contents = request.body
-        name = JSON.parse(contents, :create_additions => false)[identity_key]
+        json = JSON.parse(contents, :create_additions => false)
+        name = identity_keys.map { |k| json[k] }.select { |v| v }.first
         if name.nil?
-          error(400, "Must specify '#{identity_key}' in JSON")
+          error(400, "Must specify #{identity_keys.map { |k| k.inspect }.join(' or ')} in JSON")
         elsif exists_data_dir?(request, request.rest_path[0..1] + ['data', name])
           error(409, "Object already exists")
         else

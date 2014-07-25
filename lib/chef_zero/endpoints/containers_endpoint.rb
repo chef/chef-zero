@@ -6,7 +6,7 @@ module ChefZero
     # /organizations/ORG/containers
     class ContainersEndpoint < RestListEndpoint
       def initialize(server)
-        super(server, 'containername')
+        super(server, %w(id containername))
       end
     end
   end

@@ -17,6 +17,7 @@ module ChefZero
     def call(request)
       begin
         ChefZero::Log.debug(request)
+        ChefZero::Log.debug(request.body) if request.body
 
         clean_path = "/" + request.rest_path.join("/")
 

@@ -6,12 +6,13 @@ module ChefZero
   module Endpoints
     # Typical REST leaf endpoint (/roles/NAME or /data/BAG/NAME)
     class RestObjectEndpoint < RestBase
-      def initialize(server, identity_key = 'name')
+      def initialize(server, identity_keys = [ 'name' ])
         super(server)
-        @identity_key = identity_key
+        identity_keys = [ identity_keys ] if identity_keys.is_a?(String)
+        @identity_keys = identity_keys
       end
 
-      attr_reader :identity_key
+      attr_reader :identity_keys
 
       def get(request)
         already_json_response(200, populate_defaults(request, get_data(request)))
@@ -21,7 +22,8 @@ module ChefZero
         # We grab the old body to trigger a 404 if it doesn't exist
         old_body = get_data(request)
         request_json = JSON.parse(request.body, :create_additions => false)
-        key = request_json[identity_key] || request.rest_path[-1]
+        key = identity_keys.map { |k| request_json[k] }.select { |v| v }.first
+        key ||= request.rest_path[-1]
         # If it's a rename, check for conflict and delete the old value
         rename = key != request.rest_path[-1]
         if rename

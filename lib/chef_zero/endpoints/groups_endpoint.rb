@@ -6,7 +6,7 @@ module ChefZero
     # /organizations/ORG/groups/NAME
     class GroupsEndpoint < RestListEndpoint
       def initialize(server)
-        super(server, 'groupname')
+        super(server, %w(id groupname))
       end
     end
   end

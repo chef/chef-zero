@@ -7,7 +7,7 @@ module ChefZero
     # /organizations/ORG/groups/NAME
     class GroupEndpoint < RestObjectEndpoint
       def initialize(server)
-        super(server, 'groupname')
+        super(server, %w(id groupname))
       end
 
       def populate_defaults(request, response_json)
