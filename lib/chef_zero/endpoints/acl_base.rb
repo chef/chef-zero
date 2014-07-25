@@ -26,8 +26,13 @@ module ChefZero
             end
           end
           acls[perm]['groups'] ||= begin
-            container_acls ||= get_container_acls(request, path)
-            container_acls ? container_acls[perm]['groups'] : []
+            # When we create containers, we don't merge groups (not sure why).
+            if path[0] == 'organizations' && path[2] == 'containers'
+              []
+            else
+              container_acls ||= get_container_acls(request, path)
+              container_acls ? container_acls[perm]['groups'] : []
+            end
           end
         end
         acls
@@ -53,14 +58,8 @@ module ChefZero
 
       def get_container_acls(request, path)
         if path[0] == 'organizations'
-          if %w(clients cookbooks data environments groups nodes roles sandboxes).include?(path[2])
+          if %w(clients cookbooks containers data environments groups nodes roles sandboxes).include?(path[2])
             return get_acls(request, path[0..1] + [ 'containers', path[2] ])
-          elsif path[2] == 'containers'
-            # When we create containers, we don't merge them with the container container.
-            # Go figure.
-            if path[3] != 'containers' && is_created_with_org?(path)
-              return get_acls(request, path[0..1] + [ 'containers', path[2] ])
-            end
           end
         end
         return nil
