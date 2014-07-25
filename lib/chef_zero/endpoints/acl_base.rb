@@ -32,7 +32,9 @@ module ChefZero
         %w(create read update delete grant).each do |perm|
           acls[perm] ||= {}
           acls[perm]['actors'] ||= []
+          # The owners of the org and of the server (the superusers) have rights too
           acls[perm]['actors'] = owners | acls[perm]['actors']
+          # Clients have access to themselves
           if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
             acls[perm]['actors'] |= [ path[3] ]
           end
@@ -42,7 +44,7 @@ module ChefZero
 
       def get_container_acls(request, path)
         if path[0] == 'organizations'
-          if %w(clients containers cookbooks environments groups nodes roles sandboxes).include?(path[2])
+          if %w(clients containers cookbooks data environments groups nodes roles sandboxes).include?(path[2])
             if path[2..3] != ['containers', 'containers']
               return get_acls(request, path[0..1] + [ 'containers', path[2] ])
             end

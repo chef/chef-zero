@@ -192,7 +192,6 @@ module ChefZero
       end
 
       def list(path)
-        puts "Defaults #{@defaults['metadata']}" if path[0] == 'metadata'
         default_results = default(path)
         default_results = default_results.keys if default_results
         begin
@@ -229,6 +228,8 @@ module ChefZero
         return !!value
       end
 
+      # Used by owners_of to find all owners of a thing by looking up
+      # the trail of directories
       def self.list_metadata(data, path, metadata_type, *options)
         begin
           result = data.list([ 'metadata', metadata_type, path.join('/') ])
