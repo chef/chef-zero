@@ -81,47 +81,50 @@ webui_key key
 platform_class Pedant::MultiTenantPlatform
 
 requestors({
-  :clients => {
-    # The the admin user, for the purposes of getting things rolling
-    :admin => {
-      :name => "pedant_admin_client",
-      :create_me => true,
-      :create_knife => true,
-      :admin => true
-    },
-    :non_admin => {
-      :name => 'pedant_client',
-      :create_me => true,
-      :create_knife => true
-    },
-    :bad => {
-      :name => 'bad_client',
-      :bogus => true
-    }
-  },
-  :users => {
-    :admin => {
-      :name => "admin",
-      :key_file => key,
-      :create_me => false,
-      :create_knife => false,
-      :admin => true
-     },
-    :non_admin => {
-      :name => "pedant_non_admin_user",
-      :create_me => true,
-      :create_knife => true,
-      :admin => false
-    },
-    # A user for Knife tests.  A knife.rb and key files will be set up
-    # for this user
-    :knife_user => {
-      :name => "knifey",
-      :create_me => true,
-      :create_knife => true
-    }
-  }
-})
+             :clients => {
+               # The the admin user, for the purposes of getting things rolling
+               :admin => {
+                 :name => "pedant_admin_client",
+                 :create_me => true,
+                 :create_knife => true,
+                 :admin => true
+               },
+               :non_admin => {
+                 :name => 'pedant_client',
+                 :create_me => true,
+                 :create_knife => true,
+               },
+               :bad => {
+                 :name => 'bad_client',
+                 :create_me => true,
+                 :create_knife => true,
+                 :bogus => true
+               }
+             },
+
+             :users => {
+               # An administrator in the testing organization
+               :admin => {
+                 :name => "pedant_admin_user",
+                 :create_me => true,
+                 :create_knife => true
+               },
+
+               :non_admin => {
+                 :name => "pedant_user",
+                 :create_me => true,
+                 :create_knife => true
+               },
+
+               # A user that is not a member of the testing organization
+               :bad => {
+                 :name => "pedant-nobody",
+                 :create_me => true,
+                 :create_knife => true,
+                 :associate => false
+               },
+             }
+           })
 
 self[:tags] = [:validation, :authentication, :authorization]
 verify_error_messages false
