@@ -11,8 +11,9 @@ module ChefZero
         orgname = request.rest_path[1]
         id = "#{username}-#{orgname}"
 
-        if !exists_data?(request, [ 'organizations', orgname, 'users', username ])
-          RestErrorResponse.new(409, "User #{username} is already in organization #{orgname}")
+        if exists_data?(request, [ 'organizations', orgname, 'users', username ])
+          # TODO 403?  Really?
+          raise RestErrorResponse.new(403, "User #{username} is already in organization #{orgname}")
         end
 
         create_data(request, request.rest_path, username, '{}')

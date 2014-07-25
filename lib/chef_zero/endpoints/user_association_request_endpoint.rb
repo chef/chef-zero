@@ -14,15 +14,16 @@ module ChefZero
         orgname = $1
 
         json = JSON.parse(request.body, :create_additions => false)
+        association_request_path = [ 'organizations', orgname, 'association_requests', username ]
         if json['response'] == 'accept'
+          delete_data(request, association_request_path)
           create_data(request, [ 'organizations', orgname, 'users' ], username, '{}')
-          delete_data(request, [ 'organizations', orgname, 'association_requests', username ])
         elsif json['response'] == 'reject'
-          delete_data(request, [ 'organizations', orgname, 'association_requests', username ])
+          delete_data(request, association_request_path)
         else
           raise RestErrorResponse.new(400, "response parameter was missing or set to the wrong value (must be accept or reject)")
         end
-        already_json_response(200, request.body)
+        json_response(200, { 'uri' => build_uri(request.base_uri, association_request_path) })
       end
     end
   end
