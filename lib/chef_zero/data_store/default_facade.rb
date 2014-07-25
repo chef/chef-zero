@@ -3,16 +3,18 @@ require 'chef_zero/data_store/interface_v2'
 module ChefZero
   module DataStore
     class DefaultFacade < ChefZero::DataStore::InterfaceV2
-      def initialize(real_store, osc_compat, superusers = [ 'pivotal' ])
+      def initialize(real_store, osc_compat, superusers = nil)
         @real_store = real_store
         @osc_compat = osc_compat
-        @superusers = superusers
+        @superusers = superusers || (osc_compat ? [] : DefaultFacade::DEFAULT_SUPERUSERS)
         clear
       end
 
       attr_reader :real_store
       attr_reader :osc_compat
       attr_reader :superusers
+
+      DEFAULT_SUPERUSERS = [ 'pivotal' ]
 
       def default(path, name=nil)
         value = @defaults
@@ -72,7 +74,12 @@ module ChefZero
         real_store.clear if real_store.respond_to?(:clear)
         @defaults = {
           'organizations' => {},
-          'acls' => {}
+          'acls' => {},
+          'metadata' => {
+            'owners' => {
+              '' => superusers.inject({}) { |result,key| result[key] = '{}'; result }
+            }
+          }
         }
         unless osc_compat
           @defaults['users'] = {}
@@ -101,10 +108,12 @@ module ChefZero
           options_hash = options.last
           requestor = options_hash.is_a?(Hash) ? options_hash[:requestor] : nil
           if path.size == 1
-            @defaults['organizations'][name] ||= org_defaults(name, requestor)
+            orgname = name
           else
-            @defaults['organizations'][path[1]] ||= org_default(path[1], requestor)
+            orgname = path[1]
           end
+          @defaults['organizations'][orgname] ||= DefaultFacade.org_defaults(orgname, requestor, superusers, osc_compat)
+          @defaults['metadata']['owners']["organizations/#{orgname}"] = { requestor => '{}' } if requestor
         end
       end
 
@@ -126,9 +135,9 @@ module ChefZero
           options_hash = options.last
           requestor = options_hash.is_a?(Hash) ? options_hash[:requestor] : nil
           if path.size == 1
-            @defaults['organizations'][name] ||= org_defaults(name, options[:requestor])
+            @defaults['organizations'][name] ||= DefaultFacade.org_defaults(name, options[:requestor], superusers, osc_compat)
           else
-            @defaults['organizations'][path[1]] ||= org_defaults(path[1], options[:requestor])
+            @defaults['organizations'][path[1]] ||= DefaultFacade.org_defaults(path[1], options[:requestor], suepruserse, osc_compat)
           end
         end
       end
@@ -183,6 +192,7 @@ module ChefZero
       end
 
       def list(path)
+        puts "Defaults #{@defaults['metadata']}" if path[0] == 'metadata'
         default_results = default(path)
         default_results = default_results.keys if default_results
         begin
@@ -209,7 +219,37 @@ module ChefZero
         real_store.exists_dir?(path) || default(path)
       end
 
-      def org_defaults(name, requestor)
+      def self.is_created_with_org?(path, osc_compat = false)
+        return false if path.size == 0 || path[0] != 'organizations'
+        value = org_defaults(path[1], 'pivotal', [], osc_compat)
+        for part in path[2..-1]
+          break if !value
+          value = value[part]
+        end
+        return !!value
+      end
+
+      def self.list_metadata(data, path, metadata_type, *options)
+        begin
+          result = data.list([ 'metadata', metadata_type, path.join('/') ])
+        rescue DataNotFoundError
+          result = []
+        end
+        if options.include?(:recurse_up) && path.size >= 1
+          result = list_metadata(data, path[0..-2], metadata_type, *options) | result
+        end
+        return result
+      end
+
+      def self.owners_of(data, path)
+#        if is_created_with_org?(path, false)
+#          return owners_of(data, [])
+#        else
+          list_metadata(data, path, 'owners', :recurse_up)
+#        end
+      end
+
+      def self.org_defaults(name, creator, superusers, osc_compat)
         result = {
           'clients' => {
             "#{name}-validator" => '{ "validator": true }'
@@ -240,10 +280,10 @@ module ChefZero
             'sandboxes' => '{}'
           },
           'groups' => {
-            'admins' => admins_group(requestor),
+            'admins' => admins_group(creator),
             'billing-admins' => '{}',
             'clients' => clients_group,
-            'users' => users_group(requestor),
+            'users' => users_group(creator),
           },
           'acls' => {
             'clients' => {},
@@ -284,11 +324,11 @@ module ChefZero
               }',
               'groups' => '{}',
               'containers' => %'{
-                "create": { "actors": [ "#{requestor}" ] },
-                "read":   { "actors": [ "#{requestor}" ], "groups": [ "admins", "users" ] },
-                "update": { "actors": [ "#{requestor}" ] },
-                "delete": { "actors": [ "#{requestor}" ] },
-                "grant":  { "actors": [ "#{requestor}" ] }
+                "create": { "actors": [ #{creator.inspect} ] },
+                "read":   { "actors": [ #{creator.inspect} ], "groups": [ "admins", "users" ] },
+                "update": { "actors": [ #{creator.inspect} ] },
+                "delete": { "actors": [ #{creator.inspect} ] },
+                "grant":  { "actors": [ #{creator.inspect} ] }
               }',
               'sandboxes' => '{
                 "create":   { "groups": [ "admins", "users" ] }
@@ -325,20 +365,20 @@ module ChefZero
             }',
             'sandboxes' => {}
           },
-          'association_requests' => {},
+          'association_requests' => {}
         }
 
         if osc_compat
           result['users']['admin'] = '{ "admin": "true" }'
           result['clients']["#{name}-webui"] = '{ "admin": true }'
         else
-          result['users'][requestor] = '{}'
+          result['users'][creator] = '{}'
         end
 
         result
       end
 
-      def admins_group(requestor)
+      def self.admins_group(creator)
         proc do |data, path|
           admins = data.list(path[0..1] + [ 'users' ]).select do |name|
             user = JSON.parse(data.get(path[0..1] + [ 'users', name ]), :create_additions => false)
@@ -348,21 +388,21 @@ module ChefZero
             client = JSON.parse(data.get(path[0..1] + [ 'clients', name ]), :create_additions => false)
             client['admin']
           end
-          JSON.pretty_generate({ 'actors' => ([ requestor ] + admins).uniq })
+          JSON.pretty_generate({ 'actors' => ([ creator ] + admins).uniq })
         end
       end
 
-      def clients_group
+      def self.clients_group
         proc do |data, path|
           clients = data.list(path[0..1] + [ 'clients' ])
           JSON.pretty_generate({ 'clients' => clients })
         end
       end
 
-      def users_group(requestor)
+      def self.users_group(creator)
         proc do |data, path|
           users = data.list(path[0..1] + [ 'users' ])
-          JSON.pretty_generate({ 'users' => ([ requestor ] + users).uniq })
+          JSON.pretty_generate({ 'users' => ([ creator ] + users).uniq })
         end
       end
     end

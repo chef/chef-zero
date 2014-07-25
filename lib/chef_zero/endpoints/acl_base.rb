@@ -1,5 +1,7 @@
 require 'json'
 require 'chef_zero/rest_base'
+require 'chef_zero/data_normalizer'
+require 'chef_zero/data_store/default_facade'
 
 module ChefZero
   module Endpoints
@@ -18,10 +20,21 @@ module ChefZero
         acls = JSON.parse(acls, :create_additions => false)
         container_acls = get_container_acls(request, path)
         if container_acls
-          DataNormalizer.merge_container_acls(acls, container_acls)
+          acls = DataNormalizer.merge_container_acls(acls, container_acls)
+          # If we're grabbing our actors from the container, we still want to
+          # include superusers, but we don't want to include org owner (who
+          # should already be in the container anyway)
+          owners = DataStore::DefaultFacade.owners_of(data_store, [])
         else
-          acls
+          # We merge owners into every acl, because we're awesome like that.
+          owners = DataStore::DefaultFacade.owners_of(data_store, path)
         end
+        %w(create read update delete grant).each do |perm|
+          acls[perm] ||= {}
+          acls[perm]['actors'] ||= []
+          acls[perm]['actors'] = owners | acls[perm]['actors']
+        end
+        acls
       end
 
       def get_container_acls(request, path)
