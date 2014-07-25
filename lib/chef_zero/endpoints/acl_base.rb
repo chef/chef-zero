@@ -33,6 +33,7 @@ module ChefZero
           acls[perm]['actors'] ||= []
           # The owners of the org and of the server (the superusers) have rights too
           acls[perm]['actors'] = owners | acls[perm]['actors']
+          acls[perm]['groups'] ||= []
         end
         acls
       end
@@ -41,8 +42,12 @@ module ChefZero
 
       def get_container_acls(request, path)
         if path[0] == 'organizations'
-          if %w(clients containers cookbooks data environments groups nodes roles sandboxes).include?(path[2])
-            if path[2..3] != ['containers', 'containers']
+          if %w(clients cookbooks data environments groups nodes roles sandboxes).include?(path[2])
+            return get_acls(request, path[0..1] + [ 'containers', path[2] ])
+          elsif path[2] == 'containers'
+            # When we create containers, we don't merge them with the container container.
+            # Go figure.
+            if path[3] != 'containers' && is_created_with_org?(path)
               return get_acls(request, path[0..1] + [ 'containers', path[2] ])
             end
           end

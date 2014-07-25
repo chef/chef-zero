@@ -7,7 +7,7 @@ module ChefZero
       %w(create read update delete grant).each do |perm|
         acls[perm] ||= {}
         acls[perm]['actors'] ||= []
-        acls[perm]['groups'] ||= [ 'admins' ]
+        acls[perm]['groups'] ||= [ ]
       end
       acls
     end

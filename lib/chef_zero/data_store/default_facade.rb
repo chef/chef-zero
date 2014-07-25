@@ -261,46 +261,64 @@ module ChefZero
                 "create": { "groups": [ "admins", "users" ] },
                 "read":   { "groups": [ "admins", "users", "clients" ] },
                 "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] }
+                "delete": { "groups": [ "admins", "users" ] },
+                "grant":  { "groups": [ "admins" ] }
               }',
               'environments' => '{
                 "create": { "groups": [ "admins", "users" ] },
                 "read":   { "groups": [ "admins", "users", "clients" ] },
                 "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] }
+                "delete": { "groups": [ "admins", "users" ] },
+                "grant":  { "groups": [ "admins" ] }
               }',
               'roles' => '{
                 "create": { "groups": [ "admins", "users" ] },
                 "read":   { "groups": [ "admins", "users", "clients" ] },
                 "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] }
+                "delete": { "groups": [ "admins", "users" ] },
+                "grant":  { "groups": [ "admins" ] }
               }',
               'data' => '{
                 "create": { "groups": [ "admins", "users", "clients" ] },
                 "read":   { "groups": [ "admins", "users", "clients" ] },
                 "update": { "groups": [ "admins", "users", "clients" ] },
-                "delete": { "groups": [ "admins", "users", "clients" ] }
+                "delete": { "groups": [ "admins", "users", "clients" ] },
+                "grant":  { "groups": [ "admins" ] }
               }',
               'nodes' => '{
                 "create": { "groups": [ "admins", "users", "clients" ] },
                 "read":   { "groups": [ "admins", "users", "clients" ] },
                 "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] }
+                "delete": { "groups": [ "admins", "users" ] },
+                "grant":  { "groups": [ "admins" ] }
               }',
               'clients' => '{
-                "read": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] }
+                "create": { "groups": [ "admins" ] },
+                "read":   { "groups": [ "admins", "users" ] },
+                "update": { "groups": [ "admins" ] },
+                "delete": { "groups": [ "admins", "users" ] },
+                "grant":  { "groups": [ "admins" ] }
               }',
-              'groups' => '{}',
+              'groups' => '{
+                "create": { "groups": [ "admins" ] },
+                "read":   { "groups": [ "admins", "users" ] },
+                "update": { "groups": [ "admins" ] },
+                "delete": { "groups": [ "admins" ] },
+                "grant":  { "groups": [ "admins" ] }
+              }',
               'containers' => %'{
-                "create": { "actors": [ #{creator.inspect} ] },
-                "read":   { "actors": [ #{creator.inspect} ], "groups": [ "admins", "users" ] },
-                "update": { "actors": [ #{creator.inspect} ] },
-                "delete": { "actors": [ #{creator.inspect} ] },
-                "grant":  { "actors": [ #{creator.inspect} ] }
+                "create": { "groups": [ "admins" ] },
+                "read":   { "groups": [ "admins", "users" ] },
+                "update": { "groups": [ "admins" ] },
+                "delete": { "groups": [ "admins" ] },
+                "grant":  { "groups": [ "admins" ] }
               }',
               'sandboxes' => '{
-                "create":   { "groups": [ "admins", "users" ] }
+                "create": { "groups": [ "admins", "users" ] }
+                "read":   { "groups": [ "admins" ] },
+                "update": { "groups": [ "admins" ] },
+                "delete": { "groups": [ "admins" ] },
+                "grant":  { "groups": [ "admins" ] }
               }'
             },
             'cookbooks' => {},
@@ -323,14 +341,18 @@ module ChefZero
             'nodes' => {},
             'roles' => {},
             'organization' => %'{
-              "create": { "actors": #{superusers.inspect} },
-              "read": { "actors": #{superusers.inspect}, "groups": [ "admins", "users" ] },
-              "update": { "actors": #{superusers.inspect} },
-              "delete": { "actors": #{superusers.inspect} },
-              "grant": { "actors": #{superusers.inspect} }
+              "create": { "groups": [ "admins" ] },
+              "read":   { "groups": [ "admins", "users" ] },
+              "update": { "groups": [ "admins" ] },
+              "delete": { "groups": [ "admins" ] },
+              "grant":  { "groups": [ "admins" ] }
             }',
             'organizations' => '{
-              "read": { "groups": [ "admins", "users" ]}
+              "create": { "groups": [ "admins" ] },
+              "read": { "groups": [ "admins", "users" ]},
+              "update": { "groups": [ "admins" ] },
+              "delete": { "groups": [ "admins" ] },
+              "grant":  { "groups": [ "admins" ] }
             }',
             'sandboxes' => {}
           },
