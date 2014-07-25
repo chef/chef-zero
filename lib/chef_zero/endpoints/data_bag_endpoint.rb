@@ -33,6 +33,7 @@ module ChefZero
       def delete(request)
         key = request.rest_path[3]
         delete_data_dir(request, request.rest_path, :recursive)
+        delete_acl(request.rest_path)
         json_response(200, {
           'chef_type' => 'data_bag',
           'json_class' => 'Chef::DataBag',
@@ -42,4 +43,3 @@ module ChefZero
     end
   end
 end
-

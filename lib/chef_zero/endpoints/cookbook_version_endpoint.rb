@@ -59,8 +59,10 @@ module ChefZero
 
         response = super(request)
         cookbook_name = request.rest_path[3]
-        if exists_data_dir?(request, request.rest_path[0..1] + [ 'cookbooks', cookbook_name ]) && list_data(request, request.rest_path[0..1] + ['cookbooks', cookbook_name]).size == 0
-          delete_data_dir(request, request.rest_path[0..1] + ['cookbooks', cookbook_name])
+        cookbook_path = request.rest_path[0..1] + ['cookbooks', cookbook_name]
+        if exists_data_dir?(request, cookbook_path) && list_data(request, cookbook_path).size == 0
+          delete_data_dir(request, cookbook_path)
+          delete_acl(cookbook_path)
         end
 
         # Hoover deleted files, if they exist

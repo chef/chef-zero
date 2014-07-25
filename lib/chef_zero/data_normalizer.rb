@@ -12,15 +12,6 @@ module ChefZero
       acls
     end
 
-    def self.merge_container_acls(acls, container_acls)
-      container_acls.each_pair do |perm, who|
-        acls[perm] ||= {}
-        acls[perm]['actors'] ||= container_acls[perm]['actors']
-        acls[perm]['groups'] ||= container_acls[perm]['groups']
-      end
-      acls
-    end
-
     def self.normalize_client(client, name)
       client['name'] ||= name
       client['admin'] ||= false

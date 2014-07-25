@@ -43,6 +43,7 @@ module ChefZero
       def delete(request)
         result = get_data(request)
         delete_data(request)
+        delete_acl(request.rest_path)
         already_json_response(200, populate_defaults(request, result))
       end
 

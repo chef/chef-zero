@@ -24,13 +24,7 @@ module ChefZero
       end
 
       def get(request)
-        path, perm = validate_request(request)
-        if path.size == 4 && path[3] == 'organization' && path[0] == 'organizations'
-          # Needs to be 405, but account returns 404
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
-        end
-        acls = DataNormalizer.normalize_acls(get_acls(request, path))
-        json_response(200, { perm => acls[perm] })
+        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
       end
 
       def put(request)

@@ -158,5 +158,33 @@ module ChefZero
     def populate_defaults(request, response)
       response
     end
+
+    def delete_acl(path)
+      # On delete we have to delete the corresponding acl
+      acl = acl_path(path)
+      if acl
+        begin
+          data_store.delete(acl)
+        rescue DataStore::DataNotFoundError
+        end
+      end
+    end
+
+    def acl_path(path)
+      if path[0] == 'organizations' && path.size > 2
+        if path.size == 4
+          acl_path = path[0..1] + [ 'acls' ] + path[2..3]
+        elsif path.size == 3 && %w(organization organizations).include?(path[2])
+          acl_path = path[0..1] + [ 'acls', path[2] ]
+        elsif path.size == 3
+          acl_path = path[0..1] + [ 'acls', 'containers', path[2] ]
+        end
+      elsif path[0] == 'organizations' && path.size == 2
+        acl_path = path + %w(acls organizations)
+      else
+        acl_path = [ 'acls' ] + path
+      end
+      acl_path
+    end
   end
 end

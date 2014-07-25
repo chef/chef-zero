@@ -7,22 +7,13 @@ module ChefZero
   module Endpoints
     # Extended by AclEndpoint and AclsEndpoint
     class AclBase < RestBase
-      def acl_path(path)
-        if path[0] == 'organizations' && path.size > 2
-          acl_path = path[0..1] + [ 'acls' ] + path[2..-1]
-        elsif path[0] == 'organizations' && path.size == 2
-          acl_path = path + %w(acls organizations)
-        else
-          acl_path = [ 'acls' ] + path
-        end
-      end
-
       def get_acls(request, path)
         acls = get_data(request, acl_path(path))
         acls = JSON.parse(acls, :create_additions => false)
+
         container_acls = get_container_acls(request, path)
         if container_acls
-          acls = DataNormalizer.merge_container_acls(acls, container_acls)
+          acls = merge_container_acls(acls, container_acls)
         end
 
         # We merge owners into every acl, because we're awesome like that.
@@ -49,6 +40,15 @@ module ChefZero
       end
 
       private
+
+      def merge_container_acls(acls, container_acls)
+        container_acls.each_pair do |perm, who|
+          acls[perm] ||= {}
+          acls[perm]['actors'] ||= container_acls[perm]['actors']
+          acls[perm]['groups'] ||= container_acls[perm]['groups']
+        end
+        acls
+      end
 
       def get_container_acls(request, path)
         if path[0] == 'organizations'
