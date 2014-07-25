@@ -218,44 +218,6 @@ module ChefZero
         real_store.exists_dir?(path) || default(path)
       end
 
-      def self.is_created_with_org?(path, osc_compat = false)
-        return false if path.size == 0 || path[0] != 'organizations'
-        value = org_defaults(path[1], 'pivotal', [], osc_compat)
-        for part in path[2..-1]
-          break if !value
-          value = value[part]
-        end
-        return !!value
-      end
-
-      # Used by owners_of to find all owners of a thing by looking up
-      # the trail of directories
-      def self.list_metadata(data, path, metadata_type, *options)
-        begin
-          result = data.list([ 'metadata', metadata_type, path.join('/') ])
-        rescue DataNotFoundError
-          result = []
-        end
-        if options.include?(:recurse_up) && path.size >= 1
-          result = list_metadata(data, path[0..-2], metadata_type, *options) | result
-        end
-        return result
-      end
-
-      def self.owners_of(data, path)
-        # The objects that were created with the org itself, and containers for
-        # some reason, have the peculiar property of missing pivotal from their acls.
-        if is_created_with_org?(path, false) || path[0] == 'organizations' && path[2] == 'containers'
-          list_metadata(data, path[0..1], 'owners')
-        else
-          result = list_metadata(data, path, 'owners', :recurse_up)
-          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
-            result |= [ path[3] ]
-          end
-          result
-        end
-      end
-
       def self.org_defaults(name, creator, superusers, osc_compat)
         result = {
           'clients' => {

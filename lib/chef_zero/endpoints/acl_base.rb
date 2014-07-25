@@ -26,7 +26,7 @@ module ChefZero
         end
 
         # We merge owners into every acl, because we're awesome like that.
-        owners = DataStore::DefaultFacade.owners_of(data_store, path)
+        owners = owners_of(path)
 
         %w(create read update delete grant).each do |perm|
           acls[perm] ||= {}
@@ -37,6 +37,8 @@ module ChefZero
         acls
       end
 
+      private
+
       def get_container_acls(request, path)
         if path[0] == 'organizations'
           if %w(clients containers cookbooks data environments groups nodes roles sandboxes).include?(path[2])
@@ -46,6 +48,44 @@ module ChefZero
           end
         end
         return nil
+      end
+
+      def owners_of(path)
+        # The objects that were created with the org itself, and containers for
+        # some reason, have the peculiar property of missing pivotal from their acls.
+        if is_created_with_org?(path, false) || path[0] == 'organizations' && path[2] == 'containers'
+          list_metadata(path[0..1], 'owners')
+        else
+          result = list_metadata(path, 'owners', :recurse_up)
+          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
+            result |= [ path[3] ]
+          end
+          result
+        end
+      end
+
+      def is_created_with_org?(path, osc_compat = false)
+        return false if path.size == 0 || path[0] != 'organizations'
+        value = DataStore::DefaultFacade.org_defaults(path[1], 'pivotal', [], osc_compat)
+        for part in path[2..-1]
+          break if !value
+          value = value[part]
+        end
+        return !!value
+      end
+
+      # Used by owners_of to find all owners of a thing by looking up
+      # the trail of directories
+      def list_metadata(path, metadata_type, *options)
+        begin
+          result = data_store.list([ 'metadata', metadata_type, path.join('/') ])
+        rescue DataStore::DataNotFoundError
+          result = []
+        end
+        if options.include?(:recurse_up) && path.size >= 1
+          result = list_metadata(path[0..-2], metadata_type, *options) | result
+        end
+        return result
       end
     end
   end
