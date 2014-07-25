@@ -26,7 +26,17 @@ module ChefZero
         end
 
         # We merge owners into every acl, because we're awesome like that.
-        owners = owners_of(path)
+        # The objects that were created with the org itself, and containers for
+        # some reason, have the peculiar property of missing pivotal from their acls.
+        if is_created_with_org?(path, false) || path[0] == 'organizations' && path[2] == 'containers'
+          owners = []
+        else
+          owners = superusers
+          # Clients need to be in their own acl list
+          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
+            owners |= [ path[3] ]
+          end
+        end
 
         %w(create read update delete grant).each do |perm|
           acls[perm] ||= {}
@@ -55,18 +65,8 @@ module ChefZero
         return nil
       end
 
-      def owners_of(path)
-        # The objects that were created with the org itself, and containers for
-        # some reason, have the peculiar property of missing pivotal from their acls.
-        if is_created_with_org?(path, false) || path[0] == 'organizations' && path[2] == 'containers'
-          list_metadata(path[0..1], 'owners')
-        else
-          result = list_metadata(path, 'owners', :recurse_up)
-          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
-            result |= [ path[3] ]
-          end
-          result
-        end
+      def superusers
+        data_store.list([ 'superusers' ])
       end
 
       def is_created_with_org?(path, osc_compat = false)
@@ -77,20 +77,6 @@ module ChefZero
           value = value[part]
         end
         return !!value
-      end
-
-      # Used by owners_of to find all owners of a thing by looking up
-      # the trail of directories
-      def list_metadata(path, metadata_type, *options)
-        begin
-          result = data_store.list([ 'metadata', metadata_type, path.join('/') ])
-        rescue DataStore::DataNotFoundError
-          result = []
-        end
-        if options.include?(:recurse_up) && path.size >= 1
-          result = list_metadata(path[0..-2], metadata_type, *options) | result
-        end
-        return result
       end
     end
   end

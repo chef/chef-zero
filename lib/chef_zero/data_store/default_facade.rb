@@ -74,17 +74,15 @@ module ChefZero
         real_store.clear if real_store.respond_to?(:clear)
         @defaults = {
           'organizations' => {},
-          'acls' => {},
-          'metadata' => {
-            'owners' => {
-              '' => superusers.inject({}) { |result,key| result[key] = '{}'; result }
-            }
-          }
+          'acls' => {}
         }
         unless osc_compat
           @defaults['users'] = {}
+          @defaults['superusers'] = {}
+
           superusers.each do |superuser|
             @defaults['users'][superuser] = '{}'
+            @defaults['superusers'][superuser] = '{}'
           end
         end
       end
@@ -113,7 +111,6 @@ module ChefZero
             orgname = path[1]
           end
           @defaults['organizations'][orgname] ||= DefaultFacade.org_defaults(orgname, requestor, superusers, osc_compat)
-          @defaults['metadata']['owners']["organizations/#{orgname}"] = { requestor => '{}' } if requestor
         end
       end
 
@@ -257,69 +254,69 @@ module ChefZero
           'acls' => {
             'clients' => {},
             'containers' => {
-              'cookbooks' => '{
-                "create": { "groups": [ "admins", "users" ] },
-                "read":   { "groups": [ "admins", "users", "clients" ] },
-                "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'environments' => '{
-                "create": { "groups": [ "admins", "users" ] },
-                "read":   { "groups": [ "admins", "users", "clients" ] },
-                "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'roles' => '{
-                "create": { "groups": [ "admins", "users" ] },
-                "read":   { "groups": [ "admins", "users", "clients" ] },
-                "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'data' => '{
-                "create": { "groups": [ "admins", "users", "clients" ] },
-                "read":   { "groups": [ "admins", "users", "clients" ] },
-                "update": { "groups": [ "admins", "users", "clients" ] },
-                "delete": { "groups": [ "admins", "users", "clients" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'nodes' => '{
-                "create": { "groups": [ "admins", "users", "clients" ] },
-                "read":   { "groups": [ "admins", "users", "clients" ] },
-                "update": { "groups": [ "admins", "users" ] },
-                "delete": { "groups": [ "admins", "users" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'clients' => '{
-                "create": { "groups": [ "admins" ] },
-                "read":   { "groups": [ "admins", "users" ] },
-                "update": { "groups": [ "admins" ] },
-                "delete": { "groups": [ "admins", "users" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'groups' => '{
-                "create": { "groups": [ "admins" ] },
-                "read":   { "groups": [ "admins", "users" ] },
-                "update": { "groups": [ "admins" ] },
-                "delete": { "groups": [ "admins" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'containers' => %'{
-                "create": { "groups": [ "admins" ] },
-                "read":   { "groups": [ "admins", "users" ] },
-                "update": { "groups": [ "admins" ] },
-                "delete": { "groups": [ "admins" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }',
-              'sandboxes' => '{
-                "create": { "groups": [ "admins", "users" ] }
-                "read":   { "groups": [ "admins" ] },
-                "update": { "groups": [ "admins" ] },
-                "delete": { "groups": [ "admins" ] },
-                "grant":  { "groups": [ "admins" ] }
-              }'
+              'cookbooks' => fill_acls(creator, {
+                :create => %w(admins users),
+                :read   => %w(admins users clients),
+                :update => %w(admins users),
+                :delete => %w(admins users),
+                :grant  => %w(admins)
+              }),
+              'environments' => fill_acls(creator, {
+                :create => %w(admins users),
+                :read   => %w(admins users clients),
+                :update => %w(admins users),
+                :delete => %w(admins users),
+                :grant  => %w(admins)
+              }),
+              'roles' => fill_acls(creator, {
+                :create => %w(admins users),
+                :read   => %w(admins users clients),
+                :update => %w(admins users),
+                :delete => %w(admins users),
+                :grant  => %w(admins)
+              }),
+              'data' => fill_acls(creator, {
+                :create => %w(admins users clients),
+                :read   => %w(admins users clients),
+                :update => %w(admins users clients),
+                :delete => %w(admins users clients),
+                :grant  => %w(admins)
+              }),
+              'nodes' => fill_acls(creator, {
+                :create => %w(admins users clients),
+                :read   => %w(admins users clients),
+                :update => %w(admins users),
+                :delete => %w(admins users),
+                :grant  => %w(admins)
+              }),
+              'clients' => fill_acls(creator, {
+                :create => %w(admins),
+                :read   => %w(admins users),
+                :update => %w(admins),
+                :delete => %w(admins users),
+                :grant  => %w(admins)
+              }),
+              'groups' => fill_acls(creator, {
+                :create => %w(admins),
+                :read   => %w(admins users),
+                :update => %w(admins),
+                :delete => %w(admins),
+                :grant  => %w(admins)
+              }),
+              'containers' => fill_acls(creator, {
+                :create => %w(admins),
+                :read   => %w(admins users),
+                :update => %w(admins),
+                :delete => %w(admins),
+                :grant  => %w(admins)
+              }),
+              'sandboxes' => fill_acls(creator, {
+                :create => %w(admins users),
+                :read   => %w(admins),
+                :update => %w(admins),
+                :delete => %w(admins),
+                :grant  => %w(admins)
+              })
             },
             'cookbooks' => {},
             'data' => {},
@@ -340,20 +337,14 @@ module ChefZero
             },
             'nodes' => {},
             'roles' => {},
-            'organization' => %'{
-              "create": { "groups": [ "admins" ] },
-              "read":   { "groups": [ "admins", "users" ] },
-              "update": { "groups": [ "admins" ] },
-              "delete": { "groups": [ "admins" ] },
-              "grant":  { "groups": [ "admins" ] }
-            }',
-            'organizations' => '{
-              "create": { "groups": [ "admins" ] },
-              "read": { "groups": [ "admins", "users" ]},
-              "update": { "groups": [ "admins" ] },
-              "delete": { "groups": [ "admins" ] },
-              "grant":  { "groups": [ "admins" ] }
-            }',
+            'organization' => org_acls,
+            'organizations' => fill_acls(creator, {
+              :create => %w(admins),
+              :read   => %w(admins users),
+              :update => %w(admins),
+              :delete => %w(admins),
+              :grant  => %w(admins)
+            }),
             'sandboxes' => {}
           },
           'association_requests' => {}
@@ -367,6 +358,63 @@ module ChefZero
         end
 
         result
+      end
+
+      private
+
+      def self.org_acls
+        proc do |data, path|
+          superusers = data.list([ 'superusers' ])
+          acls = {
+            'create' => {
+              'actors' => superusers,
+              'groups' => %w(admins)
+            },
+            'read' => {
+              'actors' => superusers,
+              'groups' => %w(admins users)
+            },
+            'update' => {
+              'actors' => superusers,
+              'groups' => %w(admins)
+            },
+            'delete' => {
+              'actors' => superusers,
+              'groups' => %w(admins)
+            },
+            'grant' => {
+              'actors' => superusers,
+              'groups' => %w(admins)
+            }
+          }
+          JSON.pretty_generate(acls)
+        end
+      end
+
+      def self.fill_acls(creator, group_acls)
+        acls = {
+          'create' => {
+            'actors' => [ creator ],
+            'groups' => group_acls[:create]
+          },
+          'read' => {
+            'actors' => [ creator ],
+            'groups' => group_acls[:read]
+          },
+          'update' => {
+            'actors' => [ creator ],
+            'groups' => group_acls[:update]
+          },
+          'delete' => {
+            'actors' => [ creator ],
+            'groups' => group_acls[:delete]
+          },
+          'grant' => {
+            'actors' => [ creator ],
+            'groups' => group_acls[:grant]
+          }
+        }
+        return JSON.pretty_generate(acls)
       end
 
       def self.admins_group(creator)
