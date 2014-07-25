@@ -16,7 +16,7 @@ module ChefZero
         %w(create read update delete grant).each do |perm|
           acls[perm] ||= {}
           acls[perm]['actors'] ||= begin
-            # The owners of the org and of the server (the superusers) have rights too
+            # owners = the superusers (and special case for clients owning themselves)
             owners ||= get_owners(path)
             container_acls ||= get_container_acls(request, path)
             if container_acls
@@ -41,9 +41,8 @@ module ChefZero
       private
 
       def get_owners(path)
-        # We merge owners into every acl, because we're awesome like that.
         # The objects that were created with the org itself, and containers for
-        # some reason, have the peculiar property of missing pivotal from their acls.
+        # some reason, have the peculiar property of missing superusers from their acls.
         if is_created_with_org?(path, false) || path[0] == 'organizations' && path[2] == 'containers'
           owners = []
         else

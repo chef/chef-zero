@@ -12,7 +12,8 @@ module ChefZero
       end
 
       def post(request)
-        key = JSON.parse(request.body, :create_additions => false)[identity_key]
+        json = JSON.parse(request.body, :create_additions => false)
+        key = identity_keys.map { |k| json[k] }.select { |v| v }.first
         response = super(request)
         if response[0] == 201
           already_json_response(201, DataBagItemEndpoint::populate_defaults(request, request.body, request.rest_path[3], key))
