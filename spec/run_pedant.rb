@@ -54,7 +54,7 @@ begin
     require 'chef_zero/data_store/raw_file_store'
     tmpdir = Dir.mktmpdir
     data_store = ChefZero::DataStore::RawFileStore.new(tmpdir, true)
-    data_store = ChefZero::DataStore::DefaultFacade.new(data_store, true)
+    data_store = ChefZero::DataStore::DefaultFacade.new(data_store, true, false)
     server = ChefZero::Server.new(:port => 8889, :single_org => 'chef', :data_store => data_store)
     server.start_background
 

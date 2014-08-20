@@ -1,5 +1,6 @@
 require 'json'
-require 'chef_zero/endpoints/acl_base'
+require 'chef_zero/rest_base'
+require 'chef_zero/chef_data/acl_path'
 
 module ChefZero
   module Endpoints
@@ -13,14 +14,16 @@ module ChefZero
     # /users/NAME/_acl/PERM
     #
     # Where PERM is create,read,update,delete,grant
-    class AclEndpoint < AclBase
+    class AclEndpoint < RestBase
       def validate_request(request)
-        path = acl_path(request.rest_path[0..-3]) # Strip off _acl/PERM
+        path = request.rest_path[0..-3]
+        path = path[0..1] if path.size == 3 && path[0] == 'organizations' && %w(organization organizations).include?(path[2])
+        acl_path = ChefData::AclPath.get_acl_data_path(path) # Strip off _acl/PERM
         perm = request.rest_path[-1]
-        if !%w(read create update delete grant).include?(perm)
+        if !acl_path || !%w(read create update delete grant).include?(perm)
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
-        [path, perm]
+        [acl_path, perm]
       end
 
       def get(request)

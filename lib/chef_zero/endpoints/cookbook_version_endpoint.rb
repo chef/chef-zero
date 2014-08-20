@@ -62,7 +62,6 @@ module ChefZero
         cookbook_path = request.rest_path[0..1] + ['cookbooks', cookbook_name]
         if exists_data_dir?(request, cookbook_path) && list_data(request, cookbook_path).size == 0
           delete_data_dir(request, cookbook_path)
-          delete_acl(cookbook_path)
         end
 
         # Hoover deleted files, if they exist
@@ -98,7 +97,7 @@ module ChefZero
           # This deals with an exception on delete, but things can still get deleted
           # that shouldn't be.
           begin
-            data_store.delete(request.rest_path[0..1] + ['file_store', 'checksums', checksum])
+            delete_data(request, request.rest_path[0..1] + ['file_store', 'checksums', checksum], :data_store_exceptions)
           rescue ChefZero::DataStore::DataNotFoundError
           end
         end

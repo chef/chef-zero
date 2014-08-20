@@ -1,13 +1,14 @@
 require 'chef_zero'
 require 'chef_zero/rest_base'
+require 'chef_zero/chef_data/default_creator'
 
 module ChefZero
   class DataNormalizer
     def self.normalize_acls(acls)
-      %w(create read update delete grant).each do |perm|
+      ChefData::DefaultCreator::PERMISSIONS.each do |perm|
         acls[perm] ||= {}
         acls[perm]['actors'] ||= []
-        acls[perm]['groups'] ||= [ ]
+        acls[perm]['groups'] ||= []
       end
       acls
     end

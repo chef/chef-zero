@@ -28,7 +28,7 @@ module ChefZero
         rename = key != request.rest_path[-1]
         if rename
           begin
-            data_store.create(request.rest_path[0..1] + request.rest_path[2..-2], key, request.body)
+            create_data(request, request.rest_path[0..1] + request.rest_path[2..-2], key, request.body, :data_store_exceptions)
           rescue DataStore::DataAlreadyExistsError
             return error(409, "Cannot rename '#{request.rest_path[-1]}' to '#{key}': '#{key}' already exists")
           end
@@ -43,7 +43,6 @@ module ChefZero
       def delete(request)
         result = get_data(request)
         delete_data(request)
-        delete_acl(request.rest_path)
         already_json_response(200, populate_defaults(request, result))
       end
 

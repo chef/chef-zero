@@ -25,7 +25,7 @@ module ChefZero
     class MemoryStore < ChefZero::DataStore::V2ToV1Adapter
       def initialize
         super
-        @real_store = ChefZero::DataStore::DefaultFacade.new(ChefZero::DataStore::MemoryStoreV2.new, true)
+        @real_store = ChefZero::DataStore::DefaultFacade.new(ChefZero::DataStore::MemoryStoreV2.new, 'chef', true)
         clear
       end
     end

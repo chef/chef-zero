@@ -74,7 +74,7 @@ OptionParser.new do |opts|
 end.parse!
 
 if options[:data_store]
-  options[:data_store] = ChefZero::DataStore::DefaultFacade.new(options[:data_store], options[:single_org])
+  options[:data_store] = ChefZero::DataStore::DefaultFacade.new(options[:data_store], options[:single_org], false)
 end
 
 server = ChefZero::Server.new(options)

@@ -145,12 +145,12 @@ module ChefZero
     #
     def data_store
       @data_store ||= begin
-        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:osc_compat])
+        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:single_org], options[:osc_compat])
         if options[:single_org]
 
           if !result.respond_to?(:interface_version) || result.interface_version == 1
             result = ChefZero::DataStore::V1ToV2Adapter.new(result, options[:single_org])
-            result = ChefZero::DataStore::DefaultFacade.new(result, options[:osc_compat])
+            result = ChefZero::DataStore::DefaultFacade.new(result, options[:single_org], options[:osc_compat])
           end
 
         else
@@ -393,9 +393,6 @@ module ChefZero
 
     def clear_data
       data_store.clear
-      if options[:single_org]
-        data_store.create_dir([ 'organizations' ], options[:single_org])
-      end
     end
 
     def request_handler(&block)

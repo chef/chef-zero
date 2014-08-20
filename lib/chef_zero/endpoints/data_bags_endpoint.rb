@@ -14,7 +14,7 @@ module ChefZero
         elsif exists_data_dir?(request, request.rest_path[0..1] + ['data', name])
           error(409, "Object already exists")
         else
-          data_store.create_dir(request.rest_path[0..1] + ['data'], name, :recursive)
+          create_data_dir(request, request.rest_path[0..1] + ['data'], name, :recursive)
           json_response(201, {"uri" => "#{build_uri(request.base_uri, request.rest_path + [name])}"})
         end
       end

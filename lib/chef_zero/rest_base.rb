@@ -1,6 +1,7 @@
 require 'chef_zero/rest_request'
 require 'chef_zero/rest_error_response'
 require 'chef_zero/data_store/data_not_found_error'
+require 'chef_zero/chef_data/acl_path'
 
 module ChefZero
   class RestBase
@@ -52,27 +53,43 @@ module ChefZero
       rescue DataStore::DataNotFoundError
         if options.include?(:nil)
           nil
+        elsif options.include?(:data_store_exceptions)
+          raise
         else
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
       end
     end
 
-    def list_data(request, rest_path=nil)
+    def list_data(request, rest_path=nil, *options)
       rest_path ||= request.rest_path
       begin
         data_store.list(rest_path)
       rescue DataStore::DataNotFoundError
-        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
+        end
       end
     end
 
-    def delete_data(request, rest_path=nil)
+    def delete_data(request, rest_path=nil, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.delete(rest_path)
+        data_store.delete(rest_path, *options)
       rescue DataStore::DataNotFoundError
-        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+        end
+      end
+
+      begin
+        acl_path = ChefData::AclPath.get_acl_data_path(rest_path)
+        data_store.delete(acl_path) if acl_path
+      rescue DataStore::DataNotFoundError
       end
     end
 
@@ -81,7 +98,17 @@ module ChefZero
       begin
         data_store.delete_dir(rest_path, *options)
       rescue DataStore::DataNotFoundError
-        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+        end
+      end
+
+      begin
+        acl_path = ChefData::AclPath.get_acl_data_path(rest_path)
+        data_store.delete(acl_path) if acl_path
+      rescue DataStore::DataNotFoundError
       end
     end
 
@@ -90,29 +117,49 @@ module ChefZero
       begin
         data_store.set(rest_path, data, *options)
       rescue DataStore::DataNotFoundError
-        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+        end
       end
     end
 
     def create_data_dir(request, rest_path, name, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.create_dir(rest_path, name, *options)
+        data_store.create_dir(rest_path, name, *options, :requestor => request.requestor)
       rescue DataStore::DataNotFoundError
-        raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+        end
       rescue DataStore::DataAlreadyExistsError
-        raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+        end
       end
     end
 
     def create_data(request, rest_path, name, data, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.create(rest_path, name, data, *options)
+        data_store.create(rest_path, name, data, *options, :requestor => request.requestor)
       rescue DataStore::DataNotFoundError
-        raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+        end
       rescue DataStore::DataAlreadyExistsError
-        raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+        if options.include?(:data_store_exceptions)
+          raise
+        else
+          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+        end
       end
     end
 
@@ -157,34 +204,6 @@ module ChefZero
 
     def populate_defaults(request, response)
       response
-    end
-
-    def delete_acl(path)
-      # On delete we have to delete the corresponding acl
-      acl = acl_path(path)
-      if acl
-        begin
-          data_store.delete(acl)
-        rescue DataStore::DataNotFoundError
-        end
-      end
-    end
-
-    def acl_path(path)
-      if path[0] == 'organizations' && path.size > 2
-        if path.size == 4
-          acl_path = path[0..1] + [ 'acls' ] + path[2..3]
-        elsif path.size == 3 && %w(organization organizations).include?(path[2])
-          acl_path = path[0..1] + [ 'acls', path[2] ]
-        elsif path.size == 3
-          acl_path = path[0..1] + [ 'acls', 'containers', path[2] ]
-        end
-      elsif path[0] == 'organizations' && path.size == 2
-        acl_path = path + %w(acls organizations)
-      else
-        acl_path = [ 'acls' ] + path
-      end
-      acl_path
     end
   end
 end

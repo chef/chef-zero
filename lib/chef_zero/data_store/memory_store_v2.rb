@@ -114,7 +114,7 @@ module ChefZero
         begin
           value = _get(path)
           if value.is_a?(Hash) && !options[:allow_dirs]
-            raise "exists? does not work with directories (#{path} = #{dir.class})"
+            raise "exists? does not work with directories (#{path} = #{value.class})"
           end
           return true
         rescue DataNotFoundError

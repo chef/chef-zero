@@ -1,5 +1,5 @@
 module ChefZero
-  class RestErrorResponse < Exception
+  class RestErrorResponse < StandardError
     def initialize(response_code, error)
       @response_code = response_code
       @error = error
