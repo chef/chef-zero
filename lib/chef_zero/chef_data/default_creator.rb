@@ -343,23 +343,19 @@ module ChefZero
         path = AclPath.get_object_path(acl_path)
         if path
 
-          # Add the actual owner
-          if @creators[path]
-            owners += @creators[path]
+          # Non-validator clients own themselves, instead of the creator owning them.
+          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
+            client = JSON.parse(data.get(path), :create_additions => false)
+            if client['validator']
+              owners |= @creators[path] if @creators[path]
+            else
+              owners |= [ path[3] ]
+            end
+          else
+            owners |= @creators[path] if @creators[path]
           end
 
-          # The objects that were created with the org itself have the peculiar
-          # property of missing superusers from their acl.
-  #          if !exists?(path)
-            owners += superusers
-  #          end
-
-          # Clients need to be in their own acl list, except the validator created with the org
-          # (which we test for with exists?, which only looks at the defaults)
-          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients' && !exists?(path)
-            owners |= [ path[3] ]
-          end
-
+          owners += superusers
         end
 
         owners.uniq
