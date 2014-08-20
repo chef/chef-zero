@@ -155,9 +155,13 @@ module ChefZero
       def list_org_default(path)
         if path.size >= 3 && path[2] == 'acls'
           if path.size == 3
+            # /organizations/ORG/acls
             return [ 'root' ] + data.list(path[0..1] + [ 'containers' ])
+          elsif path.size == 4
+            # /organizations/ORG/acls/TYPE
+            return data.list(path[0..1] + [ path[3] ])
           else
-            return data.list(AclPath.get_object_path(path))
+            return nil
           end
         end
 
