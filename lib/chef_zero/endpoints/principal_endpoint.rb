@@ -11,15 +11,25 @@ module ChefZero
         json = get_data(request, request.rest_path[0..1] + [ 'users', name ], :nil)
         if json
           type = 'user'
+          org_member = true
         else
           json = get_data(request, request.rest_path[0..1] + [ 'clients', name ], :nil)
-          type = 'client'
+          if json
+            type = 'client'
+            org_member = true
+          else
+            json = get_data(request, [ 'users', name ], :nil)
+            type = 'user'
+            org_member = false
+          end
         end
         if json
           json_response(200, {
             'name' => name,
             'type' => type,
-            'public_key' => JSON.parse(json)['public_key'] || PUBLIC_KEY
+            'public_key' => JSON.parse(json)['public_key'] || PUBLIC_KEY,
+            'authz_id' => '0'*32,
+            'org_member' => org_member
           })
         else
           error(404, 'Principal not found')
