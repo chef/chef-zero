@@ -17,8 +17,12 @@ module ChefZero
           org[key] = value
         end
         org = JSON.pretty_generate(org)
+        if new_org['name'] != request.rest_path[-1]
+          # This is a rename
+          return error(400, "Cannot rename org #{request.rest_path[-1]} to #{new_org['name']}: rename not supported for orgs")
+        end
         set_data(request, request.rest_path + [ 'org' ], org)
-        already_json_response(200, populate_defaults(request, org))
+        json_response(200, "uri" => "#{build_uri(request.base_uri, request.rest_path)}")
       end
 
       def delete(request)

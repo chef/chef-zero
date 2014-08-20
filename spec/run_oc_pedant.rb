@@ -38,7 +38,9 @@ begin
     '--skip-authentication',
     '--skip-authorization',
     '--skip-omnibus',
-    '--skip-usags'
+    '--skip-usags',
+    '--skip-internal_orgs',
+    '--skip-rename_org'
   ])
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args)

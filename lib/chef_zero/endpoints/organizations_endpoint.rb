@@ -25,7 +25,7 @@ module ChefZero
           create_data_dir(request, request.rest_path, name, :requestor => request.requestor)
 
           org = {
-            "guid" => UUIDTools::UUID.random_create,
+            "guid" => UUIDTools::UUID.random_create.to_s.gsub('-', ''),
             "assigned_at" => Time.now.to_s
           }
           org_path = request.rest_path + [ name ]
