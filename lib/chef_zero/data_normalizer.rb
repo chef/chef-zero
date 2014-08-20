@@ -118,6 +118,7 @@ module ChefZero
     end
 
     def self.normalize_group(group, name, orgname)
+      group.delete('id')
       if group['actors'].is_a?(Hash)
         group['users'] ||= group['actors']['users']
         group['clients'] ||= group['actors']['clients']
