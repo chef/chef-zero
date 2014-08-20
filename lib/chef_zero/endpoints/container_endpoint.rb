@@ -10,6 +10,8 @@ module ChefZero
         super(server, %w(id containername))
       end
 
+      undef_method(:put)
+
       def populate_defaults(request, response_json)
         container = JSON.parse(response_json, :create_additions => false)
         container = DataNormalizer.normalize_container(container, request.rest_path[3])

@@ -26,8 +26,9 @@ module ChefZero
     end
 
     def self.normalize_container(container, name)
-      container['containername'] ||= name
-      container['containerpath'] ||= name
+      container.delete('id')
+      container['containername'] = name
+      container['containerpath'] = name
       container
     end
 
