@@ -40,7 +40,18 @@ module ChefZero
 
         # Inject private_key into response, delete public_key/password if applicable
         if result[0] == 200 || result[0] == 201
-          response = JSON.parse(result[2], :create_additions => false)
+          if request.rest_path[0] == 'users'
+            key = nil
+            identity_keys.each do |identity_key|
+              key ||= request_body[identity_key]
+            end
+            key ||= request.rest_path[-1]
+            response = {
+              'uri' => build_uri(request.base_uri, [ 'users', key ])
+            }
+          else
+            response = JSON.parse(result[2], :create_additions => false)
+          end
           response['private_key'] = private_key if private_key
           response.delete('public_key') if !updating_public_key && request.rest_path[2] == 'users'
           response.delete('password')
@@ -55,7 +66,7 @@ module ChefZero
         if request.rest_path[2] == 'clients'
           response = DataNormalizer.normalize_client(response, request.rest_path[3])
         else
-          response = DataNormalizer.normalize_user(response, request.rest_path[3], identity_keys)
+          response = DataNormalizer.normalize_user(response, request.rest_path[3], identity_keys, server.options[:osc_compat], request.method)
         end
         JSON.pretty_generate(response)
       end

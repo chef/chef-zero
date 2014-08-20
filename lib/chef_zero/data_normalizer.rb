@@ -32,12 +32,22 @@ module ChefZero
       container
     end
 
-    def self.normalize_user(user, name, identity_keys)
+    def self.normalize_user(user, name, identity_keys, osc_compat, method=nil)
       user[identity_keys.first] ||= name
+      user['public_key'] ||= PUBLIC_KEY
       user['admin'] ||= false
       user['admin'] = !!user['admin']
       user['openid'] ||= nil
-      user['public_key'] ||= PUBLIC_KEY
+      if !osc_compat
+        if method == 'GET'
+          user.delete('admin')
+          user.delete('password')
+          user.delete('openid')
+        end
+        user['email'] ||= nil
+        user['first_name'] ||= nil
+        user['last_name'] ||= nil
+      end
       user
     end
 

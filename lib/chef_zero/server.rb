@@ -78,6 +78,7 @@ require 'chef_zero/endpoints/user_association_requests_endpoint'
 require 'chef_zero/endpoints/user_association_requests_count_endpoint'
 require 'chef_zero/endpoints/user_association_request_endpoint'
 require 'chef_zero/endpoints/user_organizations_endpoint'
+require 'chef_zero/endpoints/verify_password_endpoint'
 require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
 
@@ -432,6 +433,7 @@ module ChefZero
           [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
           [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
           [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
+          [ "/verify_password", VerifyPasswordEndpoint.new(self) ],
 
           [ "/organizations", OrganizationsEndpoint.new(self) ],
           [ "/organizations/*", OrganizationEndpoint.new(self) ],

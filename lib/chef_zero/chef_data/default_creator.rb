@@ -187,8 +187,6 @@ module ChefZero
           elsif path[2] == 'users'
             if osc_compat
               result << 'admin'
-            else
-              result += @creators[path[0..1]] if @creators[path[0..1]]
             end
           end
         end
@@ -214,7 +212,6 @@ module ChefZero
               return nil
             end
           end
-
 
           # /organizations/(*)/clients/\1-validator
           # /organizations/*/environments/_default

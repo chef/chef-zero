@@ -28,8 +28,9 @@ module ChefZero
         rename = key != request.rest_path[-1]
         if rename
           begin
-            create_data(request, request.rest_path[0..1] + request.rest_path[2..-2], key, request.body, :data_store_exceptions)
+            create_data(request, request.rest_path[0..-2], key, request.body, :data_store_exceptions)
           rescue DataStore::DataAlreadyExistsError
+            puts $!.backtrace.join("\n")
             return error(409, "Cannot rename '#{request.rest_path[-1]}' to '#{key}': '#{key}' already exists")
           end
           delete_data(request)
