@@ -51,30 +51,28 @@ module ChefZero
         end
       end
 
+      #
       # Reverse transform from acl_data_path to path.
       # /acls/root -> /
-      # /acls/containers/TYPE -> /TYPE
-      # /acls/TYPE/NAME -> /TYPE/NAME
-      # /organizations/ORG/acls/root -> /
-      # /organizations/ORG/acls/containers/TYPE -> /organizations/ORG/TYPE
-      # /organizations/ORG/acls/TYPE/NAME -> /organizations/ORG/TYPE/NAME
+      # /acls/** -> /**
+      # /organizations/ORG/acls/root -> /organizations/ORG
+      # /organizations/ORG/acls/** -> /organizations/ORG/**
+      #
+      # This means that /acls/containers/nodes maps to
+      # /containers/nodes, not /nodes.
       #
       def self.get_object_path(acl_data_path)
         if acl_data_path[0] == 'acls'
           if acl_data_path[1] == 'root'
             []
-          elsif acl_data_path[1] == 'containers'
-            [acl_data_path[2]]
           else
-            acl_data_path[1..2]
+            acl_data_path[1..-1]
           end
         elsif acl_data_path[0] == 'organizations' && acl_data_path[2] == 'acls'
           if acl_data_path[3] == 'root'
             acl_data_path[0..1]
-          elsif acl_data_path[3] == 'containers'
-            acl_data_path[0..1] + [ acl_data_path[4] ]
           else
-            acl_data_path[0..1] + acl_data_path[3..4]
+            acl_data_path[0..1] + acl_data_path[3..-1]
           end
         end
       end

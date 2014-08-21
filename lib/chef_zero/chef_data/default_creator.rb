@@ -62,7 +62,7 @@ module ChefZero
       def get(path)
         return nil if deleted?(path)
 
-        case path[0]
+        result = case path[0]
         when 'acls'
           # /acls/*
           object_path = AclPath.get_object_path(path)
@@ -89,6 +89,8 @@ module ChefZero
             end
           end
         end
+
+        result
       end
 
       def list(path)
@@ -101,13 +103,13 @@ module ChefZero
         case path[0]
         when 'acls'
           if path.size == 1
-            [ 'root' ] + data.list(path + [ 'containers' ])
+            [ 'root' ] + (data.list(path + [ 'containers' ]) - [ 'organizations' ])
           else
             data.list(AclPath.get_object_path(path))
           end
 
         when 'containers'
-          [ 'containers', 'users' ]
+          [ 'containers', 'users', 'organizations' ]
 
         when 'users'
           superusers
@@ -256,7 +258,8 @@ module ChefZero
 
       def get_org_acl_default(path)
         object_path = AclPath.get_object_path(path)
-        return nil if !data_exists?(object_path)
+        # The actual things containers correspond to don't have to exist, as long as the container does
+        return nil if object_path[2] != 'containers' && !data_exists?(object_path)
         basic_acl =
           case path[3..-1].join('/')
           when 'root', 'containers/containers', 'containers/groups'
