@@ -115,7 +115,7 @@ module ChefZero
     def set_data(request, rest_path, data, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.set(rest_path, data, *options)
+        data_store.set(rest_path, data, *options, :requestor => request.requestor)
       rescue DataStore::DataNotFoundError
         if options.include?(:data_store_exceptions)
           raise

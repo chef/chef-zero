@@ -43,7 +43,7 @@ module ChefZero
         end
 
         options_hash = options.last.is_a?(Hash) ? options.last : {}
-        default_creator.created(path + [ name ], options_hash[:requestor])
+        default_creator.created(path + [ name ], options_hash[:requestor], options.include?(:recursive))
       end
 
       def create(path, name, data, *options)
@@ -62,7 +62,7 @@ module ChefZero
         end
 
         options_hash = options.last || {}
-        default_creator.created(path + [ name ], options_hash[:requestor])
+        default_creator.created(path + [ name ], options_hash[:requestor], options.include?(:recursive))
       end
 
       def get(path, request=nil)
@@ -87,6 +87,11 @@ module ChefZero
           else
             raise
           end
+        end
+
+        if options.include?(:create)
+          options_hash = options.last || {}
+          default_creator.created(path, options_hash[:requestor], options.include?(:create_dir))
         end
       end
 

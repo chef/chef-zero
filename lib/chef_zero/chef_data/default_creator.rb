@@ -50,9 +50,15 @@ module ChefZero
         false
       end
 
-      def created(path, creator)
-        @creators[path] = [ creator ]
-        @deleted.delete(path) if @deleted[path]
+      def created(path, creator, create_parents)
+        while !@creators[path]
+          @creators[path] = [ creator ]
+          @deleted.delete(path) if @deleted[path]
+          # Only do this once if create_parents is false
+          break if !create_parents || path.size == 0
+
+          path = path[0..-2]
+        end
       end
 
       def superusers
@@ -365,7 +371,12 @@ module ChefZero
             owners |= @creators[path] if @creators[path]
           end
 
-          owners |= superusers
+          #ANGRY
+          # Non-default containers do not get superusers added to them,
+          # because reasons.
+          unless path.size == 4 && path[0] == 'organizations' && path[2] == 'containers' && !exists?(path)
+            owners |= superusers
+          end
         end
 
         owners.uniq
@@ -378,19 +389,13 @@ module ChefZero
           acl[perm] ||= {}
           acl[perm]['actors'] ||= begin
             owners ||= get_owners(acl_path)
-            container_acl ||= get_container_acl(acl_path) || {}
-            if container_acl[perm] && container_acl[perm]['actors']
-              owners | container_acl[perm]['actors']
-            else
-              owners
-            end
           end
           acl[perm]['groups'] ||= begin
             # When we create containers, we don't merge groups (not sure why).
             if acl_path[0] == 'organizations' && acl_path[3] == 'containers'
               []
             else
-              container_acl ||= get_container_acl(request, acl_path) || {}
+              container_acl ||= get_container_acl(acl_path) || {}
               (container_acl[perm] ? container_acl[perm]['groups'] : []) || []
             end
           end
