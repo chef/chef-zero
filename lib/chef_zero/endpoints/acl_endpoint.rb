@@ -26,25 +26,12 @@ module ChefZero
         [acl_path, perm]
       end
 
-      def get(request)
-        raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
-      end
-
       def put(request)
         path, perm = validate_request(request)
         acls = JSON.parse(get_data(request, path), :create_additions => false)
         acls[perm] = JSON.parse(request.body, :create_additions => false)[perm]
         set_data(request, path, JSON.pretty_generate(acls))
         json_response(200, {'uri' => "#{build_uri(request.base_uri, request.rest_path)}"})
-      end
-
-      # Remove these to get them doing 405 again like they ought to
-      def post(request)
-        raise RestErrorResponse.new(404, "Method not allowed: POST #{build_uri(request.base_uri, request.rest_path)}")
-      end
-
-      def delete(request)
-        raise RestErrorResponse.new(404, "Method not allowed: DELETE #{build_uri(request.base_uri, request.rest_path)}")
       end
     end
   end

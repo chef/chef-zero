@@ -142,6 +142,11 @@ module ChefZero
       group['orgname'] ||= orgname if orgname
       group['name'] ||= name
       group['groupname'] ||= name
+
+      group['users'].uniq!
+      group['clients'].uniq!
+      group['actors'].uniq!
+      group['groups'].uniq!
       group
     end
 

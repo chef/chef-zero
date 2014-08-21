@@ -130,4 +130,5 @@ self[:tags] = [:validation, :authentication, :authorization]
 verify_error_messages false
 
 ruby_users_endpoint? false
+ruby_acls_endpoint? false
 ruby_org_assoc? false

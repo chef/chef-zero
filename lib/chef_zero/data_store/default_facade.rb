@@ -90,7 +90,7 @@ module ChefZero
         end
       end
 
-      def delete(path)
+      def delete(path, *options)
         deleted = default_creator.deleted(path)
         begin
           real_store.delete(path)

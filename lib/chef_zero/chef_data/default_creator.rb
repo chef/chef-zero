@@ -244,8 +244,8 @@ module ChefZero
 
           when "groups/users"
             users = data.list(path[0..1] + [ 'users' ])
-            users += @creators[path[0..1]] if @creators[path[0..1]]
-            { 'users' => users.uniq }
+            users |= @creators[path[0..1]] if @creators[path[0..1]]
+            { 'users' => users }
 
           when "org"
             {}
@@ -362,7 +362,7 @@ module ChefZero
             owners |= @creators[path] if @creators[path]
           end
 
-          owners += superusers
+          owners |= superusers
         end
 
         owners.uniq
