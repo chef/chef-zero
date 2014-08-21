@@ -19,8 +19,10 @@ module ChefZero
             org_member = true
           else
             json = get_data(request, [ 'users', name ], :nil)
-            type = 'user'
-            org_member = false
+            if json
+              type = 'user'
+              org_member = false
+            end
           end
         end
         if json
