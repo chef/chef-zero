@@ -19,8 +19,12 @@ module ChefZero
 
       def create_dir(path, name, *options)
         return nil if skip_organizations?(path, name)
-        fix_exceptions do
-          real_store.create_dir(path[2..-1], name, *options)
+        if path.size <= 1
+          raise DataAlreadyExistsError.new(path + [ name ]) if !options[:recursive]
+        else
+          fix_exceptions do
+            real_store.create_dir(path[2..-1], name, *options)
+          end
         end
       end
 
@@ -61,22 +65,34 @@ module ChefZero
 
       def list(path)
         return nil if skip_organizations?(path)
-        fix_exceptions do
-          real_store.list(path[2..-1])
+        if path == []
+          [ 'organizations' ]
+        elsif path == [ 'organizations' ]
+          [ single_org ]
+        else
+          fix_exceptions do
+            real_store.list(path[2..-1])
+          end
         end
       end
 
       def exists?(path)
-        return nil if skip_organizations?(path)
+        return false if skip_organizations?(path)
         fix_exceptions do
           real_store.exists?(path[2..-1])
         end
       end
 
       def exists_dir?(path)
-        return nil if skip_organizations?(path)
-        fix_exceptions do
-          real_store.exists_dir?(path[2..-1])
+        return false if skip_organizations?(path)
+        if path == []
+          [ 'organizations' ]
+        elsif path == [ 'organizations' ]
+          [ single_org ]
+        else
+          fix_exceptions do
+            real_store.exists_dir?(path[2..-1])
+          end
         end
       end
 
@@ -101,9 +117,6 @@ module ChefZero
           true
         else
           raise "Path #{path} must start with /organizations/#{single_org}" if path[0..1] != [ 'organizations', single_org ]
-          if !name
-            raise "Path #{path} must start with /organizations/#{single_org}/<something>" if path.size <= 2
-          end
           false
         end
       end

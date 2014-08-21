@@ -30,7 +30,7 @@ module ChefZero
 
       def clear
         real_store.clear
-        real_store.create_dir([ 'organizations' ], single_org)
+        real_store.create_dir([ 'organizations' ], single_org, :recursive)
       end
 
       def create_dir(path, name, *options)
