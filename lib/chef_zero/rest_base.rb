@@ -136,7 +136,6 @@ module ChefZero
           raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
       rescue DataStore::DataAlreadyExistsError
-        puts $!.backtrace.join("\n")
         if options.include?(:data_store_exceptions)
           raise
         else
@@ -156,7 +155,6 @@ module ChefZero
           raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
       rescue DataStore::DataAlreadyExistsError
-        puts $!.backtrace.join("\n")
         if options.include?(:data_store_exceptions)
           raise
         else

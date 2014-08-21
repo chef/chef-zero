@@ -110,11 +110,7 @@ module ChefZero
           [ 'containers', 'users' ]
 
         when 'users'
-          result = superusers
-          data.list([ 'organizations' ]).each do |org|
-            result += data.list([ 'organizations', org, 'users' ]).uniq
-          end
-          result
+          superusers
 
         when 'organizations'
           if path.size == 1

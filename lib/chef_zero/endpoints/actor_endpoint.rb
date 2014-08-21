@@ -8,6 +8,19 @@ module ChefZero
     # /organizations/ORG/users/NAME
     # /users/NAME
     class ActorEndpoint < RestObjectEndpoint
+      def delete(request)
+        result = super
+        if request.rest_path[0] == 'users'
+          list_data(request, [ 'organizations' ]).each do |org|
+            begin
+              delete_data(request, [ 'organizations', org, 'users', request.rest_path[1] ], :data_store_exceptions)
+            rescue DataStore::DataNotFoundError
+            end
+          end
+        end
+        result
+      end
+
       def put(request)
         # Find out if we're updating the public key.
         request_body = JSON.parse(request.body, :create_additions => false)
