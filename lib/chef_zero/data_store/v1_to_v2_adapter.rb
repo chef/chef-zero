@@ -18,53 +18,53 @@ module ChefZero
       end
 
       def create_dir(path, name, *options)
-        return nil if skip_organizations?(path, name)
-        if path.size <= 1
-          raise DataAlreadyExistsError.new(path + [ name ]) if !options[:recursive]
-        else
-          fix_exceptions do
-            real_store.create_dir(path[2..-1], name, *options)
-          end
+        raise DataNotFoundError.new(path) if skip_organizations?(path)
+        raise "Cannot create #{name} at #{path} with V1ToV2Adapter: only handles a single org named #{single_org}." if skip_organizations?(path, name)
+        raise DataAlreadyExistsError.new(path + [ name ]) if path.size < 2
+        fix_exceptions do
+          real_store.create_dir(path[2..-1], name, *options)
         end
       end
 
       def create(path, name, data, *options)
-        return nil if skip_organizations?(path, name)
+        raise DataNotFoundError.new(path) if skip_organizations?(path)
+        raise "Cannot create #{name} at #{path} with V1ToV2Adapter: only handles a single org named #{single_org}." if skip_organizations?(path, name)
+        raise DataAlreadyExistsError.new(path + [ name ]) if path.size < 2
         fix_exceptions do
           real_store.create(path[2..-1], name, data, *options)
         end
       end
 
       def get(path, request=nil)
-        return nil if skip_organizations?(path)
+        raise DataNotFoundError.new(path) if skip_organizations?(path)
         fix_exceptions do
           real_store.get(path[2..-1], request)
         end
       end
 
       def set(path, data, *options)
-        return nil if skip_organizations?(path)
+        raise DataNotFoundError.new(path) if skip_organizations?(path)
         fix_exceptions do
           real_store.set(path[2..-1], data, *options)
         end
       end
 
-      def delete(path)
-        return nil if skip_organizations?(path)
+      def delete(path, *options)
+        raise DataNotFoundError.new(path) if skip_organizations?(path) && !options.include?(:recursive)
         fix_exceptions do
           real_store.delete(path[2..-1])
         end
       end
 
       def delete_dir(path, *options)
-        return nil if skip_organizations?(path)
+        raise DataNotFoundError.new(path) if skip_organizations?(path) && !options.include?(:recursive)
         fix_exceptions do
           real_store.delete_dir(path[2..-1], *options)
         end
       end
 
       def list(path)
-        return nil if skip_organizations?(path)
+        raise DataNotFoundError.new(path) if skip_organizations?(path)
         if path == []
           [ 'organizations' ]
         elsif path == [ 'organizations' ]
@@ -86,10 +86,11 @@ module ChefZero
       def exists_dir?(path)
         return false if skip_organizations?(path)
         if path == []
-          [ 'organizations' ]
-        elsif path == [ 'organizations' ]
-          [ single_org ]
+          true
+        elsif path == [ 'organizations' ] || path == [ 'users' ]
+          true
         else
+          return false if skip_organizations?(path)
           fix_exceptions do
             real_store.exists_dir?(path[2..-1])
           end
@@ -110,14 +111,17 @@ module ChefZero
 
       def skip_organizations?(path, name = nil)
         if path == []
-          raise "" if name == nil || name != 'organizations'
-          true
-        elsif path == ['organizations']
-          raise "" if name == nil || name != single_org
-          true
-        else
-          raise "Path #{path} must start with /organizations/#{single_org}" if path[0..1] != [ 'organizations', single_org ]
           false
+        elsif path[0] == 'organizations'
+          if path.size == 1
+            false
+          elsif path.size >= 2 && path[1] != single_org
+            true
+          else
+            false
+          end
+        else
+          true
         end
       end
     end
