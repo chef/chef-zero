@@ -336,13 +336,27 @@ module ChefZero
         path = AclPath.get_object_path(acl_path)
         if path
 
-          # Non-validator clients own themselves, instead of the creator owning them.
+          # Non-validator clients own themselves.
           if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
-            client = JSON.parse(data.get(path), :create_additions => false)
-            if client['validator']
-              owners |= @creators[path] if @creators[path]
-            else
+            begin
+              client = JSON.parse(data.get(path), :create_additions => false)
+              if !client['validator']
+                owners |= [ path[3] ]
+              end
+            rescue
               owners |= [ path[3] ]
+            end
+
+            # Add creators as owners (except any validator clients).
+            if @creators[path]
+              @creators[path].each do |creator|
+                begin
+                  client = JSON.parse(data.get(path[0..2] + [ creator ]), :create_additions => false)
+                  next if client['validator']
+                rescue
+                end
+                owners |= [ creator ]
+              end
             end
           else
             owners |= @creators[path] if @creators[path]
