@@ -51,9 +51,17 @@ module ChefZero
       end
 
       def created(path, creator, create_parents)
-        while !@creators[path]
+        # If a parent has been deleted, we will need to clear that.
+        deleted_index = nil
+        0.upto(path.size-1) do |index|
+          deleted_index = index if @deleted[path[0..index]]
+        end
+
+        # Walk up the tree, setting the creator on anything that doesn't exist
+        # (anything that is either deleted or was never created)
+        while (deleted_index && path.size > deleted_index) || !@creators[path]
           @creators[path] = [ creator ]
-          @deleted.delete(path) if @deleted[path]
+          @deleted.delete(path)
           # Only do this once if create_parents is false
           break if !create_parents || path.size == 0
 
