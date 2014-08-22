@@ -227,7 +227,9 @@ module ChefZero
     def start_background(wait = 5)
       realm = "ChefZero's realm"
       if options[:auth_string]
-        htpd = WEBrick::HTTPAuth::Htpasswd.new('dot.htpasswd')
+        htp_file = Tempfile.new('dot.htpasswd')
+        htpd = WEBrick::HTTPAuth::Htpasswd.new(htp_file.path)
+        htp_file.unlink
         htpd.set_passwd(nil, options[:auth_string], nil)
         authenticator = WEBrick::HTTPAuth::BasicAuth.new(:UserDB => htpd, :Realm => realm)
       end
