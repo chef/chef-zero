@@ -62,6 +62,10 @@ OptionParser.new do |opts|
     options[:ssl] = value
   end
 
+  opts.on("--auth-string STRING", "Set HTTP Basic Auth if given") do |value|
+    options[:auth_string] = value
+  end
+
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit

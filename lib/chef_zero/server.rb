@@ -229,6 +229,13 @@ module ChefZero
     #   the thread the background process is running in
     #
     def start_background(wait = 5)
+      realm = "ChefZero's realm"
+      if options[:auth_string]
+        htpd = WEBrick::HTTPAuth::Htpasswd.new('dot.htpasswd')
+        htpd.set_passwd(nil, options[:auth_string], nil)
+        authenticator = WEBrick::HTTPAuth::BasicAuth.new(:UserDB => htpd, :Realm => realm)
+      end
+
       @server = WEBrick::HTTPServer.new(
         :DoNotListen => true,
         :AccessLog   => [],
@@ -237,7 +244,10 @@ module ChefZero
         :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
         :StartCallback => proc {
           @running = true
-        }
+        },
+        :RequestCallback => lambda do |req, res|
+          authenticator.authenticate(req, res) if options[:auth_string]
+        end
       )
       @server.mount('/', Rack::Handler::WEBrick, app)
 
