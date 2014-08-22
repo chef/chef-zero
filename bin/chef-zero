@@ -58,8 +58,8 @@ OptionParser.new do |opts|
     options[:data_store] = ChefZero::DataStore::RawFileStore.new(value)
   end
 
-  opts.on("--ssl", "Use SSL with self-signed certificate(Auto generate before every run)") do
-    options[:ssl] = true
+  opts.on("--[no-]ssl", "Use SSL with self-signed certificate(Auto generate before every run).  Default: false.") do |value|
+    options[:ssl] = value
   end
 
   opts.on_tail("-h", "--help", "Show this message") do

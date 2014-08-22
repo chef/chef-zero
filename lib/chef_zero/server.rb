@@ -88,7 +88,8 @@ module ChefZero
       :port => 8889,
       :log_level => :info,
       :generate_real_keys => true,
-      :single_org => 'chef'
+      :single_org => 'chef',
+      :ssl => false
     }.freeze
 
     def initialize(options = {})
