@@ -12,8 +12,7 @@ module ChefZero
         id = "#{username}-#{orgname}"
 
         if exists_data?(request, [ 'organizations', orgname, 'users', username ])
-          # TODO 403?  Really?
-          raise RestErrorResponse.new(403, "User #{username} is already in organization #{orgname}")
+          raise RestErrorResponse.new(409, "User #{username} is already in organization #{orgname}")
         end
 
         create_data(request, request.rest_path, username, '{}')
