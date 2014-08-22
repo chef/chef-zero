@@ -27,7 +27,7 @@ require 'webrick'
 require 'webrick/https'
 
 require 'chef_zero'
-require 'chef_zero/cookbook_data'
+require 'chef_zero/chef_data/cookbook_data'
 require 'chef_zero/rest_router'
 require 'chef_zero/data_store/memory_store_v2'
 require 'chef_zero/data_store/v1_to_v2_adapter'
@@ -374,9 +374,9 @@ module ChefZero
       if contents['cookbooks']
         contents['cookbooks'].each_pair do |name_version, cookbook|
           if name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
-            cookbook_data = CookbookData.to_hash(cookbook, $1, $2)
+            cookbook_data = ChefData::CookbookData.to_hash(cookbook, $1, $2)
           else
-            cookbook_data = CookbookData.to_hash(cookbook, name_version)
+            cookbook_data = ChefData::CookbookData.to_hash(cookbook, name_version)
           end
           raise "No version specified" if !cookbook_data[:version]
           data_store.create_dir(['organizations', org_name, 'cookbooks'], cookbook_data[:cookbook_name], :recursive)

@@ -1,6 +1,6 @@
 require 'json'
 require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/data_normalizer'
+require 'chef_zero/chef_data/data_normalizer'
 
 module ChefZero
   module Endpoints
@@ -14,7 +14,7 @@ module ChefZero
 
       def populate_defaults(request, response_json)
         container = JSON.parse(response_json, :create_additions => false)
-        container = DataNormalizer.normalize_container(container, request.rest_path[3])
+        container = ChefData::DataNormalizer.normalize_container(container, request.rest_path[3])
         JSON.pretty_generate(container)
       end
     end

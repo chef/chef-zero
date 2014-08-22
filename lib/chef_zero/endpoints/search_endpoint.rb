@@ -1,6 +1,6 @@
 require 'json'
 require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/data_normalizer'
+require 'chef_zero/chef_data/data_normalizer'
 require 'chef_zero/rest_error_response'
 require 'chef_zero/solr/solr_parser'
 require 'chef_zero/solr/solr_doc'
@@ -48,15 +48,15 @@ module ChefZero
       def search_container(request, index)
         relative_parts, normalize_proc = case index
         when 'client'
-          [ ['clients'], Proc.new { |client, name| DataNormalizer.normalize_client(client, name) } ]
+          [ ['clients'], Proc.new { |client, name| ChefData::DataNormalizer.normalize_client(client, name) } ]
         when 'node'
-          [ ['nodes'], Proc.new { |node, name| DataNormalizer.normalize_node(node, name) } ]
+          [ ['nodes'], Proc.new { |node, name| ChefData::DataNormalizer.normalize_node(node, name) } ]
         when 'environment'
-          [ ['environments'], Proc.new { |environment, name| DataNormalizer.normalize_environment(environment, name) } ]
+          [ ['environments'], Proc.new { |environment, name| ChefData::DataNormalizer.normalize_environment(environment, name) } ]
         when 'role'
-          [ ['roles'], Proc.new { |role, name| DataNormalizer.normalize_role(role, name) } ]
+          [ ['roles'], Proc.new { |role, name| ChefData::DataNormalizer.normalize_role(role, name) } ]
         else
-          [ ['data', index], Proc.new { |data_bag_item, id| DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') } ]
+          [ ['data', index], Proc.new { |data_bag_item, id| ChefData::DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') } ]
         end
         [
           request.rest_path[0..1] + relative_parts,
@@ -86,7 +86,7 @@ module ChefZero
           result
 
         elsif !%w(client environment role).include?(index)
-          DataNormalizer.normalize_data_bag_item(value, index, id, 'GET')
+          ChefData::DataNormalizer.normalize_data_bag_item(value, index, id, 'GET')
         else
           value
         end

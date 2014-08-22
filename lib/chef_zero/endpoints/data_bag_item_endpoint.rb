@@ -1,7 +1,7 @@
 require 'json'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/endpoints/data_bag_item_endpoint'
-require 'chef_zero/data_normalizer'
+require 'chef_zero/chef_data/data_normalizer'
 
 module ChefZero
   module Endpoints
@@ -17,7 +17,7 @@ module ChefZero
 
       def self.populate_defaults(request, response_json, data_bag, data_bag_item)
         response = JSON.parse(response_json, :create_additions => false)
-        response = DataNormalizer.normalize_data_bag_item(response, data_bag, data_bag_item, request.method)
+        response = ChefData::DataNormalizer.normalize_data_bag_item(response, data_bag, data_bag_item, request.method)
         JSON.pretty_generate(response)
       end
     end

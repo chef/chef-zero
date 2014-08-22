@@ -1,6 +1,6 @@
 require 'json'
 require 'chef_zero/rest_base'
-require 'chef_zero/data_normalizer'
+require 'chef_zero/chef_data/data_normalizer'
 
 module ChefZero
   module Endpoints

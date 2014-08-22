@@ -1,6 +1,6 @@
 require 'json'
 require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/data_normalizer'
+require 'chef_zero/chef_data/data_normalizer'
 
 module ChefZero
   module Endpoints
@@ -77,9 +77,9 @@ module ChefZero
       def populate_defaults(request, response_json)
         response = JSON.parse(response_json, :create_additions => false)
         if request.rest_path[2] == 'clients'
-          response = DataNormalizer.normalize_client(response, request.rest_path[3])
+          response = ChefData::DataNormalizer.normalize_client(response, request.rest_path[3])
         else
-          response = DataNormalizer.normalize_user(response, request.rest_path[3], identity_keys, server.options[:osc_compat], request.method)
+          response = ChefData::DataNormalizer.normalize_user(response, request.rest_path[3], identity_keys, server.options[:osc_compat], request.method)
         end
         JSON.pretty_generate(response)
       end

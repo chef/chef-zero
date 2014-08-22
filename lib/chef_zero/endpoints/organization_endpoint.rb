@@ -33,7 +33,7 @@ module ChefZero
 
       def populate_defaults(request, response_json)
         org = JSON.parse(response_json, :create_additions => false)
-        org = DataNormalizer.normalize_organization(org, request.rest_path[1])
+        org = ChefData::DataNormalizer.normalize_organization(org, request.rest_path[1])
         JSON.pretty_generate(org)
       end
     end

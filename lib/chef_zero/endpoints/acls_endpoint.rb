@@ -1,6 +1,6 @@
 require 'json'
 require 'chef_zero/rest_base'
-require 'chef_zero/data_normalizer'
+require 'chef_zero/chef_data/data_normalizer'
 require 'chef_zero/chef_data/acl_path'
 
 module ChefZero
@@ -21,7 +21,7 @@ module ChefZero
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
         acls = JSON.parse(get_data(request, acl_path), :create_additions => false)
-        acls = DataNormalizer.normalize_acls(acls)
+        acls = ChefData::DataNormalizer.normalize_acls(acls)
         json_response(200, acls)
       end
     end

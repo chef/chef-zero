@@ -1,7 +1,7 @@
 require 'json'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/rest_error_response'
-require 'chef_zero/data_normalizer'
+require 'chef_zero/chef_data/data_normalizer'
 require 'chef_zero/data_store/data_not_found_error'
 
 module ChefZero
@@ -106,7 +106,7 @@ module ChefZero
       def populate_defaults(request, response_json)
         # Inject URIs into each cookbook file
         cookbook = JSON.parse(response_json, :create_additions => false)
-        cookbook = DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, request.rest_path[3], request.rest_path[4], request.base_uri, request.method)
+        cookbook = ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, request.rest_path[3], request.rest_path[4], request.base_uri, request.method)
         JSON.pretty_generate(cookbook)
       end
 

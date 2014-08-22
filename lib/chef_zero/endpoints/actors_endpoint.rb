@@ -27,7 +27,7 @@ module ChefZero
             record = get_data(request, request.rest_path + [ name ], :nil)
             if record
               record = JSON.parse(record, :create_additions => false)
-              record = DataNormalizer.normalize_user(record, name, identity_keys, server.options[:osc_compat])
+              record = ChefData::DataNormalizer.normalize_user(record, name, identity_keys, server.options[:osc_compat])
               results[name] = record
             end
           end

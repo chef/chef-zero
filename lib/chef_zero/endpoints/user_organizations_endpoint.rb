@@ -13,7 +13,7 @@ module ChefZero
         result = result.map do |orgname|
           org = get_data(request, [ 'organizations', orgname, 'org' ])
           org = JSON.parse(org, :create_additions => false)
-          DataNormalizer.normalize_organization(org, orgname)
+          ChefData::DataNormalizer.normalize_organization(org, orgname)
         end
         json_response(200, result)
       end
