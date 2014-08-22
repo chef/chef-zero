@@ -235,4 +235,6 @@ module ChefZero
       end
     end
   end
+
+  CookbookData = ChefData::CookbookData
 end
