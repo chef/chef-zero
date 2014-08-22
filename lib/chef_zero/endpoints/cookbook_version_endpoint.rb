@@ -6,7 +6,7 @@ require 'chef_zero/data_store/data_not_found_error'
 
 module ChefZero
   module Endpoints
-    # /cookbooks/NAME/VERSION
+    # /organizations/ORG/cookbooks/NAME/VERSION
     class CookbookVersionEndpoint < RestObjectEndpoint
       def get(request)
         if request.rest_path[4] == "_latest" || request.rest_path[4] == "latest"
@@ -37,7 +37,7 @@ module ChefZero
         end
 
         # Set the cookbook
-        set_data(request, request.rest_path[0..1] + ['cookbooks', name, version], request.body, :create_dir, :create)
+        set_data(request, request.rest_path, request.body, :create_dir, :create)
 
         # If the cookbook was updated, check for deleted files and clean them up
         if existing_cookbook
