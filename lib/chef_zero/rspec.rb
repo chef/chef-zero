@@ -34,7 +34,7 @@ module ChefZero
             default_opts
           end
 
-          if ChefZero::RSpec.server && server_opts.any? { |opt, value| ChefZero::RSpec.server.options[opt] != value }
+          if ChefZero::RSpec.server && server_opts != ChefZero::RSpec.server.options
             ChefZero::RSpec.server.stop
             ChefZero::RSpec.server = nil
           end
@@ -77,32 +77,79 @@ module ChefZero
           end
         end
 
+        def self.organization(name, org = '{}')
+          before(:each) do
+            ChefZero::RSpec.server.data_store.set([ 'organizations', name, 'org' ], dejsonize(org), :create_dir, :create)
+            @current_org = name
+          end
+        end
+
+        def self.acl(path, acl)
+          before(:each) do
+            path = [ 'organizations', @current_org || 'chef' ] + path.split('/')
+            ChefZero::RSpec.server.data_store.set(ChefData::AclPath.get_acl_data_path(path), acl)
+          end
+        end
+
+        def self.group(name, group)
+          before(:each) do
+            path = [ 'organizations', @current_org || 'chef' ] + path.split('/')
+            ChefZero::RSpec.server.data_store.set([ 'organizations', @current_org || 'chef', 'groups', name ], dejsonize(group), :create)
+          end
+        end
+
+        def self.org_invite(username)
+          before(:each) do
+            ChefZero::RSpec.server.data_store.set([ 'organizations', @current_org || 'chef', 'users', username ], '{}', :create)
+          end
+        end
+
+        def self.org_members(name, *members)
+          before(:each) do
+            members.each do |member|
+              ChefZero::RSpec.server.set([ 'organizations', @current_org || 'chef', 'users', member], '{}')
+            end
+          end
+        end
+
         def self.client(name, client)
-          before(:each) { ChefZero::RSpec.server.load_data({ 'clients' => { name => client }}) }
+          before(:each) { ChefZero::RSpec.server.load_data({ 'clients' => { name => client }}, @current_org) }
         end
 
         def self.cookbook(name, version, cookbook, options = {})
-          before(:each) { ChefZero::RSpec.server.load_data({ 'cookbooks' => { "#{name}-#{version}" => cookbook.merge(options) }}) }
+          before(:each) { ChefZero::RSpec.server.load_data({ 'cookbooks' => { "#{name}-#{version}" => cookbook.merge(options) }}, @current_org) }
         end
 
         def self.data_bag(name, data_bag)
-          before(:each) { ChefZero::RSpec.server.load_data({ 'data' => { name => data_bag }}) }
+          before(:each) { ChefZero::RSpec.server.load_data({ 'data' => { name => data_bag }}, @current_org) }
         end
 
         def self.environment(name, environment)
-          before(:each) { ChefZero::RSpec.server.load_data({ 'environments' => { name => environment }}) }
+          before(:each) { ChefZero::RSpec.server.load_data({ 'environments' => { name => environment }}, @current_org) }
         end
 
         def self.node(name, node)
-          before(:each) { ChefZero::RSpec.server.load_data({ 'nodes' => { name => node }}) }
+          before(:each) { ChefZero::RSpec.server.load_data({ 'nodes' => { name => node }}, @current_org) }
         end
 
         def self.role(name, role)
-          before(:each) { ChefZero::RSpec.server.load_data({ 'roles' => { name => role }}) }
+          before(:each) { ChefZero::RSpec.server.load_data({ 'roles' => { name => role }}, @current_org) }
         end
 
         def self.user(name, user)
-          before(:each) { ChefZero::RSpec.server.load_data({ 'users' => { name => user }}) }
+          if ChefZero::RSpec.server.options[:osc_compat]
+            before(:each) { ChefZero::RSpec.server.load_data({ 'users' => { name => user }}, @current_org) }
+          else
+            before(:each) { ChefZero::RSpec.server.set([ 'users', name ], dejsonize(user)) }
+          end
+        end
+
+        def self.dejsonize(data)
+          if data.is_a?(String)
+            data
+          else
+            JSON.pretty_generate(value)
+          end
         end
 
 #        after :each do
