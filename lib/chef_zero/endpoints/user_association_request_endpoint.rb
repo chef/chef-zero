@@ -16,8 +16,18 @@ module ChefZero
         json = JSON.parse(request.body, :create_additions => false)
         association_request_path = [ 'organizations', orgname, 'association_requests', username ]
         if json['response'] == 'accept'
+          users = get_data(request, [ 'organizations', orgname, 'groups', 'users' ])
+          users = JSON.parse(users, :create_additions => false)
+
           delete_data(request, association_request_path)
           create_data(request, [ 'organizations', orgname, 'users' ], username, '{}')
+
+          # Add the user to the users group if it isn't already there
+          if !users['users'] || !users['users'].include?(username)
+            users['users'] ||= []
+            users['users'] |= [ username ]
+            set_data(request, [ 'organizations', orgname, 'groups', 'users' ], JSON.pretty_generate(users))
+          end
         elsif json['response'] == 'reject'
           delete_data(request, association_request_path)
         else
