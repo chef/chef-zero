@@ -60,7 +60,7 @@ module ChefZero
         # Walk up the tree, setting the creator on anything that doesn't exist
         # (anything that is either deleted or was never created)
         while (deleted_index && path.size > deleted_index) || !@creators[path]
-          @creators[path] = [ creator ]
+          @creators[path] = creator ? [ creator ] : []
           @deleted.delete(path)
           # Only do this once if create_parents is false
           break if !create_parents || path.size == 0

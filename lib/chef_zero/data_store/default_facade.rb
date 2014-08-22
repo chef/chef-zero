@@ -61,7 +61,7 @@ module ChefZero
           end
         end
 
-        options_hash = options.last || {}
+        options_hash = options.last.is_a?(Hash) ? options.last : {}
         default_creator.created(path + [ name ], options_hash[:requestor], options.include?(:recursive))
       end
 
@@ -82,7 +82,9 @@ module ChefZero
         begin
           real_store.set(path, data, *options)
         rescue DataNotFoundError
-          if default_creator.exists?(path)
+          if options.include?(:create_dir) ||
+             options.include?(:create) && default_creator.exists?(path[0..-2]) ||
+             default_creator.exists?(path)
             real_store.set(path, data, :create, :create_dir, *options)
           else
             raise
@@ -90,7 +92,7 @@ module ChefZero
         end
 
         if options.include?(:create)
-          options_hash = options.last || {}
+          options_hash = options.last.is_a?(Hash) ? options.last : {}
           default_creator.created(path, options_hash[:requestor], options.include?(:create_dir))
         end
       end
