@@ -35,12 +35,13 @@ module ChefZero
       def deleted(path)
         # acl deletes mean nothing, they are entirely subservient to their
         # parent object
-        unless path[0] == 'acls' || (path[0] == 'organizations' && path[2] == 'acls')
-          result = exists?(path)
-          @deleted[path] = true
-          result
+        if path[0] == 'acls' || (path[0] == 'organizations' && path[2] == 'acls')
+          return false
         end
-        false
+
+        result = exists?(path)
+        @deleted[path] = true
+        result
       end
 
       def deleted?(path)
@@ -211,12 +212,6 @@ module ChefZero
           get_org_acl_default(path)
 
         elsif path.size >= 4
-          if !osc_compat && path[2] == 'users'
-            if @creators[path[0..1]] && @creators[path[0..1]].include?(path[3])
-              return {}
-            end
-          end
-
           if path[2] == 'containers' && path.size == 4
             if exists?(path)
               return {}
