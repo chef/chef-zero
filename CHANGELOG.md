@@ -1,7 +1,7 @@
 Chef Zero CHANGELOG
 ===================
 
-# 3.0.0.rc.1 (7/22/2014)
+# 3.0 (7/22/2014)
 
 - Enterprise Chef support (organizations, ACLs, groups, much more)
 - SSL support (@sawanoboly)
