@@ -57,6 +57,7 @@ require 'chef_zero/endpoints/environment_cookbook_versions_endpoint'
 require 'chef_zero/endpoints/environment_nodes_endpoint'
 require 'chef_zero/endpoints/environment_recipes_endpoint'
 require 'chef_zero/endpoints/environment_role_endpoint'
+require 'chef_zero/endpoints/license_endpoint'
 require 'chef_zero/endpoints/node_endpoint'
 require 'chef_zero/endpoints/organizations_endpoint'
 require 'chef_zero/endpoints/organization_endpoint'
@@ -432,6 +433,7 @@ module ChefZero
           [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
           [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
           [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
+          [ "/license", LicenseEndpoint.new(self) ],
 
           [ "/organizations", OrganizationsEndpoint.new(self) ],
           [ "/organizations/*", OrganizationEndpoint.new(self) ],
