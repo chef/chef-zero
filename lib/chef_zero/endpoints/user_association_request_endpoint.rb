@@ -23,7 +23,7 @@ module ChefZero
         else
           raise RestErrorResponse.new(400, "response parameter was missing or set to the wrong value (must be accept or reject)")
         end
-        json_response(200, { 'uri' => build_uri(request.base_uri, association_request_path) })
+        json_response(200, { 'organization' => { 'name' => orgname } })
       end
     end
   end
