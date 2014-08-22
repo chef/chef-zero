@@ -24,6 +24,7 @@ require 'stringio'
 
 require 'rack'
 require 'webrick'
+require 'webrick/https'
 
 require 'chef_zero'
 require 'chef_zero/cookbook_data'
@@ -87,7 +88,8 @@ module ChefZero
       :port => 8889,
       :log_level => :info,
       :generate_real_keys => true,
-      :single_org => 'chef'
+      :single_org => 'chef',
+      :ssl => false
     }.freeze
 
     def initialize(options = {})
@@ -128,10 +130,11 @@ module ChefZero
     # @return [String]
     #
     def url
+      sch = @options[:ssl] ? 'https' : 'http'
       @url ||= if @options[:host].include?(':')
-                 URI("http://[#{@options[:host]}]:#{port}").to_s
+                 URI("#{sch}://[#{@options[:host]}]:#{port}").to_s
                else
-                 URI("http://#{@options[:host]}:#{port}").to_s
+                 URI("#{sch}://#{@options[:host]}:#{port}").to_s
                end
     end
 
@@ -229,6 +232,8 @@ module ChefZero
         :DoNotListen => true,
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new(StringIO.new, 7),
+        :SSLEnable  => options[:ssl],
+        :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
         :StartCallback => proc {
           @running = true
         }
