@@ -6,7 +6,7 @@ module ChefZero
     # /users/NAME/association_requests/count
     class UserAssociationRequestsCountEndpoint < RestBase
       def get(request)
-        get_data(request, request.rest_path[0..-2])
+        get_data(request, request.rest_path[0..-3])
 
         username = request.rest_path[1]
         result = list_data(request, [ 'organizations' ]).select do |org|
