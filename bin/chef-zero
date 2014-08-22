@@ -58,6 +58,10 @@ OptionParser.new do |opts|
     options[:data_store] = ChefZero::DataStore::RawFileStore.new(value)
   end
 
+  opts.on("--auth-string STRING", "Set HTTP Basic Auth if given") do |value|
+    options[:auth_string] = value
+  end
+
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit
