@@ -1,6 +1,11 @@
 Chef Zero CHANGELOG
 ===================
 
+# 3.0.0.rc.1 (7/22/2014)
+
+- Enterprise Chef support (organizations, ACLs, groups, much more)
+- SSL support (@sawanoboly)
+
 # 2.2 (6/18/2014)
 
 - allow port ranges to be passed in as enumerables, which will be tried in sequence until one works: `ChefZero::Server.new(:port => 80.upto(100))`
