@@ -31,7 +31,7 @@ module ChefZero
 
         # /organizations/ORG/association_requests/USERNAME-ORG
         begin
-          delete_data(request, [ 'organizations', orgname, 'association_requests', "#{username}-#{orgname}"], :data_store_exceptions)
+          delete_data(request, [ 'organizations', orgname, 'association_requests', username], :data_store_exceptions)
         rescue DataStore::DataNotFoundError
         end
 
