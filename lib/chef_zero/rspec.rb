@@ -261,7 +261,7 @@ module ChefZero
         end
 
         def current_org
-          @current_org || 'chef'
+          @current_org || ChefZero::RSpec.server.options[:single_org] || nil
         end
 
         def with_object_path(object_path)

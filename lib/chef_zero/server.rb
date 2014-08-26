@@ -356,7 +356,13 @@ module ChefZero
     #     }
     #   }
     # }
-    def load_data(contents, org_name = 'chef')
+    def load_data(contents, org_name = nil)
+      passed_org = !!org_name
+      org_name ||= options[:single_org]
+      if org_name.nil? && contents.keys != [ 'users' ]
+        raise "Must pass an org name to load_data or run in single_org mode"
+      end
+
       %w(clients containers environments groups nodes roles sandboxes).each do |data_type|
         if contents[data_type]
           dejsonize_children(contents[data_type]).each_pair do |name, data|
@@ -364,6 +370,7 @@ module ChefZero
           end
         end
       end
+
       if contents['users']
         dejsonize_children(contents['users']).each_pair do |name, data|
           if options[:osc_compat]
@@ -371,7 +378,9 @@ module ChefZero
           else
             # Create the user and put them in the org
             data_store.set(['users', name], data, :create)
-            data_store.set(['organizations', org_name, 'users', name], '{}', :create)
+            if org_name
+              data_store.set(['organizations', org_name, 'users', name], '{}', :create)
+            end
           end
         end
       end
@@ -381,11 +390,13 @@ module ChefZero
           data_store.set(['organizations', org_name, 'users', name], '{}', :create)
         end
       end
+
       if contents['invites']
         contents['invites'].each do |name|
-          data_store.set(['organizations', org_name, 'association_requests', "#{current_org}-#{username}"], '{}', :create)
+          data_store.set(['organizations', org_name, 'association_requests', name], '{}', :create)
         end
       end
+
       if contents['acls']
         dejsonize_children(contents['acls']).each do |path, acl|
           path = [ 'organizations', org_name ] + path.split('/')
@@ -393,6 +404,7 @@ module ChefZero
           ChefZero::RSpec.server.data_store.set(path, acl)
         end
       end
+
       if contents['data']
         contents['data'].each_pair do |key, data_bag|
           data_store.create_dir(['organizations', org_name, 'data'], key, :recursive)
@@ -401,6 +413,7 @@ module ChefZero
           end
         end
       end
+
       if contents['cookbooks']
         contents['cookbooks'].each_pair do |name_version, cookbook|
           if name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
