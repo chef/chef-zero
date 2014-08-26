@@ -28,6 +28,7 @@ require 'webrick/https'
 
 require 'chef_zero'
 require 'chef_zero/chef_data/cookbook_data'
+require 'chef_zero/chef_data/acl_path'
 require 'chef_zero/rest_router'
 require 'chef_zero/data_store/memory_store_v2'
 require 'chef_zero/data_store/v1_to_v2_adapter'
@@ -99,7 +100,6 @@ module ChefZero
         @options[:osc_compat] = true
       end
       @options.freeze
-
       ChefZero::Log.level = @options[:log_level].to_sym
     end
 
@@ -357,11 +357,40 @@ module ChefZero
     #   }
     # }
     def load_data(contents, org_name = 'chef')
-      %w(clients environments nodes roles users).each do |data_type|
+      %w(clients containers environments groups nodes roles sandboxes).each do |data_type|
         if contents[data_type]
           dejsonize_children(contents[data_type]).each_pair do |name, data|
             data_store.set(['organizations', org_name, data_type, name], data, :create)
           end
+        end
+      end
+      if contents['users']
+        dejsonize_children(contents['users']).each_pair do |name, data|
+          if options[:osc_compat]
+            data_store.set(['organizations', org_name, 'users', name], data, :create)
+          else
+            # Create the user and put them in the org
+            data_store.set(['users', name], data, :create)
+            data_store.set(['organizations', org_name, 'users', name], '{}', :create)
+          end
+        end
+      end
+
+      if contents['members']
+        contents['members'].each do |name|
+          data_store.set(['organizations', org_name, 'users', name], '{}', :create)
+        end
+      end
+      if contents['invites']
+        contents['invites'].each do |name|
+          data_store.set(['organizations', org_name, 'association_requests', "#{current_org}-#{username}"], '{}', :create)
+        end
+      end
+      if contents['acls']
+        dejsonize_children(contents['acls']).each do |path, acl|
+          path = [ 'organizations', org_name ] + path.split('/')
+          path = ChefData::AclPath.get_acl_data_path(path)
+          ChefZero::RSpec.server.data_store.set(path, acl)
         end
       end
       if contents['data']
@@ -425,8 +454,8 @@ module ChefZero
           [ "/organizations/*/users/*", OrganizationUserEndpoint.new(self) ],
           [ "/users", ActorsEndpoint.new(self, 'username') ],
           [ "/users/*", ActorEndpoint.new(self, 'username') ],
-          [ "/users/_acl", AclsEndpoint.new(self) ],
-          [ "/users/_acl/*", AclEndpoint.new(self) ],
+          [ "/users/*/_acl", AclsEndpoint.new(self) ],
+          [ "/users/*/_acl/*", AclEndpoint.new(self) ],
           [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
           [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
           [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
@@ -533,9 +562,13 @@ module ChefZero
     def dejsonize_children(hash)
       result = {}
       hash.each_pair do |key, value|
-        result[key] = value.is_a?(Hash) ? JSON.pretty_generate(value) : value
+        result[key] = dejsonize(value)
       end
       result
+    end
+
+    def dejsonize(value)
+      value.is_a?(Hash) ? JSON.pretty_generate(value) : value
     end
 
     def get_file(directory, path)

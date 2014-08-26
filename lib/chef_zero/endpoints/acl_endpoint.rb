@@ -16,9 +16,9 @@ module ChefZero
     # Where PERM is create,read,update,delete,grant
     class AclEndpoint < RestBase
       def validate_request(request)
-        path = request.rest_path[0..-3]
+        path = request.rest_path[0..-3] # Strip off _acl/PERM
         path = path[0..1] if path.size == 3 && path[0] == 'organizations' && %w(organization organizations).include?(path[2])
-        acl_path = ChefData::AclPath.get_acl_data_path(path) # Strip off _acl/PERM
+        acl_path = ChefData::AclPath.get_acl_data_path(path)
         perm = request.rest_path[-1]
         if !acl_path || !%w(read create update delete grant).include?(perm)
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
