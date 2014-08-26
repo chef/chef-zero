@@ -15,8 +15,8 @@ module ChefZero
       end
 
       def post(request)
-        contents = request.body
-        name = JSON.parse(contents, :create_additions => false)['name']
+        contents = JSON.parse(request.body, :create_additions => false)
+        name = contents['name']
         if name.nil?
           error(400, "Must specify 'name' in JSON")
         elsif exists_data_dir?(request, request.rest_path + [ name ])
@@ -27,7 +27,7 @@ module ChefZero
           org = {
             "guid" => UUIDTools::UUID.random_create.to_s.gsub('-', ''),
             "assigned_at" => Time.now.to_s
-          }
+          }.merge(contents)
           org_path = request.rest_path + [ name ]
           set_data(request, org_path + [ 'org' ], JSON.pretty_generate(org))
 
