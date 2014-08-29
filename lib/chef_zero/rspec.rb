@@ -137,12 +137,21 @@ module ChefZero
           end
         end
 
-        def self.cookbook(name, version, data, options = {}, &block)
-          before(:each) { cookbook(name, version, data, &block) }
+        def self.cookbook(name, version, data = {}, options = {}, &block)
+          before(:each) do
+            cookbook(name, version, data, &block)
+          end
         end
 
-        def cookbook(name, version, data, options = {}, &block)
+        def cookbook(name, version, data = {}, options = {}, &block)
           with_object_path("cookbooks/#{name}") do
+            if data.has_key?('metadata.rb')
+              if data['metadata.rb'].nil?
+                data.delete('metadata.rb')
+              end
+            else
+              data['metadata.rb'] = "name #{name.inspect}; version #{version.inspect}"
+            end
             ChefZero::RSpec.server.load_data({ 'cookbooks' => { "#{name}-#{version}" => data.merge(options) }}, current_org)
             instance_eval(&block) if block_given?
           end
