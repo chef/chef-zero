@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 3.1.1 (8/28/2014)
+
+- fix minor bug with unknown container acls
+
 # 3.1 (8/28/2014)
 
 - New rspec data directives: organization, acl, group, container
