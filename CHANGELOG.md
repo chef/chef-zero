@@ -1,6 +1,11 @@
 Chef Zero CHANGELOG
 ===================
 
+# 3.1.2 (8/29/2014)
+
+- add default to rspec for cookbooks
+- add /organizations/NAME/organization/_acl as an alias for /organizations/NAME/organizations/_acl
+
 # 3.1.1 (8/28/2014)
 
 - fix minor bug with unknown container acls
