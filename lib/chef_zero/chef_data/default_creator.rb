@@ -268,7 +268,7 @@ module ChefZero
       def get_org_acl_default(path)
         object_path = AclPath.get_object_path(path)
         # The actual things containers correspond to don't have to exist, as long as the container does
-        return nil if object_path[2] != 'containers' && !data_exists?(object_path)
+        return nil if !data_exists?(object_path)
         basic_acl =
           case path[3..-1].join('/')
           when 'root', 'containers/containers', 'containers/groups'
