@@ -1,6 +1,13 @@
 Chef Zero CHANGELOG
 ===================
 
+# 3.1 (8/28/2014)
+
+- New rspec data directives: organization, acl, group, container
+- Fix organizations POST to honor full_name
+- Fixes for enterprise rspec data loading
+- Fix invites not removing the invite when user is forcibly added to an org
+
 # 3.0 (7/22/2014)
 
 - Enterprise Chef support (organizations, ACLs, groups, much more)
