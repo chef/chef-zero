@@ -3,7 +3,7 @@ require 'chef_zero/rest_base'
 module ChefZero
   module Endpoints
     # The minimum amount of S3 necessary to support cookbook upload/download
-    # /file_store/FILE
+    # /organizations/NAME/file_store/FILE
     class FileStoreFileEndpoint < RestBase
       def json_only
         false

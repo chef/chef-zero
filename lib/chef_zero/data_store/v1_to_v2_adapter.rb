@@ -38,7 +38,15 @@ module ChefZero
       def get(path, request=nil)
         raise DataNotFoundError.new(path) if skip_organizations?(path)
         fix_exceptions do
-          real_store.get(path[2..-1], request)
+          if request
+            old_base_uri = request.base_uri
+            request.base_uri = File.join(request.base_uri, path[0..1])
+          end
+          begin
+            real_store.get(path[2..-1], request)
+          ensure
+            request.base_uri = old_base_uri if request
+          end
         end
       end
 

@@ -8,10 +8,18 @@ module ChefZero
     end
 
     attr_reader :env
-    attr_reader :rest_base_prefix
+    attr_accessor :rest_base_prefix
 
     def base_uri
       @base_uri ||= "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}#{env['SCRIPT_NAME']}"
+    end
+
+    def base_uri=(value)
+      @base_uri = value
+    end
+
+    def build_uri(*relative)
+      File.join(@base_uri, *rest_base_prefix, *relative)
     end
 
     def requestor
