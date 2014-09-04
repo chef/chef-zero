@@ -38,14 +38,15 @@ module ChefZero
       def get(path, request=nil)
         raise DataNotFoundError.new(path) if skip_organizations?(path)
         fix_exceptions do
-          if request
+          # Make it so build_uri will include /organizations/ORG inside the V1 data store
+          if request && request.rest_base_prefix.size == 0
             old_base_uri = request.base_uri
-            request.base_uri = File.join(request.base_uri, path[0..1])
+            request.base_uri = File.join(request.base_uri, 'organizations', single_org)
           end
           begin
             real_store.get(path[2..-1], request)
           ensure
-            request.base_uri = old_base_uri if request
+            request.base_uri = old_base_uri if request && request.rest_base_prefix.size == 0
           end
         end
       end

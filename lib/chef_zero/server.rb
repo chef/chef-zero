@@ -300,8 +300,8 @@ module ChefZero
     #
     def stop(wait = 5)
       if @running
-        @server.shutdown
-        @thread.join(wait)
+        @server.shutdown if @server
+        @thread.join(wait) if @thread
       end
     rescue Timeout::Error
       if @thread

@@ -18,10 +18,6 @@ module ChefZero
       @base_uri = value
     end
 
-    def build_uri(*relative)
-      File.join(@base_uri, *rest_base_prefix, *relative)
-    end
-
     def requestor
       @env['HTTP_X_OPS_USERID']
     end
