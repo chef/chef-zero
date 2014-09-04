@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 3.1.3 (9/3/2014)
+
+- fixes for running Chef local mode in multi-org mode
+
 # 3.1.2 (8/29/2014)
 
 - add default to rspec for cookbooks
