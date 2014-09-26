@@ -178,7 +178,7 @@ module ChefZero
     end
 
     def json_response(response_code, json)
-      already_json_response(response_code, JSON.pretty_generate(json))
+      already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => true))
     end
 
     def already_json_response(response_code, json_text)

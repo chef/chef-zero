@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -11,12 +11,12 @@ module ChefZero
       end
 
       def put(request)
-        org = JSON.parse(get_data(request, request.rest_path + [ 'org' ]), :create_additions => false)
-        new_org = JSON.parse(request.body, :create_additions => false)
+        org = FFI_Yajl::Parser.parse(get_data(request, request.rest_path + [ 'org' ]), :create_additions => false)
+        new_org = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         new_org.each do |key, value|
           org[key] = value
         end
-        org = JSON.pretty_generate(org)
+        org = FFI_Yajl::Encoder.encode(org, :pretty => true)
         if new_org['name'] != request.rest_path[-1]
           # This is a rename
           return error(400, "Cannot rename org #{request.rest_path[-1]} to #{new_org['name']}: rename not supported for orgs")
@@ -32,9 +32,9 @@ module ChefZero
       end
 
       def populate_defaults(request, response_json)
-        org = JSON.parse(response_json, :create_additions => false)
+        org = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
         org = ChefData::DataNormalizer.normalize_organization(org, request.rest_path[1])
-        JSON.pretty_generate(org)
+        FFI_Yajl::Encoder.encode(org, :pretty => true)
       end
     end
   end

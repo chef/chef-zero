@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/chef_data/data_normalizer'
 
@@ -11,9 +11,9 @@ module ChefZero
       end
 
       def populate_defaults(request, response_json)
-        group = JSON.parse(response_json, :create_additions => false)
+        group = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
         group = ChefData::DataNormalizer.normalize_group(group, request.rest_path[3], request.rest_path[1])
-        JSON.pretty_generate(group)
+        FFI_Yajl::Encoder.encode(group, :pretty => true)
       end
     end
   end

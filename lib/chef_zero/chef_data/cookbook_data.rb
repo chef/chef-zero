@@ -75,7 +75,7 @@ module ChefZero
         end
 
         def from_json(json)
-          self.merge!(JSON.parse(json))
+          self.merge!(FFI_Yajl::Parser.parse(json))
         end
 
         private

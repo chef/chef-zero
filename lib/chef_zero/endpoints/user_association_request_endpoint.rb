@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -13,11 +13,11 @@ module ChefZero
         end
         orgname = $1
 
-        json = JSON.parse(request.body, :create_additions => false)
+        json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         association_request_path = [ 'organizations', orgname, 'association_requests', username ]
         if json['response'] == 'accept'
           users = get_data(request, [ 'organizations', orgname, 'groups', 'users' ])
-          users = JSON.parse(users, :create_additions => false)
+          users = FFI_Yajl::Parser.parse(users, :create_additions => false)
 
           delete_data(request, association_request_path)
           create_data(request, [ 'organizations', orgname, 'users' ], username, '{}')
@@ -26,7 +26,7 @@ module ChefZero
           if !users['users'] || !users['users'].include?(username)
             users['users'] ||= []
             users['users'] |= [ username ]
-            set_data(request, [ 'organizations', orgname, 'groups', 'users' ], JSON.pretty_generate(users))
+            set_data(request, [ 'organizations', orgname, 'groups', 'users' ], FFI_Yajl::Encoder.encode(users, :pretty => true))
           end
         elsif json['response'] == 'reject'
           delete_data(request, association_request_path)

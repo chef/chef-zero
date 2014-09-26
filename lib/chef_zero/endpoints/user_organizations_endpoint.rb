@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -12,7 +12,7 @@ module ChefZero
         end
         result = result.map do |orgname|
           org = get_data(request, [ 'organizations', orgname, 'org' ])
-          org = JSON.parse(org, :create_additions => false)
+          org = FFI_Yajl::Parser.parse(org, :create_additions => false)
           ChefData::DataNormalizer.normalize_organization(org, orgname)
         end
         json_response(200, result)

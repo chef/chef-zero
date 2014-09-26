@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/endpoints/cookbooks_base'
 
 module ChefZero
@@ -6,7 +6,7 @@ module ChefZero
     # /environments/NAME/cookbooks
     class EnvironmentCookbooksEndpoint < CookbooksBase
       def get(request)
-        environment = JSON.parse(get_data(request, request.rest_path[0..3]), :create_additions => false)
+        environment = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..3]), :create_additions => false)
         constraints = environment['cookbook_versions'] || {}
         if request.query_params['num_versions'] == 'all'
           num_versions = nil
