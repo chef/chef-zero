@@ -1,7 +1,7 @@
 Chef Zero CHANGELOG
 ===================
 
-# 3.1.3 (9/26/2014)
+# 3.2 (9/26/2014)
 
 - removed 'json' gem dependency, replaced it with 'ffi-yajl'
 
