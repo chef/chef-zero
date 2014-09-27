@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -6,12 +6,12 @@ module ChefZero
     # /organizations/NAME/authenticate_user
     class OrganizationAuthenticateUserEndpoint < RestBase
       def post(request)
-        request_json = JSON.parse(request.body, :create_additions => false)
+        request_json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         name = request_json['name']
         password = request_json['password']
         begin
           user = data_store.get(request.rest_path[0..-2] + ['users', name])
-          user = JSON.parse(user, :create_additions => false)
+          user = FFI_Yajl::Parser.parse(user, :create_additions => false)
           verified = user['password'] == password
         rescue DataStore::DataNotFoundError
           verified = false

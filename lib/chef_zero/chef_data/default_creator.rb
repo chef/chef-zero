@@ -237,11 +237,11 @@ module ChefZero
 
           when "groups/admins"
             admins = data.list(path[0..1] + [ 'users' ]).select do |name|
-              user = JSON.parse(data.get(path[0..1] + [ 'users', name ]), :create_additions => false)
+              user = FFI_Yajl::Parser.parse(data.get(path[0..1] + [ 'users', name ]), :create_additions => false)
               user['admin']
             end
             admins += data.list(path[0..1] + [ 'clients' ]).select do |name|
-              client = JSON.parse(data.get(path[0..1] + [ 'clients', name ]), :create_additions => false)
+              client = FFI_Yajl::Parser.parse(data.get(path[0..1] + [ 'clients', name ]), :create_additions => false)
               client['admin']
             end
             admins += @creators[path[0..1]] if @creators[path[0..1]]
@@ -351,7 +351,7 @@ module ChefZero
           # Non-validator clients own themselves.
           if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
             begin
-              client = JSON.parse(data.get(path), :create_additions => false)
+              client = FFI_Yajl::Parser.parse(data.get(path), :create_additions => false)
               if !client['validator']
                 owners |= [ path[3] ]
               end
@@ -363,7 +363,7 @@ module ChefZero
             if @creators[path]
               @creators[path].each do |creator|
                 begin
-                  client = JSON.parse(data.get(path[0..2] + [ creator ]), :create_additions => false)
+                  client = FFI_Yajl::Parser.parse(data.get(path[0..2] + [ creator ]), :create_additions => false)
                   next if client['validator']
                 rescue
                 end
@@ -409,7 +409,7 @@ module ChefZero
       def get_container_acl(acl_path)
         parent_path = AclPath.parent_acl_data_path(acl_path)
         if parent_path
-          JSON.parse(data.get(parent_path), :create_additions => false)
+          FFI_Yajl::Parser.parse(data.get(parent_path), :create_additions => false)
         else
           nil
         end

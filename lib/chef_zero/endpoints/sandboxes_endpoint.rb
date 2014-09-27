@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -13,7 +13,7 @@ module ChefZero
       def post(request)
         sandbox_checksums = []
 
-        needed_checksums = JSON.parse(request.body, :create_additions => false)['checksums']
+        needed_checksums = FFI_Yajl::Parser.parse(request.body, :create_additions => false)['checksums']
         result_checksums = {}
         needed_checksums.keys.each do |needed_checksum|
           if list_data(request, request.rest_path[0..1] + ['file_store', 'checksums']).include?(needed_checksum)
@@ -34,10 +34,10 @@ module ChefZero
         time_str = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S%z')
         time_str = "#{time_str[0..21]}:#{time_str[22..23]}"
 
-        create_data(request, request.rest_path, id, JSON.pretty_generate({
+        create_data(request, request.rest_path, id, FFI_Yajl::Encoder.encode({
           :create_time => time_str,
           :checksums => sandbox_checksums
-        }))
+        }, :pretty => true))
 
         json_response(201, {
           :uri => build_uri(request.base_uri, request.rest_path + [id]),

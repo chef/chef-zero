@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 require 'chef_zero/chef_data/acl_path'
 
@@ -28,9 +28,9 @@ module ChefZero
 
       def put(request)
         path, perm = validate_request(request)
-        acls = JSON.parse(get_data(request, path), :create_additions => false)
-        acls[perm] = JSON.parse(request.body, :create_additions => false)[perm]
-        set_data(request, path, JSON.pretty_generate(acls))
+        acls = FFI_Yajl::Parser.parse(get_data(request, path), :create_additions => false)
+        acls[perm] = FFI_Yajl::Parser.parse(request.body, :create_additions => false)[perm]
+        set_data(request, path, FFI_Yajl::Encoder.encode(acls, :pretty => true))
         json_response(200, {'uri' => "#{build_uri(request.base_uri, request.rest_path)}"})
       end
     end

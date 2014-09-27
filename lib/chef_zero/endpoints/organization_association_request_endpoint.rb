@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -13,7 +13,7 @@ module ChefZero
         end
         username = $1
         path = request.rest_path[0..-2] + [username]
-        data = JSON.parse(get_data(request, path), :create_additions => false)
+        data = FFI_Yajl::Parser.parse(get_data(request, path), :create_additions => false)
         delete_data(request, path)
         json_response(200, { "id" => id, "username" => username })
       end

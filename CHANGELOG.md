@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 3.1.3 (9/26/2014)
+
+- removed 'json' gem dependency, replaced it with 'ffi-yajl'
+
 # 3.1.3 (9/3/2014)
 
 - fixes for running Chef local mode in multi-org mode

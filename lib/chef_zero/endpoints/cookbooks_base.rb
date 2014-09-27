@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 require 'chef_zero/chef_data/data_normalizer'
 

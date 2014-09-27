@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/chef_data/data_normalizer'
 
@@ -23,7 +23,7 @@ module ChefZero
 
       def put(request)
         # Find out if we're updating the public key.
-        request_body = JSON.parse(request.body, :create_additions => false)
+        request_body = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         if request_body['public_key'].nil?
           # If public_key is null, then don't overwrite it.  Weird patchiness.
           body_modified = true
@@ -44,7 +44,7 @@ module ChefZero
         end
 
         # Save request
-        request.body = JSON.pretty_generate(request_body) if body_modified
+        request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true) if body_modified
 
         # PUT /clients is patchy
         request.body = patch_request_body(request)
@@ -63,7 +63,7 @@ module ChefZero
               'uri' => build_uri(request.base_uri, [ 'users', key ])
             }
           else
-            response = JSON.parse(result[2], :create_additions => false)
+            response = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
           end
           response['private_key'] = private_key if private_key
           response.delete('public_key') if !updating_public_key && request.rest_path[2] == 'users'
@@ -75,13 +75,13 @@ module ChefZero
       end
 
       def populate_defaults(request, response_json)
-        response = JSON.parse(response_json, :create_additions => false)
+        response = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
         if request.rest_path[2] == 'clients'
           response = ChefData::DataNormalizer.normalize_client(response, request.rest_path[3])
         else
           response = ChefData::DataNormalizer.normalize_user(response, request.rest_path[3], identity_keys, server.options[:osc_compat], request.method)
         end
-        JSON.pretty_generate(response)
+        FFI_Yajl::Encoder.encode(response, :pretty => true)
       end
     end
   end

@@ -265,7 +265,7 @@ module ChefZero
           if data.is_a?(String)
             data
           else
-            JSON.pretty_generate(data)
+            FFI_Yajl::Encoder.encode(data, :pretty => true)
           end
         end
 

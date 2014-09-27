@@ -71,7 +71,7 @@ module ChefZero
         rescue DataNotFoundError
           result = default_creator.get(path)
           if result
-            JSON.pretty_generate(result)
+            FFI_Yajl::Encoder.encode(result, :pretty => true)
           else
             raise
           end
