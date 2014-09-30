@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/endpoints/data_bag_item_endpoint'
 require 'chef_zero/data_normalizer'
@@ -16,9 +16,9 @@ module ChefZero
       end
 
       def self.populate_defaults(request, response_json, data_bag, data_bag_item)
-        response = JSON.parse(response_json, :create_additions => false)
+        response = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
         response = DataNormalizer.normalize_data_bag_item(response, data_bag, data_bag_item, request.method)
-        JSON.pretty_generate(response)
+        FFI_Yajl::Encoder.encode(response, :pretty => true)
       end
     end
   end

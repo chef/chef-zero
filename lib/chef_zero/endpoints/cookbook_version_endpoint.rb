@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/rest_error_response'
 require 'chef_zero/data_normalizer'
@@ -22,16 +22,16 @@ module ChefZero
 
         # Honor frozen
         if existing_cookbook
-          existing_cookbook_json = JSON.parse(existing_cookbook, :create_additions => false)
+          existing_cookbook_json = FFI_Yajl::Parser.parse(existing_cookbook, :create_additions => false)
           if existing_cookbook_json['frozen?']
             if request.query_params['force'] != "true"
               raise RestErrorResponse.new(409, "The cookbook #{name} at version #{version} is frozen. Use the 'force' option to override.")
             end
             # For some reason, you are forever unable to modify "frozen?" on a frozen cookbook.
-            request_body = JSON.parse(request.body, :create_additions => false)
+            request_body = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
             if !request_body['frozen?']
               request_body['frozen?'] = true
-              request.body = JSON.pretty_generate(request_body)
+              request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true)
             end
           end
         end
@@ -70,7 +70,7 @@ module ChefZero
 
       def get_checksums(cookbook)
         result = []
-        JSON.parse(cookbook, :create_additions => false).each_pair do |key, value|
+        FFI_Yajl::Parser.parse(cookbook, :create_additions => false).each_pair do |key, value|
           if value.is_a?(Array)
             value.each do |file|
               if file.is_a?(Hash) && file.has_key?('checksum')
@@ -104,9 +104,9 @@ module ChefZero
 
       def populate_defaults(request, response_json)
         # Inject URIs into each cookbook file
-        cookbook = JSON.parse(response_json, :create_additions => false)
+        cookbook = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
         cookbook = DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, request.rest_path[3], request.rest_path[4], request.base_uri, request.method)
-        JSON.pretty_generate(cookbook)
+        FFI_Yajl::Encoder.encode(cookbook, :pretty => true)
       end
 
       def latest_version(versions)

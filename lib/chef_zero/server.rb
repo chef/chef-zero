@@ -351,7 +351,7 @@ module ChefZero
           end
           raise "No version specified" if !cookbook_data[:version]
           data_store.create_dir(['organizations', org_name, 'cookbooks'], cookbook_data[:cookbook_name], :recursive)
-          data_store.set(['organizations', org_name, 'cookbooks', cookbook_data[:cookbook_name], cookbook_data[:version]], JSON.pretty_generate(cookbook_data), :create)
+          data_store.set(['organizations', org_name, 'cookbooks', cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, :pretty => true), :create)
           cookbook_data.values.each do |files|
             next unless files.is_a? Array
             files.each do |file|
@@ -467,7 +467,7 @@ module ChefZero
     def dejsonize_children(hash)
       result = {}
       hash.each_pair do |key, value|
-        result[key] = value.is_a?(Hash) ? JSON.pretty_generate(value) : value
+        result[key] = value.is_a?(Hash) ? FFI_Yajl::Encoder.encode(value, :pretty => true) : value
       end
       result
     end

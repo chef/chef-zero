@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/data_normalizer'
 require 'chef_zero/rest_error_response'
@@ -17,7 +17,7 @@ module ChefZero
 
       def post(request)
         full_results = search(request)
-        keys = JSON.parse(request.body, :create_additions => false)
+        keys = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         partial_results = full_results['rows'].map do |name, uri, doc, search_value|
           data = {}
           keys.each_pair do |key, path|
@@ -110,7 +110,7 @@ module ChefZero
         result = []
         list_data(request, container).each do |name|
           value = get_data(request, container + [name])
-          expanded = expander.call(JSON.parse(value, :create_additions => false), name)
+          expanded = expander.call(FFI_Yajl::Parser.parse(value, :create_additions => false), name)
           result << [ name, build_uri(request.base_uri, container + [name]), expanded, expand_for_indexing(expanded, index, name) ]
         end
         result = result.select do |name, uri, value, search_value|

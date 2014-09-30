@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/endpoints/rest_list_endpoint'
 require 'chef_zero/endpoints/data_bag_item_endpoint'
 require 'chef_zero/rest_error_response'
@@ -12,7 +12,7 @@ module ChefZero
       end
 
       def post(request)
-        key = JSON.parse(request.body, :create_additions => false)[identity_key]
+        key = FFI_Yajl::Parser.parse(request.body, :create_additions => false)[identity_key]
         response = super(request)
         if response[0] == 201
           already_json_response(201, DataBagItemEndpoint::populate_defaults(request, request.body, request.rest_path[3], key))
@@ -22,7 +22,7 @@ module ChefZero
       end
 
       def get_key(contents)
-        data_bag_item = JSON.parse(contents, :create_additions => false)
+        data_bag_item = FFI_Yajl::Parser.parse(contents, :create_additions => false)
         if data_bag_item['json_class'] == 'Chef::DataBagItem' && data_bag_item['raw_data']
           data_bag_item['raw_data']['id']
         else

@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 require 'chef_zero/rest_error_response'
 
@@ -20,7 +20,7 @@ module ChefZero
       def put(request)
         # We grab the old body to trigger a 404 if it doesn't exist
         old_body = get_data(request)
-        request_json = JSON.parse(request.body, :create_additions => false)
+        request_json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         key = request_json[identity_key] || request.rest_path[-1]
         # If it's a rename, check for conflict and delete the old value
         rename = key != request.rest_path[-1]
@@ -47,11 +47,11 @@ module ChefZero
       def patch_request_body(request)
         existing_value = get_data(request, nil, :nil)
         if existing_value
-          request_json = JSON.parse(request.body, :create_additions => false)
-          existing_json = JSON.parse(existing_value, :create_additions => false)
+          request_json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+          existing_json = FFI_Yajl::Parser.parse(existing_value, :create_additions => false)
           merged_json = existing_json.merge(request_json)
           if merged_json.size > request_json.size
-            return JSON.pretty_generate(merged_json)
+            return FFI_Yajl::Encoder.encode(merged_json, :pretty => true)
           end
         end
         request.body

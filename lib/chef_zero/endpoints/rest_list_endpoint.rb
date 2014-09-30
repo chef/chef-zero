@@ -1,4 +1,4 @@
-require 'json'
+require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -33,7 +33,7 @@ module ChefZero
       end
 
       def get_key(contents)
-        JSON.parse(contents, :create_additions => false)[identity_key]
+        FFI_Yajl::Parser.parse(contents, :create_additions => false)[identity_key]
       end
     end
   end
