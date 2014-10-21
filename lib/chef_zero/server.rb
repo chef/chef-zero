@@ -559,6 +559,9 @@ module ChefZero
           # Insert Server header
           response[1]['Server'] = 'chef-zero'
 
+          # Add CORS header
+          response[1]['Access-Control-Allow-Origin'] = '*'
+
           # Puma expects the response to be an array (chunked responses). Since
           # we are statically generating data, we won't ever have said chunked
           # response, so fake it.
