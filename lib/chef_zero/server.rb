@@ -239,6 +239,7 @@ module ChefZero
           @running = true
         }
       )
+      ENV['HTTPS'] = 'on' if options[:ssl]
       @server.mount('/', Rack::Handler::WEBrick, app)
 
       # Pick a port
