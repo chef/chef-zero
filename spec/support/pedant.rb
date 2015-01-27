@@ -75,6 +75,10 @@ superuser_name 'admin'
 superuser_key key
 webui_key key
 
+# The Policies endpoint is feature-flagged during development. Zero supports
+# the policies endpoint, so turn it on:
+policies? true
+
 # Set the platform_class
 platform_class Pedant::OpenSourcePlatform
 
