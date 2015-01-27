@@ -112,9 +112,13 @@ module ChefZero
         begin
           yield
         rescue DataAlreadyExistsError => e
-          raise DataAlreadyExistsError.new([ 'organizations', single_org ] + e.path, e)
+          err = DataAlreadyExistsError.new([ 'organizations', single_org ] + e.path, e)
+          err.set_backtrace(e.backtrace)
+          raise err
         rescue DataNotFoundError => e
-          raise DataNotFoundError.new([ 'organizations', single_org ] + e.path, e)
+          err = DataNotFoundError.new([ 'organizations', single_org ] + e.path, e)
+          err.set_backtrace(e.backtrace)
+          raise e
         end
       end
 
