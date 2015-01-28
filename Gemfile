@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'rest-client', :github => 'opscode/rest-client'
-gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => '0a3547aa38b98f57bf856aee055d42af4d2de06c'
-gem 'chef', :github => 'opscode/chef', :ref => 'a2dee150e68a611249577a8adcb2c3e329d6762d'
+gem 'chef-pedant', :github => 'opscode/chef-pedant', :tag => '1.0.41'
+
+gem 'chef', :github => 'opscode/chef', :ref => '92eefc79bb28d217b15099655244228b9e1efec7'
 
