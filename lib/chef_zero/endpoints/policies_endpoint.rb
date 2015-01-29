@@ -19,7 +19,15 @@ module ChefZero
         error = validate(request)
         return error if error
 
-        code = create_or_update(request)
+        code =
+          if data_store.exists?(request.rest_path)
+            set_data(request, request.rest_path, request.body, :data_store_exceptions)
+            200
+          else
+            name = request.rest_path[4]
+            data_store.create(request.rest_path[0..3], name, request.body, :create_dir)
+            201
+          end
         already_json_response(code, request.body)
       end
 
@@ -27,15 +35,6 @@ module ChefZero
         result = get_data(request, request.rest_path)
         delete_data(request, request.rest_path, :data_store_exceptions)
         already_json_response(200, result)
-      end
-
-      def create_or_update(request)
-        set_data(request, request.rest_path, request.body, :data_store_exceptions)
-        200
-      rescue ChefZero::DataStore::DataNotFoundError
-        name = request.rest_path[4]
-        data_store.create(request.rest_path[0..3], name, request.body, :create_dir)
-        201
       end
 
       private
