@@ -38,7 +38,7 @@ module ChefZero
     private
 
       def find_endpoint(clean_path)
-        _, endpoint = routes.find { |route, endpoint| route.match(clean_path) }
+        _, endpoint = routes.find { |route, _endpoint| route.match(clean_path) }
         endpoint || not_found
       end
   end
