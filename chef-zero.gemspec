@@ -19,7 +19,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'rack'
 
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec'
+
+  # pedant incompatible with RSpec 3.2 as of pedant version 1.0.42
+  s.add_development_dependency 'rspec', '~> 3.1.0'
 
   s.bindir       = 'bin'
   s.executables  = ['chef-zero']
