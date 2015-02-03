@@ -132,3 +132,7 @@ verify_error_messages false
 ruby_users_endpoint? false
 ruby_acls_endpoint? false
 ruby_org_assoc? false
+
+# The Policies endpoint is feature-flagged during development. Zero supports
+# the policies endpoint, so turn it on:
+policies? true
