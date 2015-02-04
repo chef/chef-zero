@@ -55,11 +55,24 @@ begin
     tmpdir = Dir.mktmpdir
     data_store = ChefZero::DataStore::RawFileStore.new(tmpdir, true)
     data_store = ChefZero::DataStore::DefaultFacade.new(data_store, true, false)
-    server = ChefZero::Server.new(:port => 8889, :single_org => 'chef', :data_store => data_store)
+
+    # TODO: Without this, tests don't run at all for me. But when I add this,
+    # there are a handful of extra clients present, which makes some tests
+    # fail.
+    data_store.create_dir([ 'organizations' ], 'pedant')
+
+    server_opts =  { :port => 8889, :single_org => 'pedant', :data_store => data_store }
+    server_opts[:log_level] = :debug if ENV['DEBUG_ZERO']
+
+    server = ChefZero::Server.new(server_opts)
     server.start_background
 
   else
-    server = ChefZero::Server.new(:port => 8889, :single_org => false, :osc_compat => true)
+    server_opts =  { :port => 8889, :single_org => false, :osc_compat => true }
+    server_opts[:log_level] = :debug if ENV['DEBUG_ZERO']
+
+    server = ChefZero::Server.new(server_opts)
+
     server.data_store.create_dir([ 'organizations' ], 'pedant')
     server.start_background
   end
