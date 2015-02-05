@@ -181,6 +181,10 @@ module ChefZero
       already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => true))
     end
 
+    def text_response(response_code, text)
+      [response_code, {"Content-Type" => "text/plain"}, text]
+    end
+
     def already_json_response(response_code, json_text)
       [response_code, {"Content-Type" => "application/json"}, json_text]
     end

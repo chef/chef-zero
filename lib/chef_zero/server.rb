@@ -83,6 +83,7 @@ require 'chef_zero/endpoints/user_association_request_endpoint'
 require 'chef_zero/endpoints/user_organizations_endpoint'
 require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
+require 'chef_zero/endpoints/version_endpoint'
 
 module ChefZero
   class Server
@@ -94,6 +95,12 @@ module ChefZero
       :single_org => 'chef',
       :ssl => false
     }.freeze
+
+    GLOBAL_ENDPOINTS = [
+      '/license',
+      '/users',
+      '/version',
+    ]
 
     def initialize(options = {})
       @options = DEFAULT_OPTIONS.merge(options)
@@ -457,9 +464,9 @@ module ChefZero
       result = if options[:osc_compat]
         # OSC-only
         [
-          [ "/organizations/*/users", ActorsEndpoint.new(self) ],
-          [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
-          [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
+          [ "/users", ActorsEndpoint.new(self) ],
+          [ "/users/*", ActorEndpoint.new(self) ],
+          [ "/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
         ]
       else
         # EC-only
@@ -495,8 +502,7 @@ module ChefZero
           [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ]
         ]
       end
-      result +
-      [
+      result + [
         # Both
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
@@ -526,10 +532,17 @@ module ChefZero
         [ "/organizations/*/sandboxes/*", SandboxEndpoint.new(self) ],
         [ "/organizations/*/search", SearchesEndpoint.new(self) ],
         [ "/organizations/*/search/*", SearchEndpoint.new(self) ],
+        [ "/version", VersionEndpoint.new(self) ],
 
         # Internal
         [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ]
       ]
+    end
+
+    def global_endpoint?(ep)
+      GLOBAL_ENDPOINTS.any? do |g_ep|
+        ep.start_with?(g_ep)
+      end
     end
 
     def app
@@ -543,7 +556,8 @@ module ChefZero
       end
       return proc do |env|
         begin
-          request = RestRequest.new(env, rest_base_prefix)
+          prefix = global_endpoint?(env['PATH_INFO']) ? [] : rest_base_prefix
+          request = RestRequest.new(env, prefix)
           if @on_request_proc
             @on_request_proc.call(request)
           end

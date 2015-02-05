@@ -33,6 +33,12 @@ describe ChefZero::Server do
         httpcall.get('/nodes', 'Accept' => accepts)
       end
 
+      def get_version
+        uri = URI(@server.url)
+        httpcall = Net::HTTP.new(uri.host, uri.port)
+        httpcall.get('/version', 'Accept' => 'text/plain, application/json')
+      end
+
       it 'accepts requests with no accept header' do
         request = Net::HTTP::Get.new('/nodes')
         request.delete('Accept')
@@ -77,6 +83,9 @@ describe ChefZero::Server do
         expect(get_nodes('a/b;a=b;c=d, application/json;a=b, application/xml;a=b').code).to eq '200'
       end
 
+      it 'accepts /version' do
+        expect(get_version.body.start_with?('chef-zero')).to be true
+      end
     end
   end
 end
