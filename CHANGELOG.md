@@ -1,6 +1,11 @@
 Chef Zero CHANGELOG
 ===================
 
+# 4.0 (2/11/2014)
+
+- Add policyfile endpoints
+- Remove Ruby 1.8 and 1.9 support
+
 # 3.2 (9/26/2014)
 
 - removed 'json' gem dependency, replaced it with 'ffi-yajl'
