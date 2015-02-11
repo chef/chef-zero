@@ -69,6 +69,7 @@ require 'chef_zero/endpoints/organization_users_endpoint'
 require 'chef_zero/endpoints/organization_user_endpoint'
 require 'chef_zero/endpoints/organization_validator_key_endpoint'
 require 'chef_zero/endpoints/principal_endpoint'
+require 'chef_zero/endpoints/policies_endpoint'
 require 'chef_zero/endpoints/role_endpoint'
 require 'chef_zero/endpoints/role_environments_endpoint'
 require 'chef_zero/endpoints/sandboxes_endpoint'
@@ -358,7 +359,6 @@ module ChefZero
     #   }
     # }
     def load_data(contents, org_name = nil)
-      passed_org = !!org_name
       org_name ||= options[:single_org]
       if org_name.nil? && contents.keys != [ 'users' ]
         raise "Must pass an org name to load_data or run in single_org mode"
@@ -516,6 +516,7 @@ module ChefZero
         [ "/organizations/*/environments/*/roles/*", EnvironmentRoleEndpoint.new(self) ],
         [ "/organizations/*/nodes", RestListEndpoint.new(self) ],
         [ "/organizations/*/nodes/*", NodeEndpoint.new(self) ],
+        [ "/organizations/*/policies/*/*", PoliciesEndpoint.new(self) ],
         [ "/organizations/*/principals/*", PrincipalEndpoint.new(self) ],
         [ "/organizations/*/roles", RestListEndpoint.new(self) ],
         [ "/organizations/*/roles/*", RoleEndpoint.new(self) ],

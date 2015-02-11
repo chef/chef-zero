@@ -47,7 +47,7 @@ module ChefZero
 
       def create(path, name, data, *options)
         if !data.is_a?(String)
-          raise "set only works with strings"
+          raise "set only works with strings (given data: #{data.inspect})"
         end
 
         parent = _get(path, options.include?(:create_dir))

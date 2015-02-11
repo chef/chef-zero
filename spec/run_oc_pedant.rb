@@ -34,6 +34,9 @@ begin
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
   Pedant.setup([
     '--skip-knife',
+    '--skip-keys',
+    '--skip-controls',
+    '--skip-acl',
     '--skip-validation',
     '--skip-authentication',
     '--skip-authorization',
