@@ -41,6 +41,11 @@ require 'chef_zero/endpoints/acls_endpoint'
 require 'chef_zero/endpoints/acl_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
 require 'chef_zero/endpoints/actor_endpoint'
+
+require 'chef_zero/endpoints/cookbook_artifact_endpoint'
+require 'chef_zero/endpoints/cookbook_artifact_version_endpoint'
+require 'chef_zero/endpoints/cookbook_artifacts_endpoint'
+
 require 'chef_zero/endpoints/cookbooks_endpoint'
 require 'chef_zero/endpoints/cookbook_endpoint'
 require 'chef_zero/endpoints/cookbook_version_endpoint'
@@ -500,6 +505,11 @@ module ChefZero
         # Both
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
+
+        [ "/organizations/*/cookbook_artifacts", CookbookArtifactsEndpoint.new(self) ],
+        [ "/organizations/*/cookbook_artifacts/*", CookbookArtifactEndpoint.new(self) ],
+        [ "/organizations/*/cookbook_artifacts/*/*", CookbookArtifactVersionEndpoint.new(self) ],
+
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
         [ "/organizations/*/cookbooks/*", CookbookEndpoint.new(self) ],
         [ "/organizations/*/cookbooks/*/*", CookbookVersionEndpoint.new(self) ],

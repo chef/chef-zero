@@ -44,18 +44,20 @@ module ChefZero
         if destructible
           Dir.entries(root).each do |entry|
             next if entry == '.' || entry == '..'
-            FileUtils.rm_rf(Path.join(root, entry))
+            FileUtils.rm_rf(File.join(root, entry))
           end
         end
       end
 
       def create_dir(path, name, *options)
+        pp create_dir: {path: path, name: name}
         real_path = path_to(path, name)
+        pp create_dir_real_path: real_path
         if options.include?(:recursive)
           FileUtils.mkdir_p(real_path)
         else
           begin
-            Dir.mkdir(File.join(path, name))
+            Dir.mkdir(real_path)
           rescue Errno::ENOENT
             raise DataNotFoundError.new(path)
           rescue Errno::EEXIST
