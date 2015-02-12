@@ -116,10 +116,12 @@ module ChefZero
       rest_path ||= request.rest_path
       begin
         data_store.set(rest_path, data, *options, :requestor => request.requestor)
-      rescue DataStore::DataNotFoundError
+      rescue DataStore::DataNotFoundError => e
         if options.include?(:data_store_exceptions)
           raise
         else
+          puts e
+          puts e.backtrace
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
       end
