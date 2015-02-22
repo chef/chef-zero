@@ -79,7 +79,8 @@ begin
       '--skip-authentication',
       '--skip-authorization',
       '--skip-keys',
-      '--skip-omnibus'
+      '--skip-omnibus',
+      '--skip-cookbook_artifacts'
     ])
 
     result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
