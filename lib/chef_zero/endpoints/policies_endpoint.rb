@@ -41,7 +41,8 @@ module ChefZero
 
       def validate(request)
         req_object = validate_json(request.body)
-        validate_name(request, req_object) ||
+        validate_revision_id(request, req_object) ||
+          validate_name(request, req_object) ||
           validate_run_list(req_object) ||
           validate_each_run_list_item(req_object) ||
           validate_cookbook_locks_collection(req_object) ||
@@ -52,6 +53,16 @@ module ChefZero
         FFI_Yajl::Parser.parse(request_body)
         # TODO: rescue parse error, return 400
         # error(400, "Must specify #{identity_keys.map { |k| k.inspect }.join(' or ')} in JSON")
+      end
+
+      def validate_revision_id(request, req_object)
+        if !req_object.key?("revision_id")
+          error(400, "Must specify 'revision_id' in JSON")
+        elsif req_object["revision_id"].size > 255
+          error(400, "'revision_id' field in JSON must be 255 characters or fewer")
+        elsif req_object["revision_id"] !~ /^[\-[:alnum:]_\.\:]+$/
+          error(400, "'revision_id' field in JSON must be contain only alphanumeric, hypen, underscore, and dot characters")
+        end
       end
 
       def validate_name(request, req_object)
