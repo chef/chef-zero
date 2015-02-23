@@ -58,6 +58,8 @@ module ChefZero
       def validate_revision_id(request, req_object)
         if !req_object.key?("revision_id")
           error(400, "Must specify 'revision_id' in JSON")
+        elsif req_object["revision_id"].empty?
+          error(400, "'revision_id' field in JSON cannot be an empty string")
         elsif req_object["revision_id"].size > 255
           error(400, "'revision_id' field in JSON must be 255 characters or fewer")
         elsif req_object["revision_id"] !~ /^[\-[:alnum:]_\.\:]+$/
