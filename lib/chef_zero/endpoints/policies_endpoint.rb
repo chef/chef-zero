@@ -1,4 +1,8 @@
 require 'ffi_yajl'
+
+require 'chef/version_class'
+require 'chef/exceptions'
+
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/chef_data/data_normalizer'
 
@@ -57,33 +61,33 @@ module ChefZero
 
       def validate_revision_id(request, req_object)
         if !req_object.key?("revision_id")
-          error(400, "Must specify 'revision_id' in JSON")
+          error(400, "Field 'revision_id' missing")
         elsif req_object["revision_id"].empty?
-          error(400, "'revision_id' field in JSON cannot be an empty string")
+          error(400, "Field 'revision_id' invalid")
         elsif req_object["revision_id"].size > 255
-          error(400, "'revision_id' field in JSON must be 255 characters or fewer")
+          error(400, "Field 'revision_id' invalid")
         elsif req_object["revision_id"] !~ /^[\-[:alnum:]_\.\:]+$/
-          error(400, "'revision_id' field in JSON must be contain only alphanumeric, hypen, underscore, and dot characters")
+          error(400, "Field 'revision_id' invalid")
         end
       end
 
       def validate_name(request, req_object)
         if !req_object.key?("name")
-          error(400, "Must specify 'name' in JSON")
-        elsif req_object["name"] != URI.decode(request.rest_path[4])
-          error(400, "'name' field in JSON must match the policy name in the URL")
+          error(400, "Field 'name' missing")
+        elsif req_object["name"] != (uri_policy_name = URI.decode(request.rest_path[4]))
+          error(400, "Field 'name' invalid : #{uri_policy_name} does not match #{req_object["name"]}")
         elsif req_object["name"].size > 255
-          error(400, "'name' field in JSON must be 255 characters or fewer")
+          error(400, "Field 'name' invalid")
         elsif req_object["name"] !~ /^[\-[:alnum:]_\.\:]+$/
-          error(400, "'name' field in JSON must be contain only alphanumeric, hypen, underscore, and dot characters")
+          error(400, "Field 'name' invalid")
         end
       end
 
       def validate_run_list(req_object)
         if !req_object.key?("run_list")
-          error(400, "Must specify 'run_list' in JSON")
+          error(400, "Field 'run_list' missing")
         elsif !req_object["run_list"].kind_of?(Array)
-          error(400, "'run_list' must be an Array of run list items")
+          error(400, "Field 'run_list' is not a valid run list")
         end
       end
 
@@ -98,17 +102,17 @@ module ChefZero
 
       def validate_run_list_item(run_list_item)
         if !run_list_item.kind_of?(String)
-          error(400, "Items in run_list must be strings in fully qualified recipe format, like recipe[cookbook::recipe]")
+          error(400, "Field 'run_list' is not a valid run list")
         elsif run_list_item !~ /\Arecipe\[[^\s]+::[^\s]+\]\Z/
-          error(400, "Items in run_list must be strings in fully qualified recipe format, like recipe[cookbook::recipe]")
+          error(400, "Field 'run_list' is not a valid run list")
         end
       end
 
       def validate_cookbook_locks_collection(req_object)
         if !req_object.key?("cookbook_locks")
-          error(400, "Must specify 'cookbook_locks' in JSON")
+          error(400, "Field 'cookbook_locks' missing")
         elsif !req_object["cookbook_locks"].kind_of?(Hash)
-          error(400, "'cookbook_locks' must be a JSON object of cookbook_name: lock_data pairs")
+          error(400, "Field 'cookbook_locks' invalid")
         end
       end
 
@@ -125,12 +129,23 @@ module ChefZero
         if !lock.kind_of?(Hash)
           error(400, "cookbook_lock entries must be a JSON object")
         elsif !lock.key?("identifier")
-          error(400, "cookbook_lock entries must contain an 'identifier' field")
-        elsif !lock.key?("dotted_decimal_identifier")
-          error(400, "cookbook_lock entries must contain an 'dotted_decimal_identifier' field")
+          error(400, "Field 'identifier' missing")
         elsif lock["identifier"].size > 255
-          error(400, "cookbook_lock entries 'identifier' field must be 255 or fewer characters")
+          error(400, "Field 'identifier' invalid")
+        elsif !lock.key?("version")
+          error(400, "Field 'version' missing")
+        elsif lock.key?("dotted_decimal_identifier")
+          unless valid_version?(lock["dotted_decimal_identifier"])
+            error(400, "Field 'dotted_decimal_identifier' is not a valid version")
+          end
         end
+      end
+
+      def valid_version?(version_string)
+        Chef::Version.new(version_string)
+        true
+      rescue Chef::Exceptions::InvalidCookbookVersion
+        false
       end
 
     end
