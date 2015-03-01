@@ -1,4 +1,4 @@
-[![Stories in Ready](https://badge.waffle.io/opscode/chef-zero.png?label=ready&title=Ready)](https://waffle.io/opscode/chef-zero)[![Stories in Progress](https://badge.waffle.io/opscode/chef-zero.png?label=in+progress&title=In+Progress)](https://waffle.io/opscode/chef-zero)
+[![Stories in Ready](https://badge.waffle.io/chef/chef-zero.png?label=ready&title=Ready)](https://waffle.io/chef/chef-zero)[![Stories in Progress](https://badge.waffle.io/chef/chef-zero.png?label=in+progress&title=In+Progress)](https://waffle.io/chef/chef-zero)
 
 Chef Zero
 =========
