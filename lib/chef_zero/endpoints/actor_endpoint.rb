@@ -66,8 +66,6 @@ module ChefZero
             response = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
           end
 
-          # TODO some oc_erchef follow-up here.  I still don't see that we're returning this
-          # as a flag in absence of an actual private key.
           if request.rest_path[2] == 'clients'
             response['private_key'] = private_key ? private_key : false
           else
