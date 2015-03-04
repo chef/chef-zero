@@ -132,3 +132,4 @@ verify_error_messages false
 ruby_users_endpoint? false
 ruby_acls_endpoint? false
 ruby_org_assoc? false
+chef_12? true

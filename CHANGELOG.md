@@ -1,6 +1,12 @@
 Chef Zero CHANGELOG
 ===================
 
+$ 5.0 (pending)
+
+* updates to be compatible with current Chef Server 12 behaviors
+* update oc-chef-pedant to 2.0
+* remove chef-pedant support
+
 # 4.2.3
 
 * [PR#143](https://github.com/chef/chef-zero/pull/143): Fix server_scope: :context
