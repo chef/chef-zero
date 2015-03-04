@@ -10,13 +10,15 @@ module ChefZero
     # /search/INDEX
     class SearchEndpoint < RestBase
       def get(request)
-        results = search(request)
+        orgname = request.rest_path[1]
+        results = search(request, orgname)
         results['rows'] = results['rows'].map { |name,uri,value,search_value| value }
         json_response(200, results)
       end
 
       def post(request)
-        full_results = search(request)
+        orgname = request.rest_path[1]
+        full_results = search(request, orgname)
         keys = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         partial_results = full_results['rows'].map do |name, uri, doc, search_value|
           data = {}
@@ -45,10 +47,10 @@ module ChefZero
 
       private
 
-      def search_container(request, index)
+      def search_container(request, index, orgname)
         relative_parts, normalize_proc = case index
         when 'client'
-          [ ['clients'], Proc.new { |client, name| ChefData::DataNormalizer.normalize_client(client, name) } ]
+          [ ['clients'], Proc.new { |client, name| ChefData::DataNormalizer.normalize_client(client, name, orgname) } ]
         when 'node'
           [ ['nodes'], Proc.new { |node, name| ChefData::DataNormalizer.normalize_node(node, name) } ]
         when 'environment'
@@ -92,7 +94,7 @@ module ChefZero
         end
       end
 
-      def search(request)
+      def search(request, orgname = nil)
         # Extract parameters
         index = request.rest_path[3]
         query_string = request.query_params['q'] || '*:*'
@@ -104,7 +106,7 @@ module ChefZero
         rows = rows.to_i if rows
 
         # Get the search container
-        container, expander = search_container(request, index)
+        container, expander = search_container(request, index, orgname)
 
         # Search!
         result = []
