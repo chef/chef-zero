@@ -13,7 +13,7 @@ module ChefZero
         result = result.map do |orgname|
           org = get_data(request, [ 'organizations', orgname, 'org' ])
           org = FFI_Yajl::Parser.parse(org, :create_additions => false)
-          ChefData::DataNormalizer.normalize_organization(org, orgname)
+          { "organization" => ChefData::DataNormalizer.normalize_organization(org, orgname) }
         end
         json_response(200, result)
       end

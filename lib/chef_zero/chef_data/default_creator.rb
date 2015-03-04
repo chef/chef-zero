@@ -160,7 +160,7 @@ module ChefZero
         'users' => {},
 
         'org' => {},
-        'containers' => %w(clients containers cookbooks data environments groups nodes roles sandboxes),
+        'containers' => %w(clients containers cookbooks data environments groups nodes roles sandboxes policies cookbook_artifacts),
         'groups' => %w(admins billing-admins clients users),
         'association_requests' => {}
       }

@@ -17,8 +17,11 @@ module ChefZero
       def post(request)
         contents = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         name = contents['name']
+        full_name = contents['full_name']
         if name.nil?
           error(400, "Must specify 'name' in JSON")
+        elsif full_name.nil?
+          error(400, "Must specify 'full_name' in JSON")
         elsif exists_data_dir?(request, request.rest_path + [ name ])
           error(409, "Organization already exists")
         else
@@ -43,8 +46,12 @@ module ChefZero
             set_data(request, validator_path, validator)
           end
 
+
           json_response(201, {
             "uri" => "#{build_uri(request.base_uri, org_path)}",
+            "name" => name,
+            "org_type" => "Pleasure",
+            "full_name" => full_name,
             "clientname" => validator_name,
             "private_key" => private_key
           })
