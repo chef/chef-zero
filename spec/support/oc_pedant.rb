@@ -77,9 +77,6 @@ superuser_name 'pivotal'
 superuser_key key
 webui_key key
 
-# Set the platform_class
-platform_class Pedant::MultiTenantPlatform
-
 requestors({
              :clients => {
                # The the admin user, for the purposes of getting things rolling
