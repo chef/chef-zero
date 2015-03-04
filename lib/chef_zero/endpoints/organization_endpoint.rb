@@ -32,7 +32,7 @@ module ChefZero
 
       def delete(request)
         org = get_data(request, request.rest_path + [ 'org' ])
-        delete_data_dir(request, request.rest_path)
+        delete_data_dir(request, request.rest_path, :recursive)
         already_json_response(200, populate_defaults(request, org))
       end
 
