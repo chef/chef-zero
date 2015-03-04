@@ -22,7 +22,6 @@ module ChefZero
           return error(400, "Cannot rename org #{request.rest_path[-1]} to #{new_org['name']}: rename not supported for orgs")
         end
         set_data(request, request.rest_path + [ 'org' ], save_org)
-        pp org
         json_response(200, {
           "uri" => "#{build_uri(request.base_uri, request.rest_path)}",
           "name" => org['name'],
