@@ -1,6 +1,12 @@
 Chef Zero CHANGELOG
 ===================
 
+$ 5.0 (pending)
+
+- updates to be compatible with current Chef Server 12 behaviors
+- update oc-chef-pedant to 2.0
+- remove chef-pedant support
+
 # 4.0 (2/11/2014)
 
 - Add policyfile endpoints

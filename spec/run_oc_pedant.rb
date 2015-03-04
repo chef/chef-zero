@@ -24,8 +24,6 @@ begin
 
   require 'rspec/core'
   require 'pedant'
-  require 'pedant/opensource/platform'
-  require 'pedant/multitenant'
   require 'pedant/organization'
 
   #Pedant::Config.rerun = true
@@ -43,7 +41,8 @@ begin
     '--skip-omnibus',
     '--skip-usags',
     '--skip-internal_orgs',
-    '--skip-rename_org'
+    '--skip-rename_org',
+    '--skip-headers'
   ])
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
