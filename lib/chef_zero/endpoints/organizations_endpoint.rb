@@ -50,7 +50,7 @@ module ChefZero
           json_response(201, {
             "uri" => "#{build_uri(request.base_uri, org_path)}",
             "name" => name,
-            "org_type" => "Pleasure",
+            "org_type" => org["org_type"],
             "full_name" => full_name,
             "clientname" => validator_name,
             "private_key" => private_key
