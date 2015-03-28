@@ -98,7 +98,6 @@ module ChefZero
 
     GLOBAL_ENDPOINTS = [
       '/license',
-      '/users',
       '/version',
     ]
 
@@ -464,9 +463,9 @@ module ChefZero
       result = if options[:osc_compat]
         # OSC-only
         [
-          [ "/users", ActorsEndpoint.new(self) ],
-          [ "/users/*", ActorEndpoint.new(self) ],
-          [ "/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
+          [ "/organizations/*/users", ActorsEndpoint.new(self) ],
+          [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
+          [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
         ]
       else
         # EC-only
@@ -557,6 +556,7 @@ module ChefZero
       return proc do |env|
         begin
           prefix = global_endpoint?(env['PATH_INFO']) ? [] : rest_base_prefix
+
           request = RestRequest.new(env, prefix)
           if @on_request_proc
             @on_request_proc.call(request)
