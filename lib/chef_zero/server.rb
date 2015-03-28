@@ -86,7 +86,55 @@ require 'chef_zero/endpoints/not_found_endpoint'
 require 'chef_zero/endpoints/version_endpoint'
 
 module ChefZero
+  # TODO: make its own file
+  class SocketlessServerMap
+
+    def self.request(port, request_env)
+      instance.request(port, request_env)
+    end
+
+    MUTEX = Mutex.new
+
+    include Singleton
+
+    def initialize()
+      @servers_by_port = {}
+    end
+
+    def register_port(port, server)
+      MUTEX.synchronize do
+        @servers_by_port[port] = server
+      end
+    end
+
+    def register_no_listen_server(server)
+      MUTEX.synchronize do
+        1.upto(1000) do |port|
+          unless @servers_by_port.key?(port)
+            @servers_by_port[port] = server
+            return i
+          end
+        end
+        raise "No socketless ports left to register"
+      end
+    end
+
+    def deregister(port)
+      MUTEX.synchronize do
+        @servers_by_port.delete(port)
+      end
+    end
+
+    def request(port, request_env)
+      server = @servers_by_port[port]
+      raise "No socketless chef-zero server on given port #{port.inspect}" unless server
+      server.handle_socketless_request(request_env)
+    end
+
+  end
+
   class Server
+
     DEFAULT_OPTIONS = {
       :host => '127.0.0.1',
       :port => 8889,
@@ -108,6 +156,7 @@ module ChefZero
       end
       @options.freeze
       ChefZero::Log.level = @options[:log_level].to_sym
+      @app = nil
     end
 
     # @return [Hash]
@@ -145,6 +194,12 @@ module ChefZero
                  URI("#{sch}://#{@options[:host]}:#{port}").to_s
                end
     end
+
+    def local_mode_url
+      raise "Port not yet set, cannot generate URL" unless port.kind_of?(Integer)
+      "chefzero://localhost:#{port}"
+    end
+
 
     #
     # The data store for this server (default is in-memory).
@@ -224,7 +279,6 @@ module ChefZero
       thread.join
     end
 
-
     #
     # Start a Chef Zero server in a forked process. This method returns the PID
     # to the forked process.
@@ -284,7 +338,17 @@ module ChefZero
         sleep(0.01)
       end
 
+      SocketlessServerMap.instance.register_port(@port, self)
+
       @thread
+    end
+
+    def start_socketless
+      @port = SocketlessServerMap.instance.register_no_listen_server(self)
+    end
+
+    def handle_socketless_request(request_env)
+      app.call(request_env)
     end
 
     #
@@ -315,6 +379,7 @@ module ChefZero
       if @thread
         ChefZero::Log.error("Chef Zero did not stop within #{wait} seconds! Killing...")
         @thread.kill
+        SocketlessServerMap.deregister(port)
       end
     ensure
       @server = nil
@@ -545,6 +610,7 @@ module ChefZero
     end
 
     def app
+      return @app if @app
       router = RestRouter.new(open_source_endpoints)
       router.not_found = NotFoundEndpoint.new
 
@@ -553,7 +619,7 @@ module ChefZero
       else
         rest_base_prefix = []
       end
-      return proc do |env|
+      @app = proc do |env|
         begin
           prefix = global_endpoint?(env['PATH_INFO']) ? [] : rest_base_prefix
 
@@ -591,6 +657,7 @@ module ChefZero
           end
         end
       end
+      @app
     end
 
     def dejsonize_children(hash)
