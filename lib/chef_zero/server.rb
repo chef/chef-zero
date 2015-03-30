@@ -27,6 +27,7 @@ require 'webrick'
 require 'webrick/https'
 
 require 'chef_zero'
+require 'chef_zero/socketless_server_map'
 require 'chef_zero/chef_data/cookbook_data'
 require 'chef_zero/chef_data/acl_path'
 require 'chef_zero/rest_router'
@@ -86,53 +87,6 @@ require 'chef_zero/endpoints/not_found_endpoint'
 require 'chef_zero/endpoints/version_endpoint'
 
 module ChefZero
-  # TODO: make its own file
-  class SocketlessServerMap
-
-    def self.request(port, request_env)
-      instance.request(port, request_env)
-    end
-
-    MUTEX = Mutex.new
-
-    include Singleton
-
-    def initialize()
-      @servers_by_port = {}
-    end
-
-    def register_port(port, server)
-      MUTEX.synchronize do
-        @servers_by_port[port] = server
-      end
-    end
-
-    def register_no_listen_server(server)
-      MUTEX.synchronize do
-        1.upto(1000) do |port|
-          unless @servers_by_port.key?(port)
-            @servers_by_port[port] = server
-            return i
-          end
-        end
-        raise "No socketless ports left to register"
-      end
-    end
-
-    def deregister(port)
-      MUTEX.synchronize do
-        @servers_by_port.delete(port)
-      end
-    end
-
-    def request(port, request_env)
-      server = @servers_by_port[port]
-      raise "No socketless chef-zero server on given port #{port.inspect}" unless server
-      server.handle_socketless_request(request_env)
-    end
-
-  end
-
   class Server
 
     DEFAULT_OPTIONS = {
