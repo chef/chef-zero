@@ -27,6 +27,7 @@ require 'webrick'
 require 'webrick/https'
 
 require 'chef_zero'
+require 'chef_zero/socketless_server_map'
 require 'chef_zero/chef_data/cookbook_data'
 require 'chef_zero/chef_data/acl_path'
 require 'chef_zero/rest_router'
@@ -87,6 +88,7 @@ require 'chef_zero/endpoints/version_endpoint'
 
 module ChefZero
   class Server
+
     DEFAULT_OPTIONS = {
       :host => '127.0.0.1',
       :port => 8889,
@@ -108,6 +110,7 @@ module ChefZero
       end
       @options.freeze
       ChefZero::Log.level = @options[:log_level].to_sym
+      @app = nil
     end
 
     # @return [Hash]
@@ -145,6 +148,12 @@ module ChefZero
                  URI("#{sch}://#{@options[:host]}:#{port}").to_s
                end
     end
+
+    def local_mode_url
+      raise "Port not yet set, cannot generate URL" unless port.kind_of?(Integer)
+      "chefzero://localhost:#{port}"
+    end
+
 
     #
     # The data store for this server (default is in-memory).
@@ -224,7 +233,6 @@ module ChefZero
       thread.join
     end
 
-
     #
     # Start a Chef Zero server in a forked process. This method returns the PID
     # to the forked process.
@@ -284,7 +292,17 @@ module ChefZero
         sleep(0.01)
       end
 
+      SocketlessServerMap.instance.register_port(@port, self)
+
       @thread
+    end
+
+    def start_socketless
+      @port = SocketlessServerMap.instance.register_no_listen_server(self)
+    end
+
+    def handle_socketless_request(request_env)
+      app.call(request_env)
     end
 
     #
@@ -315,6 +333,7 @@ module ChefZero
       if @thread
         ChefZero::Log.error("Chef Zero did not stop within #{wait} seconds! Killing...")
         @thread.kill
+        SocketlessServerMap.deregister(port)
       end
     ensure
       @server = nil
@@ -545,6 +564,7 @@ module ChefZero
     end
 
     def app
+      return @app if @app
       router = RestRouter.new(open_source_endpoints)
       router.not_found = NotFoundEndpoint.new
 
@@ -553,7 +573,7 @@ module ChefZero
       else
         rest_base_prefix = []
       end
-      return proc do |env|
+      @app = proc do |env|
         begin
           prefix = global_endpoint?(env['PATH_INFO']) ? [] : rest_base_prefix
 
@@ -591,6 +611,7 @@ module ChefZero
           end
         end
       end
+      @app
     end
 
     def dejsonize_children(hash)
