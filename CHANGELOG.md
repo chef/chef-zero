@@ -3,9 +3,11 @@ Chef Zero CHANGELOG
 
 # unreleased
 
+* [PR#121](https://github.com/chef/chef-zero/pull/121): Add Socketless
+  mode.
 * [**Phil Dibowitz**](https://github.com/jaymzh):
   Added support for /version
- 
+
 # 4.0 (2/11/2014)
 
 - Add policyfile endpoints
