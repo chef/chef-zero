@@ -1,7 +1,15 @@
 Chef Zero CHANGELOG
 ===================
 
-# unreleased
+# 4.2.0
+
+* [PR#124](https://github.com/chef/chef-zero/pull/124): Bump ffi-yajl
+  dependency
+* [PR#119](https://github.com/chef/chef-zero/pull/119): Add
+  :organization and :data_scope options to RSpec support method
+  `with_chef_server`
+
+# 4.1.0
 
 * [PR#121](https://github.com/chef/chef-zero/pull/121): Add Socketless
   mode.
