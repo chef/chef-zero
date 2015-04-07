@@ -1,6 +1,11 @@
 Chef Zero CHANGELOG
 ===================
 
+# 4.2.1
+
+* [PR#125](https://github.com/chef/chef-zero/pull/125): Don't polute
+  global chef_server configs when running RSpec
+
 # 4.2.0
 
 * [PR#124](https://github.com/chef/chef-zero/pull/124): Bump ffi-yajl
