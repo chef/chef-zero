@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'uuidtools', '~> 2.1'
   s.add_dependency 'ffi-yajl', '>= 1.1', '< 3.0'
   s.add_dependency 'rack'
+  s.add_dependency 'redis'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
