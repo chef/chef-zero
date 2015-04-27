@@ -47,8 +47,14 @@ module ChefZero
         if path.length < 3
           data_type = _data_type_to_path(Chef::JSONCompat.parse(data)["chef_type"])
           hkey = [path, data_type].flatten.compact.join("/")
+          if %w[users clients].include?(data_type)
+            raise DataAlreadyExistsError.new(path + [name]) if @redis.hexists(hkey, name)
+          end
           @redis.hset(hkey, name, data)
         else
+          if %w[users clients].include?(path.last)
+            raise DataAlreadyExistsError.new(path + [name]) if @redis.hexists(path.join("/"), name)
+          end
           @redis.hset(path.join("/"), name, data)
         end
       end
@@ -100,7 +106,7 @@ module ChefZero
       end
 
       def _data_type_to_path(type)
-        if %w[environment role node client user].include?(type)
+        if %w[environment role node client user principal].include?(type)
           type + "s"
         else
           type
