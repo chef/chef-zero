@@ -21,7 +21,7 @@
 ################################################################################
 # You MUST specify the address of the server the API requests will be
 # sent to.  Only specify protocol, hostname, and port.
-if ENV['SINGLE_ORG'] || ENV['FILE_STORE']
+if ENV['SINGLE_ORG'] || ENV['FILE_STORE'] || ENV['REDIS_STORE']
   chef_server 'http://127.0.0.1:8889'
 else
   chef_server 'http://127.0.0.1:8889/organizations/pedant'

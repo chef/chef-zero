@@ -58,6 +58,14 @@ begin
     server = ChefZero::Server.new(:port => 8889, :single_org => 'chef', :data_store => data_store)
     server.start_background
 
+  elsif ENV['REDIS_STORE']
+    require 'chef_zero/data_store/redis_store'
+    tmpdir = Dir.mktmpdir
+    data_store = ChefZero::DataStore::RedisStore.new(true, {})
+    data_store = ChefZero::DataStore::DefaultFacade.new(data_store, true, false)
+    server = ChefZero::Server.new(:port => 8889, :single_org => 'chef', :data_store => data_store)
+    server.start_background
+
   else
     server = ChefZero::Server.new(:port => 8889, :single_org => false, :osc_compat => true)
     server.data_store.create_dir([ 'organizations' ], 'pedant')
