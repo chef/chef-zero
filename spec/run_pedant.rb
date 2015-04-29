@@ -60,9 +60,8 @@ begin
 
   elsif ENV['REDIS_STORE']
     require 'chef_zero/data_store/redis_store'
-    tmpdir = Dir.mktmpdir
     data_store = ChefZero::DataStore::RedisStore.new(true, {})
-    data_store = ChefZero::DataStore::DefaultFacade.new(data_store, true, false)
+    data_store = ChefZero::DataStore::DefaultFacade.new(data_store, true, true)
     server = ChefZero::Server.new(:port => 8889, :single_org => 'chef', :data_store => data_store)
     server.start_background
 
