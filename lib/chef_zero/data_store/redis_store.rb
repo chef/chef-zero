@@ -66,6 +66,7 @@ module ChefZero
       end
 
       def delete(path, *options)
+        verbose_entry("===In: delete #{path.to_s}")
         hkey, field = _split_path(path)
         raise DataStore::DataNotFoundError.new(path) unless @redis.hexists(hkey.join("/"), field)
         @redis.hdel(hkey.join("/"), field)
@@ -97,6 +98,7 @@ module ChefZero
       end
 
       def exists_dir?(path)
+        verbose_entry("===In: exists_dir #{path.to_s}")
         return true if path.length < 3
         return true if @redis.hlen(path.join("/")) > 0
         false
