@@ -44,15 +44,16 @@ module ChefZero
       end
 
       def create(path, name, data, *options)
+        verbose_entry("===In: create #{path.to_s} ++ #{name}")
         if path.length < 3
           data_type = _data_type_to_path(Chef::JSONCompat.parse(data)["chef_type"])
           hkey = [path, data_type].flatten.compact.join("/")
-          if %w[users clients nodes roles environments].include?(data_type)
+          if %w[users clients nodes roles environments data].include?(data_type)
             raise DataAlreadyExistsError.new(path + [name]) if @redis.hexists(hkey, name)
           end
           @redis.hset(hkey, name, data)
         else
-          if %w[users clients nodes roles environments].include?(path.last)
+          if %w[users clients nodes roles environments data].include?(path.last)
             raise DataAlreadyExistsError.new(path + [name]) if @redis.hexists(path.join("/"), name)
           end
           @redis.hset(path.join("/"), name, data)
@@ -60,6 +61,7 @@ module ChefZero
       end
 
       def get(path, request=nil)
+        verbose_entry("===In: get #{path.to_s}")
         hkey, field = _split_path(path)
         data = @redis.hget(hkey.join("/"), field)
         raise DataNotFoundError.new(path) unless data
@@ -67,6 +69,7 @@ module ChefZero
       end
 
       def set(path, data, *options)
+        verbose_entry("===In: set #{path.to_s}")
         hkey, field = _split_path(path)
         @redis.hset(hkey.join("/"), field, data)
       end
@@ -82,10 +85,18 @@ module ChefZero
       end
 
       def list(path)
-        if %w[cookbooks data].include?(path.last) && path.length < 4
-          @redis.keys(path.join("/") + "/*").map {|key| key.split("/").last }
+        verbose_entry("===In: list #{path.to_s}")
+        if %w[cookbooks].include?(path.last) && path.length < 4
+          data = @redis.keys(path.join("/") + "/*").map {|key| key.split("/").last }
+          raise DataNotFoundError.new(path) if data.empty?
+          data
+        elsif path.include?("data") && path.length < 5
+          data = @redis.keys(path.join("/") + "/*").map {|key| key.split("/").last }
+          data
         else
-          @redis.hkeys(path.join("/"))
+          data = @redis.hkeys(path.join("/"))
+          raise DataNotFoundError.new(path) if data.empty?
+          data
         end
       end
 
@@ -111,6 +122,11 @@ module ChefZero
         else
           type
         end
+      end
+
+      def verbose_entry(str)
+        ## For debug with pedant.
+        puts str if ENV['VERBOSE']
       end
     end
   end
