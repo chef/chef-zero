@@ -45,19 +45,10 @@ module ChefZero
 
       def create(path, name, data, *options)
         verbose_entry("===In: create #{path.to_s} ++ #{name}")
-        if path.length < 3
-          data_type = _data_type_to_path(Chef::JSONCompat.parse(data)["chef_type"])
-          hkey = [path, data_type].flatten.compact.join("/")
-          if %w[users clients nodes roles environments data].include?(data_type)
-            raise DataAlreadyExistsError.new(path + [name]) if @redis.hexists(hkey, name)
-          end
-          @redis.hset(hkey, name, data)
-        else
-          if %w[users clients nodes roles environments data].include?(path.last)
-            raise DataAlreadyExistsError.new(path + [name]) if @redis.hexists(path.join("/"), name)
-          end
-          @redis.hset(path.join("/"), name, data)
+        if %w[users clients nodes roles environments data].include?(path.last)
+          raise DataAlreadyExistsError.new(path + [name]) if @redis.hexists(path.join("/"), name)
         end
+        @redis.hset(path.join("/"), name, data)
       end
 
       def get(path, request=nil)
