@@ -14,6 +14,11 @@ describe "Socketless Mode" do
     expect(server_map).to have_server_on_port(8889)
   end
 
+  it "retrieves a server by port" do
+    server_map.register_port(8889, server)
+    expect(ChefZero::SocketlessServerMap.server_on_port(8889)).to eq(server)
+  end
+
   context "when a no-listen server is registered" do
 
     let!(:port) { server_map.register_no_listen_server(server) }
