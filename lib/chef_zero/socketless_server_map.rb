@@ -33,6 +33,10 @@ module ChefZero
       instance.request(port, request_env)
     end
 
+    def self.server_on_port(port)
+      instance.server_on_port(port)
+    end
+
     MUTEX = Mutex.new
 
     include Singleton
@@ -65,6 +69,10 @@ module ChefZero
 
     def has_server_on_port?(port)
       @servers_by_port.key?(port)
+    end
+
+    def server_on_port(port)
+      @servers_by_port[port]
     end
 
     def deregister(port)

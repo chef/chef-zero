@@ -1,6 +1,11 @@
 Chef Zero CHANGELOG
 ===================
 
+# Unrelesed
+
+* [PR#131](https://github.com/chef/chef-zero/pull/131): Adding new
+  `server_on_port` method to the socketless server map.
+
 # 4.2.1
 
 * [PR#125](https://github.com/chef/chef-zero/pull/125): Don't polute
