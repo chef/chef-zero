@@ -55,7 +55,7 @@ module ChefZero
 
         @@chef_server_options = { port: 8900, signals: false, log_requests: true, server_scope: :each }
         chef_server_options = self.chef_server_options
-        chef_server_options = chef_server_options.merge(chef_zero_opts) if self.respond_to?(:chef_zero_opts)
+
         chef_server_options = chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
 
         old_chef_server_url = nil
@@ -64,6 +64,8 @@ module ChefZero
 
         before chef_server_options[:server_scope] do
           Log.debug("Starting Chef server with options #{chef_server_options}")
+
+          chef_server_options = chef_server_options.merge(chef_zero_opts) if self.respond_to?(:chef_zero_opts)
 
           ChefZero::RSpec.set_server_options(chef_server_options)
 
