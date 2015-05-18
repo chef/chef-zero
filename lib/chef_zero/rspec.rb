@@ -46,23 +46,25 @@ module ChefZero
         extend WhenTheChefServerClassMethods
         include WhenTheChefServerInstanceMethods
 
+        @@chef_server_options = { port: 8900, signals: false, log_requests: true, server_scope: :each }
+
         def self.chef_server_options
           @@chef_server_options
         end
+
         def chef_server_options
           self.class.chef_server_options
         end
-
-        @@chef_server_options = { port: 8900, signals: false, log_requests: true, server_scope: :each }
-        chef_server_options = self.chef_server_options
-        chef_server_options = chef_server_options.merge(chef_zero_opts) if self.respond_to?(:chef_zero_opts)
-        chef_server_options = chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
 
         old_chef_server_url = nil
         old_node_name = nil
         old_client_key = nil
 
         before chef_server_options[:server_scope] do
+          chef_server_options = self.chef_server_options
+          chef_server_options = chef_server_options.merge(chef_zero_opts) if self.respond_to?(:chef_zero_opts)
+          chef_server_options = chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
+
           Log.debug("Starting Chef server with options #{chef_server_options}")
 
           ChefZero::RSpec.set_server_options(chef_server_options)
