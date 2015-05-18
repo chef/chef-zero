@@ -1,8 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
-# Unrelesed
+# 4.2.2
 
+* [PR#133](https://github.com/chef/chef-zero/pull/133): Fix RSpec
+  helpers to use `chef_zero_opts` from let binding.
 * [PR#131](https://github.com/chef/chef-zero/pull/131): Adding new
   `server_on_port` method to the socketless server map.
 
