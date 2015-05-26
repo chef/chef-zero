@@ -248,6 +248,7 @@ module ChefZero
         :DoNotListen => true,
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new(StringIO.new, 7),
+        :RequestTimeout => 300,
         :SSLEnable  => options[:ssl],
         :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
         :StartCallback => proc {
