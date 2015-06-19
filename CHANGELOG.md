@@ -1,6 +1,10 @@
 Chef Zero CHANGELOG
 ===================
 
+# 4.2.3
+
+* [PR#143](https://github.com/chef/chef-zero/pull/143): Fix server_scope: :context
+
 # 4.2.2
 
 * [PR#133](https://github.com/chef/chef-zero/pull/133): Fix RSpec
