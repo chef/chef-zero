@@ -51,8 +51,8 @@ module ChefZero
         define_singleton_method(:chef_server_options) {
           @chef_server_options ||= begin
             _chef_server_options = { port: 8900, signals: false, log_requests: true }
-            _chef_server_options = chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
-            _chef_server_options = chef_server_options.freeze
+            _chef_server_options = _chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
+            _chef_server_options = _chef_server_options.freeze
           end
         }
 
