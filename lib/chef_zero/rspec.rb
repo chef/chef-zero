@@ -46,25 +46,27 @@ module ChefZero
         extend WhenTheChefServerClassMethods
         include WhenTheChefServerInstanceMethods
 
-        @@chef_server_options = { port: 8900, signals: false, log_requests: true, server_scope: :each }
+        # Take the passed-in options
 
-        def self.chef_server_options
-          @@chef_server_options
-        end
+        define_singleton_method(:chef_server_options) {
+          @chef_server_options ||= begin
+            _chef_server_options = { port: 8900, signals: false, log_requests: true }
+            _chef_server_options = chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
+            _chef_server_options = chef_server_options.freeze
+          end
+        }
 
+        # Merge in chef_server_options from let(:chef_server_options)
         def chef_server_options
-          self.class.chef_server_options
+          chef_server_options = self.class.chef_server_options.dup
+          chef_server_options = chef_server_options.merge(chef_zero_opts) if self.respond_to?(:chef_zero_opts)
+          chef_server_options
         end
-
-        old_chef_server_url = nil
-        old_node_name = nil
-        old_client_key = nil
 
         before chef_server_options[:server_scope] do
-          chef_server_options = self.chef_server_options
-          chef_server_options = chef_server_options.merge(chef_zero_opts) if self.respond_to?(:chef_zero_opts)
-          chef_server_options = chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
-
+          if chef_server_options[:server_scope] != self.class.chef_server_options[:server_scope]
+            raise "server_scope: #{chef_server_options[:server_scope]} will not be honored: it can only be set on when_the_chef_server!"
+          end
           Log.debug("Starting Chef server with options #{chef_server_options}")
 
           ChefZero::RSpec.set_server_options(chef_server_options)
@@ -74,9 +76,9 @@ module ChefZero
           end
 
           if defined?(Chef::Config)
-            old_chef_server_url = Chef::Config.chef_server_url
-            old_node_name = Chef::Config.node_name
-            old_client_key = Chef::Config.client_key
+            @old_chef_server_url = Chef::Config.chef_server_url
+            @old_node_name = Chef::Config.node_name
+            @old_client_key = Chef::Config.client_key
             if chef_server_options[:organization]
               Chef::Config.chef_server_url = "#{ChefZero::RSpec.server.url}/organizations/#{chef_server_options[:organization]}"
             else
@@ -90,9 +92,9 @@ module ChefZero
 
         if defined?(Chef::Config)
           after chef_server_options[:server_scope] do
-            Chef::Config.chef_server_url = old_chef_server_url
-            Chef::Config.node_name = old_node_name
-            Chef::Config.client_key = old_client_key
+            Chef::Config.chef_server_url = @old_chef_server_url
+            Chef::Config.node_name = @old_node_name
+            Chef::Config.client_key = @old_client_key
           end
         end
 
