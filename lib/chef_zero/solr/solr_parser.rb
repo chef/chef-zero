@@ -7,6 +7,8 @@ require 'chef_zero/solr/query/subquery'
 
 module ChefZero
   module Solr
+    class ParseError < RuntimeError; end
+
     class SolrParser
       def initialize(query_string)
         @query_string = query_string
@@ -114,7 +116,7 @@ module ChefZero
       end
 
       def parse_error(token, str)
-        raise "Error on token '#{token}' at #{@index} of '#{@query_string}': #{str}"
+        raise ChefZero::Solr::ParseError, "Error on token '#{token}' at #{@index} of '#{@query_string}': #{str}"
       end
 
       def read_single_expression
