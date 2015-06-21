@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
   s.homepage = 'http://www.opscode.com'
   s.license = 'Apache 2.0'
 
-  s.add_dependency 'mixlib-log',    '~> 1.3'
-  s.add_dependency 'hashie',        '~> 2.0'
-  s.add_dependency 'uuidtools', '~> 2.1'
-  s.add_dependency 'ffi-yajl', '>= 1.1', '< 3.0'
+  s.add_dependency 'mixlib-log',  '~> 1.3'
+  s.add_dependency 'hashie',      '~> 3.0'
+  s.add_dependency 'uuidtools',   '~> 2.1'
+  s.add_dependency 'ffi-yajl',    '>= 1.1', '< 3.0'
   s.add_dependency 'rack'
 
   s.add_development_dependency 'rake'
