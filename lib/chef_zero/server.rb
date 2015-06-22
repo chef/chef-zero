@@ -34,6 +34,7 @@ require 'chef_zero/rest_router'
 require 'chef_zero/data_store/memory_store_v2'
 require 'chef_zero/data_store/v1_to_v2_adapter'
 require 'chef_zero/data_store/default_facade'
+require 'chef_zero/errors'
 require 'chef_zero/version'
 
 require 'chef_zero/endpoints/rest_list_endpoint'
@@ -103,14 +104,15 @@ module ChefZero
       '/version',
     ]
 
-    def initialize(options = {})
-      @options = DEFAULT_OPTIONS.merge(options)
-      if @options[:single_org] && !@options.has_key?(:osc_compat)
-        @options[:osc_compat] = true
+    def initialize(**options)
+      options = DEFAULT_OPTIONS.merge(options)
+      self.options = options
+      if options[:single_org] && !options.has_key?(:osc_compat)
+        options[:osc_compat] = true
       end
-      @options.freeze
-      ChefZero::Log.level = @options[:log_level].to_sym
-      @app = nil
+      options.freeze
+      ChefZero::Log.level = options[:log_level].to_sym
+      self.server_mutex = Mutex.new
     end
 
     # @return [Hash]
@@ -141,11 +143,11 @@ module ChefZero
     # @return [String]
     #
     def url
-      sch = @options[:ssl] ? 'https' : 'http'
-      @url ||= if @options[:host].include?(':')
-                 URI("#{sch}://[#{@options[:host]}]:#{port}").to_s
+      sch = options[:ssl] ? 'https' : 'http'
+      @url ||= if options[:host].include?(':')
+                 URI("#{sch}://[#{options[:host]}]:#{port}").to_s
                else
-                 URI("#{sch}://#{@options[:host]}:#{port}").to_s
+                 URI("#{sch}://#{options[:host]}:#{port}").to_s
                end
     end
 
@@ -162,7 +164,7 @@ module ChefZero
     #
     def data_store
       @data_store ||= begin
-        result = @options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:single_org], options[:osc_compat])
+        result = options[:data_store] || DataStore::DefaultFacade.new(DataStore::MemoryStoreV2.new, options[:single_org], options[:osc_compat])
         if options[:single_org]
 
           if !result.respond_to?(:interface_version) || result.interface_version == 1
@@ -188,7 +190,7 @@ module ChefZero
     #   true if real keys should be created, false otherwise
     #
     def generate_real_keys?
-      !!@options[:generate_real_keys]
+      !!options[:generate_real_keys]
     end
 
     #
@@ -225,7 +227,7 @@ module ChefZero
       %w[INT TERM].each do |signal|
         Signal.trap(signal) do
           puts "\n>> Stopping Chef Zero..."
-          @server.shutdown
+          server.shutdown
         end
       end
 
@@ -238,67 +240,78 @@ module ChefZero
     # to the forked process.
     #
     # @param [Fixnum] wait
-    #   the number of seconds to wait for the server to start
+    #   the number of seconds to wait for the server to start (nil or 0 means forever)
     #
     # @return [Thread]
     #   the thread the background process is running in
     #
-    def start_background(wait = 5)
-      @server = WEBrick::HTTPServer.new(
-        :DoNotListen => true,
-        :AccessLog   => [],
-        :Logger      => WEBrick::Log.new(StringIO.new, 7),
-        :SSLEnable  => options[:ssl],
-        :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
-        :StartCallback => proc {
-          @running = true
-        }
-      )
+    # @raise [ServerAlreadyStartedError] if the server is already started.
+    #
+    def start_background(wait = nil)
+      server_mutex.synchronize do
+        if !server.nil?
+          raise ServerAlreadyStartedError
+        end
+        self.server = WEBrick::HTTPServer.new(
+          :DoNotListen => true,
+          :AccessLog   => [],
+          :Logger      => WEBrick::Log.new(StringIO.new, 7),
+          :SSLEnable  => options[:ssl],
+          :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
+          :StartCallback => proc {
+            self.running = true
+          }
+        )
+      end
+
       ENV['HTTPS'] = 'on' if options[:ssl]
-      @server.mount('/', Rack::Handler::WEBrick, app)
+      server.mount('/', Rack::Handler::WEBrick, app)
 
       # Pick a port
       if options[:port].respond_to?(:each)
+        got_port = nil
         options[:port].each do |port|
           begin
-            @server.listen(options[:host], port)
-            @port = port
+            server.listen(options[:host], port)
+            self.port = got_port = port
             break
           rescue Errno::EADDRINUSE
             ChefZero::Log.info("Port #{port} in use: #{$!}")
           end
         end
-        if !@port
+        if !got_port
           raise Errno::EADDRINUSE, "No port in :port range #{options[:port]} is available"
         end
       else
-        @server.listen(options[:host], options[:port])
-        @port = options[:port]
+        server.listen(options[:host], options[:port])
+        self.port = options[:port]
       end
 
       # Start the server in the background
-      @thread = Thread.new do
+      self.thread = Thread.new do
         begin
           Thread.current.abort_on_exception = true
-          @server.start
+          server.start
         ensure
-          @port = nil
-          @running = false
+          self.port = nil
+          self.running = false
         end
       end
 
       # Do not return until the web server is genuinely started.
-      while !@running && @thread.alive?
-        sleep(0.01)
+      Timeout.timeout(wait) do
+        while !running? && thread.alive?
+          sleep(0.01)
+        end
       end
 
-      SocketlessServerMap.instance.register_port(@port, self)
+      SocketlessServerMap.instance.register_port(port, self)
 
-      @thread
+      thread
     end
 
     def start_socketless
-      @port = SocketlessServerMap.instance.register_no_listen_server(self)
+      self.port = SocketlessServerMap.instance.register_no_listen_server(self)
     end
 
     def handle_socketless_request(request_env)
@@ -314,7 +327,9 @@ module ChefZero
     #   true if the server is accepting requests, false otherwise
     #
     def running?
-      !@server.nil? && @running && @server.status == :Running
+      # Take a local copy of server in case it gets changed while we run
+      server = self.server
+      !server.nil? && running && server.status == :Running
     end
 
     #
@@ -325,19 +340,23 @@ module ChefZero
     #   server
     #
     def stop(wait = 5)
-      if @running
-        @server.shutdown if @server
-        @thread.join(wait) if @thread
+      # Take local copies of server and thread in case they get changed while we run
+      server = self.server
+      thread = self.thread
+      if running
+        server.shutdown if server
+        thread.join(wait) if thread
       end
     rescue Timeout::Error
-      if @thread
+      if thread
         ChefZero::Log.error("Chef Zero did not stop within #{wait} seconds! Killing...")
-        @thread.kill
+        thread.kill
+        # TODO ... should this be in ensure?
         SocketlessServerMap.deregister(port)
       end
     ensure
-      @server = nil
-      @thread = nil
+      self.server = nil
+      self.thread = nil
     end
 
     def gen_key_pair
@@ -564,54 +583,54 @@ module ChefZero
     end
 
     def app
-      return @app if @app
-      router = RestRouter.new(open_source_endpoints)
-      router.not_found = NotFoundEndpoint.new
+      @app ||= begin
+        router = RestRouter.new(open_source_endpoints)
+        router.not_found = NotFoundEndpoint.new
 
-      if options[:single_org]
-        rest_base_prefix = [ 'organizations', options[:single_org] ]
-      else
-        rest_base_prefix = []
-      end
-      @app = proc do |env|
-        begin
-          prefix = global_endpoint?(env['PATH_INFO']) ? [] : rest_base_prefix
+        if options[:single_org]
+          rest_base_prefix = [ 'organizations', options[:single_org] ]
+        else
+          rest_base_prefix = []
+        end
+        proc do |env|
+          begin
+            prefix = global_endpoint?(env['PATH_INFO']) ? [] : rest_base_prefix
 
-          request = RestRequest.new(env, prefix)
-          if @on_request_proc
-            @on_request_proc.call(request)
-          end
-          response = nil
-          if @request_handler
-            response = @request_handler.call(request)
-          end
-          unless response
-            response = router.call(request)
-          end
-          if @on_response_proc
-            @on_response_proc.call(request, response)
-          end
+            request = RestRequest.new(env, prefix)
+            if @on_request_proc
+              @on_request_proc.call(request)
+            end
+            response = nil
+            if @request_handler
+              response = @request_handler.call(request)
+            end
+            unless response
+              response = router.call(request)
+            end
+            if @on_response_proc
+              @on_response_proc.call(request, response)
+            end
 
-          # Insert Server header
-          response[1]['Server'] = 'chef-zero'
+            # Insert Server header
+            response[1]['Server'] = 'chef-zero'
 
-          # Add CORS header
-          response[1]['Access-Control-Allow-Origin'] = '*'
+            # Add CORS header
+            response[1]['Access-Control-Allow-Origin'] = '*'
 
-          # Puma expects the response to be an array (chunked responses). Since
-          # we are statically generating data, we won't ever have said chunked
-          # response, so fake it.
-          response[-1] = Array(response[-1])
+            # Puma expects the response to be an array (chunked responses). Since
+            # we are statically generating data, we won't ever have said chunked
+            # response, so fake it.
+            response[-1] = Array(response[-1])
 
-          response
-        rescue
-          if options[:log_level] == :debug
-            STDERR.puts "Request Error: #{$!}"
-            STDERR.puts $!.backtrace.join("\n")
+            response
+          rescue
+            if options[:log_level] == :debug
+              STDERR.puts "Request Error: #{$!}"
+              STDERR.puts $!.backtrace.join("\n")
+            end
           end
         end
       end
-      @app
     end
 
     def dejsonize_children(hash)
@@ -633,5 +652,14 @@ module ChefZero
       end
       value
     end
+
+    protected
+
+    attr_accessor :thread
+    attr_accessor :running
+    attr_accessor :server_mutex
+    attr_writer :options
+    attr_writer :port
+    attr_writer :server
   end
 end
