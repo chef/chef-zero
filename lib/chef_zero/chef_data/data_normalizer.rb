@@ -64,10 +64,6 @@ module ChefZero
             data_bag_item['name'] ||= "data_bag_item_#{data_bag_name}_#{id}"
           end
         else
-          # If it's not already wrapped with raw_data, wrap it.
-          if data_bag_item['json_class'] == 'Chef::DataBagItem' && data_bag_item['raw_data']
-            data_bag_item = data_bag_item['raw_data']
-          end
           # Argh.  We don't do this on GET, but we do on PUT and POST????
           if %w(PUT POST).include?(method)
             data_bag_item['chef_type'] ||= 'data_bag_item'
