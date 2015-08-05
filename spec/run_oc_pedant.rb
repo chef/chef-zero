@@ -29,7 +29,9 @@ begin
   #Pedant::Config.rerun = true
 
   Pedant.config.suite = 'api'
+  Pedant.config.internal_server = 'http://localhost:8889'
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
+  Pedant.config[:server_api_version] = 0
   Pedant.setup([
     '--skip-knife',
     '--skip-keys',
@@ -40,8 +42,7 @@ begin
     '--skip-authorization',
     '--skip-omnibus',
     '--skip-usags',
-    '--skip-internal_orgs',
-    '--skip-rename_org',
+    '--exclude-internal-orgs',
     '--skip-headers'
   ])
 
