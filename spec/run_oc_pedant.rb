@@ -43,7 +43,15 @@ begin
     '--skip-omnibus',
     '--skip-usags',
     '--exclude-internal-orgs',
-    '--skip-headers'
+    '--skip-headers',
+
+    # Chef 12 features not yet 100% supported by Chef Zero
+    '--skip-policies',
+    '--skip-server-api-version',
+    '--skip-cookbook-artifacts',
+    '--skip-containers',
+    '--skip-api-v1'
+
   ])
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args)

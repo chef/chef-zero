@@ -61,6 +61,7 @@ require 'chef_zero/endpoints/environment_recipes_endpoint'
 require 'chef_zero/endpoints/environment_role_endpoint'
 require 'chef_zero/endpoints/license_endpoint'
 require 'chef_zero/endpoints/node_endpoint'
+require 'chef_zero/endpoints/node_identifiers_endpoint'
 require 'chef_zero/endpoints/organizations_endpoint'
 require 'chef_zero/endpoints/organization_endpoint'
 require 'chef_zero/endpoints/organization_association_requests_endpoint'
@@ -540,6 +541,7 @@ module ChefZero
         [ "/organizations/*/environments/*/roles/*", EnvironmentRoleEndpoint.new(self) ],
         [ "/organizations/*/nodes", RestListEndpoint.new(self) ],
         [ "/organizations/*/nodes/*", NodeEndpoint.new(self) ],
+        [ "/organizations/*/nodes/*/_identifiers", NodeIdentifiersEndpoint.new(self) ],
         [ "/organizations/*/policies/*/*", PoliciesEndpoint.new(self) ],
         [ "/organizations/*/principals/*", PrincipalEndpoint.new(self) ],
         [ "/organizations/*/roles", RestListEndpoint.new(self) ],
