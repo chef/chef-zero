@@ -24,14 +24,14 @@ begin
 
   require 'rspec/core'
   require 'pedant'
-  require 'pedant/opensource/platform'
-  require 'pedant/multitenant'
   require 'pedant/organization'
 
   #Pedant::Config.rerun = true
 
   Pedant.config.suite = 'api'
+  Pedant.config.internal_server = 'http://localhost:8889'
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
+  Pedant.config[:server_api_version] = 0
   Pedant.setup([
     '--skip-knife',
     '--skip-keys',
@@ -42,8 +42,16 @@ begin
     '--skip-authorization',
     '--skip-omnibus',
     '--skip-usags',
-    '--skip-internal_orgs',
-    '--skip-rename_org'
+    '--exclude-internal-orgs',
+    '--skip-headers',
+
+    # Chef 12 features not yet 100% supported by Chef Zero
+    '--skip-policies',
+    '--skip-server-api-version',
+    '--skip-cookbook-artifacts',
+    '--skip-containers',
+    '--skip-api-v1'
+
   ])
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args)

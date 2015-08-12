@@ -65,7 +65,13 @@ module ChefZero
           else
             response = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
           end
-          response['private_key'] = private_key if private_key
+
+          if request.rest_path[2] == 'clients'
+            response['private_key'] = private_key ? private_key : false
+          else
+            response['private_key'] = private_key if private_key
+          end
+
           response.delete('public_key') if !updating_public_key && request.rest_path[2] == 'users'
           response.delete('password')
           json_response(result[0], response)
@@ -77,7 +83,7 @@ module ChefZero
       def populate_defaults(request, response_json)
         response = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
         if request.rest_path[2] == 'clients'
-          response = ChefData::DataNormalizer.normalize_client(response, request.rest_path[3])
+          response = ChefData::DataNormalizer.normalize_client(response,request.rest_path[3], request.rest_path[1])
         else
           response = ChefData::DataNormalizer.normalize_user(response, request.rest_path[3], identity_keys, server.options[:osc_compat], request.method)
         end

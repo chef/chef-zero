@@ -14,11 +14,11 @@ module ChefZero
         acls
       end
 
-      def self.normalize_client(client, name)
+      def self.normalize_client(client, name, orgname = nil)
         client['name'] ||= name
-        client['admin'] ||= false
-        client['admin'] = !!client['admin']
+        client['clientname'] ||= name
         client['public_key'] ||= PUBLIC_KEY
+        client['orgname'] ||= orgname
         client['validator'] ||= false
         client['validator'] = !!client['validator']
         client['json_class'] ||= "Chef::ApiClient"

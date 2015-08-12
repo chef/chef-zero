@@ -16,18 +16,23 @@ module ChefZero
         new_org.each do |key, value|
           org[key] = value
         end
-        org = FFI_Yajl::Encoder.encode(org, :pretty => true)
+        save_org = FFI_Yajl::Encoder.encode(org, :pretty => true)
         if new_org['name'] != request.rest_path[-1]
           # This is a rename
           return error(400, "Cannot rename org #{request.rest_path[-1]} to #{new_org['name']}: rename not supported for orgs")
         end
-        set_data(request, request.rest_path + [ 'org' ], org)
-        json_response(200, "uri" => "#{build_uri(request.base_uri, request.rest_path)}")
+        set_data(request, request.rest_path + [ 'org' ], save_org)
+        json_response(200, {
+          "uri" => "#{build_uri(request.base_uri, request.rest_path)}",
+          "name" => org['name'],
+          "org_type" => org['org_type'],
+          "full_name" => org['full_name']
+        })
       end
 
       def delete(request)
         org = get_data(request, request.rest_path + [ 'org' ])
-        delete_data_dir(request, request.rest_path)
+        delete_data_dir(request, request.rest_path, :recursive)
         already_json_response(200, populate_defaults(request, org))
       end
 
