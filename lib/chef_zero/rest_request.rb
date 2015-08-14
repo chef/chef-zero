@@ -19,7 +19,7 @@ module ChefZero
     end
 
     def api_version
-      @env['HTTP_X_OPS_SERVER_API_VERSION']
+      @env['HTTP_X_OPS_SERVER_API_VERSION'] || 0
     end
 
     def requestor

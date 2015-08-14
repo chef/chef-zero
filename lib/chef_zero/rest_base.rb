@@ -19,7 +19,7 @@ module ChefZero
       version = request.api_version
       return nil if version.nil? # Not present in headers
 
-      if version.to_i.to_s != version # Version is not an Integer
+      if version.to_i.to_s != version.to_s # Version is not an Integer
         return json_response(406, { "username" => request.requestor }, -1, -1)
       elsif version.to_i > MAX_API_VERSION or version.to_i < MIN_API_VERSION
         response = {
@@ -208,9 +208,9 @@ module ChefZero
     end
 
     def already_json_response(response_code, json_text, request_version=0, response_version=0)
-      header = { "min_version" => MIN_API_VERSION, "max_version" => MAX_API_VERSION,
-                 "request_version" => request_version,
-                 "response_version" => response_version }
+      header = { "min_version" => MIN_API_VERSION.to_s, "max_version" => MAX_API_VERSION.to_s,
+                 "request_version" => request_version.to_s,
+                 "response_version" => response_version.to_s }
       [ response_code,
         { "Content-Type" => "application/json",
           "X-Ops-Server-API-Version" => FFI_Yajl::Encoder.encode(header) },
