@@ -47,7 +47,6 @@ begin
 
     # Chef 12 features not yet 100% supported by Chef Zero
     '--skip-policies',
-    '--skip-server-api-version',
     '--skip-cookbook-artifacts',
     '--skip-containers',
     '--skip-api-v1'
