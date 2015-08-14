@@ -86,6 +86,7 @@ require 'chef_zero/endpoints/user_organizations_endpoint'
 require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
 require 'chef_zero/endpoints/version_endpoint'
+require 'chef_zero/endpoints/server_api_version_endpoint'
 
 module ChefZero
   class Server
@@ -102,6 +103,7 @@ module ChefZero
     GLOBAL_ENDPOINTS = [
       '/license',
       '/version',
+      '/server_api_version'
     ]
 
     def initialize(options = {})
@@ -553,6 +555,7 @@ module ChefZero
         [ "/organizations/*/search", SearchesEndpoint.new(self) ],
         [ "/organizations/*/search/*", SearchEndpoint.new(self) ],
         [ "/version", VersionEndpoint.new(self) ],
+        [ "/server_api_version", ServerAPIVersionEndpoint.new(self) ],
 
         # Internal
         [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ]
