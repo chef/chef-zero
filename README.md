@@ -1,7 +1,12 @@
-[![Stories in Ready](https://badge.waffle.io/chef/chef-zero.png?label=ready&title=Ready)](https://waffle.io/chef/chef-zero)[![Stories in Progress](https://badge.waffle.io/chef/chef-zero.png?label=in+progress&title=In+Progress)](https://waffle.io/chef/chef-zero)
 
 Chef Zero
 =========
+
+[![Status](https://travis-ci.org/chef/chef-zero.svg?branch=master)](https://travis-ci.org/chef/chef-zero)
+[![Gem Version](https://badge.fury.io/rb/chef-zero.svg)](http://badge.fury.io/rb/chef-zero)
+[![Stories in Ready](https://badge.waffle.io/chef/chef-zero.png?label=ready&title=Ready)](https://waffle.io/chef/chef-zero)
+[![Stories in Progress](https://badge.waffle.io/chef/chef-zero.png?label=in+progress&title=In+Progress)](https://waffle.io/chef/chef-zero)
+
 
 Description
 -----------
