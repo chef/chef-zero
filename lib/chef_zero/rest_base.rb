@@ -15,7 +15,29 @@ module ChefZero
       server.data_store
     end
 
+    def check_api_version(request)
+      version = request.api_version
+      return nil if version.nil? # Not present in headers
+
+      if version.to_i.to_s != version.to_s # Version is not an Integer
+        return json_response(406, { "username" => request.requestor }, -1, -1)
+      elsif version.to_i > MAX_API_VERSION or version.to_i < MIN_API_VERSION
+        response = {
+          "error" => "invalid-x-ops-server-api-version",
+          "message" => "Specified version #{version} not supported",
+          "min_api_version" => MIN_API_VERSION,
+          "max_api_version" => MAX_API_VERSION
+        }
+        return json_response(406, response, version, -1)
+      else
+        return nil
+      end
+    end
+
     def call(request)
+      response = check_api_version(request)
+      return response unless response.nil?
+
       method = request.method.downcase.to_sym
       if !self.respond_to?(method)
         accept_methods = [:get, :put, :post, :delete].select { |m| self.respond_to?(m) }
@@ -177,16 +199,22 @@ module ChefZero
       json_response(response_code, {"error" => [error]})
     end
 
-    def json_response(response_code, json)
-      already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => true))
+    def json_response(response_code, json, request_version=0, response_version=0)
+      already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => true), request_version, response_version)
     end
 
     def text_response(response_code, text)
       [response_code, {"Content-Type" => "text/plain"}, text]
     end
 
-    def already_json_response(response_code, json_text)
-      [response_code, {"Content-Type" => "application/json"}, json_text]
+    def already_json_response(response_code, json_text, request_version=0, response_version=0)
+      header = { "min_version" => MIN_API_VERSION.to_s, "max_version" => MAX_API_VERSION.to_s,
+                 "request_version" => request_version.to_s,
+                 "response_version" => response_version.to_s }
+      [ response_code,
+        { "Content-Type" => "application/json",
+          "X-Ops-Server-API-Version" => FFI_Yajl::Encoder.encode(header) },
+        json_text ]
     end
 
     # To be called from inside rest endpoints
