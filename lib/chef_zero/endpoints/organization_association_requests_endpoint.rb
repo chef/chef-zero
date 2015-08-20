@@ -6,7 +6,17 @@ module ChefZero
     # /organizations/ORG/association_requests
     class OrganizationAssociationRequestsEndpoint < RestBase
       def post(request)
-        ChefZero::Endpoints::OrganizationUserBase.post(self, request, 'user')
+        json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+        username = json['user']
+        orgname = request.rest_path[1]
+        id = "#{username}-#{orgname}"
+
+        if exists_data?(request, [ 'organizations', orgname, 'users', username ])
+          raise RestErrorResponse.new(409, "User #{username} is already in organization #{orgname}")
+        end
+
+        create_data(request, request.rest_path, username, '{}')
+        json_response(201, { "uri" => build_uri(request.base_uri, request.rest_path + [ id ]) })
       end
 
       def get(request)
