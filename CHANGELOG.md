@@ -6,6 +6,7 @@ $ 5.0 (pending)
 * updates to be compatible with current Chef Server 12 behaviors
 * update oc-chef-pedant to 2.0
 * remove chef-pedant support
+* [Antonio Terceiro](https://github.com/terceiro): [PR#140](https://github.com/chef/chef-zero/pull/140) Remove dependency on `chef/chef`
 
 # 4.2.3
 
@@ -20,7 +21,7 @@ $ 5.0 (pending)
 
 # 4.2.1
 
-* [PR#125](https://github.com/chef/chef-zero/pull/125): Don't polute
+* [PR#125](https://github.com/chef/chef-zero/pull/125): Don't pollute
   global chef_server configs when running RSpec
 
 # 4.2.0
