@@ -1,8 +1,5 @@
 require 'ffi_yajl'
 
-require 'chef/version_class'
-require 'chef/exceptions'
-
 require 'chef_zero/endpoints/rest_object_endpoint'
 require 'chef_zero/chef_data/data_normalizer'
 
@@ -142,9 +139,9 @@ module ChefZero
       end
 
       def valid_version?(version_string)
-        Chef::Version.new(version_string)
+        Gem::Version.new(version_string)
         true
-      rescue Chef::Exceptions::InvalidCookbookVersion
+      rescue ArgumentError
         false
       end
 

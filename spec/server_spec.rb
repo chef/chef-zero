@@ -1,4 +1,5 @@
 require 'chef_zero/server'
+require 'net/http'
 require 'uri'
 
 describe ChefZero::Server do
