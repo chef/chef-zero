@@ -1,8 +1,8 @@
 # Change Log
 
-## [Unreleased](https://github.com/chef/chef-zero/tree/HEAD)
+## [4.3.0](https://github.com/chef/chef-zero/tree/v4.3.0) (2015-09-02)
 
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.2.3...HEAD)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.2.3...v4.3.0)
 
 **Implemented enhancements:**
 
