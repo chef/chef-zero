@@ -17,6 +17,7 @@ module ChefZero
       def self.normalize_client(client, name, orgname = nil)
         client['name'] ||= name
         client['clientname'] ||= name
+        client['admin'] = !!client['admin'] if client.has_key?('admin')
         client['public_key'] ||= PUBLIC_KEY
         client['orgname'] ||= orgname
         client['validator'] ||= false
