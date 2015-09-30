@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.3.1](https://github.com/chef/chef-zero/tree/v4.3.1) (2015-09-29)
+
+- Don't return invalid admin="true" for clients [\#166](https://github.com/chef/chef-zero/pull/155) ([jkeiser](https://github.com/jkeiser])
+
 ## [4.3.0](https://github.com/chef/chef-zero/tree/v4.3.0) (2015-09-02)
 
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.2.3...v4.3.0)
