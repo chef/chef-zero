@@ -124,11 +124,15 @@ module ChefZero
           self[key][cookbook] = version_constraints.first || ">= 0.0.0"
         end
 
-        def method_missing(key, value = nil)
-          if value.nil?
+        def method_missing(key, *values)
+          if values.nil?
             self[key.to_sym]
           else
-            store key.to_sym, value
+            if values.length > 1
+              store key.to_sym, values
+            else
+              store key.to_sym, values.first
+            end
           end
         end
       end
