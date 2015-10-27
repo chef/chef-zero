@@ -195,12 +195,13 @@ module ChefZero
       data_store.exists_dir?(rest_path)
     end
 
-    def error(response_code, error)
-      json_response(response_code, {"error" => [error]})
+    def error(response_code, error, opts={})
+      json_response(response_code, {"error" => [error]}, 0, 0, opts)
     end
 
-    def json_response(response_code, json, request_version=0, response_version=0)
-      already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => true), request_version, response_version)
+    def json_response(response_code, json, request_version=0, response_version=0, opts={pretty: true})
+      do_pretty_json = opts[:pretty] && true
+      already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => do_pretty_json), request_version, response_version)
     end
 
     def text_response(response_code, text)
@@ -237,6 +238,36 @@ module ChefZero
 
     def populate_defaults(request, response)
       response
+    end
+
+    def parse_json(json)
+      FFI_Yajl::Parser.parse(json, create_additions: false)
+    end
+
+    def to_json(data)
+      FFI_Yajl::Encoder.encode(data, :pretty => true)
+    end
+
+    def get_data_or_else(request, path, or_else_value)
+      if exists_data?(request, path)
+        parse_json(get_data(request, path))
+      else
+        or_else_value
+      end
+    end
+
+    def list_data_or_else(request, path, or_else_value)
+      if exists_data_dir?(request, path)
+        list_data(request, path)
+      else
+        or_else_value
+      end
+    end
+
+    def policy_name_invalid?(name)
+      !name.is_a?(String) ||
+       name.size > 255 ||
+       name =~ /[+ !]/
     end
   end
 end
