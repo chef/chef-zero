@@ -77,7 +77,6 @@ begin
   Pedant::Config.search_url_fmt = "/dummy?fq=+X_CHEF_type_CHEF_X:%{type}&q=%{query}&wt=json"
 
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
-  Pedant.config[:server_api_version] = 0
 
   # "the goal is that only authorization, authentication and validation tests are turned off" - @jkeiser
   Pedant.setup([

@@ -45,6 +45,8 @@ maximum_search_time 0
 # # to be enabled for Pedant tests to work correctly
 explicit_port_url true
 
+server_api_version 0
+
 # We're starting to break tests up into groups based on different
 # criteria.  The proper API tests (the results of which are viewable
 # to OPC customers) should be the only ones run by Pedant embedded in
