@@ -61,9 +61,12 @@ server_api_version 0
 # value.
 include_internal false
 
-# This is the bit that is different from pedant.rb
-org({:name => "pedant-testorg",
-     :create_me => true})
+key = 'spec/support/stickywicket.pem'
+
+org(name: "pedant-testorg",
+    create_me: true,
+    validator_key: key)
+
 internal_account_url chef_server
 delete_org true
 
