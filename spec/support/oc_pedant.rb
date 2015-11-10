@@ -86,6 +86,8 @@ def cheffs_or_else_user(value)
   ENV['CHEF_FS'] ? "pivotal" : value
 end
 
+keyfile_maybe = ENV['CHEF_FS'] ? { key_file: key } : { key_file: nil }
+
 requestors({
              :clients => {
                # The the admin user, for the purposes of getting things rolling
@@ -115,14 +117,14 @@ requestors({
                  :create_me => !ENV['CHEF_FS'],
                  :associate => !ENV['CHEF_FS'],
                  :create_knife => true
-               },
+               }.merge(keyfile_maybe),
 
                :non_admin => {
                  :name => cheffs_or_else_user("pedant_user"),
                  :create_me => !ENV['CHEF_FS'],
                  :associate => !ENV['CHEF_FS'],
                  :create_knife => true
-               },
+               }.merge(keyfile_maybe),
 
                # A user that is not a member of the testing organization
                :bad => {
@@ -130,7 +132,7 @@ requestors({
                  :create_me => !ENV['CHEF_FS'],
                  :create_knife => true,
                  :associate => false
-               },
+               }.merge(keyfile_maybe),
              }
            })
 
