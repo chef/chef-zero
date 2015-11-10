@@ -45,6 +45,8 @@ maximum_search_time 0
 # # to be enabled for Pedant tests to work correctly
 explicit_port_url true
 
+server_api_version 0
+
 # We're starting to break tests up into groups based on different
 # criteria.  The proper API tests (the results of which are viewable
 # to OPC customers) should be the only ones run by Pedant embedded in
@@ -60,8 +62,8 @@ explicit_port_url true
 include_internal false
 
 # This is the bit that is different from pedant.rb
-org({:name => "pedant-testorg",
-     :create_me => true})
+key = 'spec/support/stickywicket.pem'
+org(name: "pedant-testorg", validator_key: key)
 internal_account_url chef_server
 delete_org true
 
@@ -72,7 +74,6 @@ delete_org true
 # are using pre-existing users, you must supply a ':key_file' key,
 # which should be the fully-qualified path /on the machine Pedant is
 # running on/ to a private key for that user.
-key = 'spec/support/stickywicket.pem'
 superuser_name 'pivotal'
 superuser_key key
 webui_key key
@@ -102,21 +103,26 @@ requestors({
              :users => {
                # An administrator in the testing organization
                :admin => {
-                 :name => "pedant_admin_user",
-                 :create_me => true,
-                 :create_knife => true
+                 :name => ENV['CHEF_FS'] ? "pivotal" : 'pedant_admin_user',
+                 :create_me => !ENV['CHEF_FS'],
+                 :key_file => ENV['CHEF_FS'] ? key : nil,
+                 :create_knife => true,
+                 :associate => !ENV['CHEF_FS']
                },
 
                :non_admin => {
-                 :name => "pedant_user",
-                 :create_me => true,
-                 :create_knife => true
+                 :name => ENV['CHEF_FS'] ? "pivotal" : 'pedant_user',
+                 :create_me => !ENV['CHEF_FS'],
+                 :key_file => ENV['CHEF_FS'] ? key : nil,
+                 :create_knife => true,
+                 :associate => !ENV['CHEF_FS']
                },
 
                # A user that is not a member of the testing organization
                :bad => {
-                 :name => "pedant-nobody",
-                 :create_me => true,
+                 :name => ENV['CHEF_FS'] ? "pivotal" : 'pedant-nobody',
+                 :create_me => !ENV['CHEF_FS'],
+                 :key_file => ENV['CHEF_FS'] ? key : nil,
                  :create_knife => true,
                  :associate => false
                },
