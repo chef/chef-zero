@@ -5,6 +5,33 @@ require 'bundler/setup'
 require 'chef_zero/server'
 require 'rspec/core'
 
+def start_server(chef_repo_path)
+  require 'chef/version'
+  require 'chef/config'
+  require 'chef/chef_fs/config'
+  require 'chef/chef_fs/chef_fs_data_store'
+  require 'chef_zero/server'
+
+  Dir.mkdir(chef_repo_path) if !File.exists?(chef_repo_path)
+
+  # 11.6 and below had a bug where it couldn't create the repo children automatically
+  if Chef::VERSION.to_f < 11.8
+    %w(clients cookbooks data_bags environments nodes roles users).each do |child|
+      Dir.mkdir("#{chef_repo_path}/#{child}") if !File.exists?("#{chef_repo_path}/#{child}")
+    end
+  end
+
+  # Start the new server
+  Chef::Config.repo_mode = 'everything'
+  Chef::Config.chef_repo_path = chef_repo_path
+  Chef::Config.versioned_cookbooks = true
+  chef_fs = Chef::ChefFS::Config.new.local_fs
+  data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs)
+  server = ChefZero::Server.new(:port => 8889, :single_org => false, :data_store => data_store)#, :log_level => :debug)
+  server.start_background
+  server
+end
+
 tmpdir = nil
 
 begin
@@ -16,6 +43,11 @@ begin
     data_store = ChefZero::DataStore::DefaultFacade.new(data_store, false, false)
     server = ChefZero::Server.new(:port => 8889, :single_org => false, :data_store => data_store)
     server.start_background
+
+  elsif ENV['CHEF_FS']
+    require 'tmpdir'
+    tmpdir = Dir.mktmpdir
+    start_server(tmpdir)
 
   else
     server = ChefZero::Server.new(:port => 8889, :single_org => false)#, :log_level => :debug)
