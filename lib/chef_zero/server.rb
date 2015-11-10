@@ -47,6 +47,7 @@ require 'chef_zero/endpoints/cookbook_endpoint'
 require 'chef_zero/endpoints/cookbook_version_endpoint'
 require 'chef_zero/endpoints/containers_endpoint'
 require 'chef_zero/endpoints/container_endpoint'
+require 'chef_zero/endpoints/dummy_endpoint'
 require 'chef_zero/endpoints/data_bags_endpoint'
 require 'chef_zero/endpoints/data_bag_endpoint'
 require 'chef_zero/endpoints/data_bag_item_endpoint'
@@ -61,17 +62,19 @@ require 'chef_zero/endpoints/environment_recipes_endpoint'
 require 'chef_zero/endpoints/environment_role_endpoint'
 require 'chef_zero/endpoints/license_endpoint'
 require 'chef_zero/endpoints/node_endpoint'
+require 'chef_zero/endpoints/nodes_endpoint'
 require 'chef_zero/endpoints/node_identifiers_endpoint'
 require 'chef_zero/endpoints/organizations_endpoint'
 require 'chef_zero/endpoints/organization_endpoint'
 require 'chef_zero/endpoints/organization_association_requests_endpoint'
 require 'chef_zero/endpoints/organization_association_request_endpoint'
 require 'chef_zero/endpoints/organization_authenticate_user_endpoint'
+require 'chef_zero/endpoints/organization_policies_endpoint'
+require 'chef_zero/endpoints/organization_policy_groups_endpoint'
 require 'chef_zero/endpoints/organization_users_endpoint'
 require 'chef_zero/endpoints/organization_user_endpoint'
 require 'chef_zero/endpoints/organization_validator_key_endpoint'
 require 'chef_zero/endpoints/principal_endpoint'
-require 'chef_zero/endpoints/policies_endpoint'
 require 'chef_zero/endpoints/role_endpoint'
 require 'chef_zero/endpoints/role_environments_endpoint'
 require 'chef_zero/endpoints/sandboxes_endpoint'
@@ -89,6 +92,7 @@ require 'chef_zero/endpoints/version_endpoint'
 require 'chef_zero/endpoints/server_api_version_endpoint'
 
 module ChefZero
+
   class Server
 
     DEFAULT_OPTIONS = {
@@ -525,6 +529,7 @@ module ChefZero
       end
       result + [
         # Both
+        [ "/dummy", DummyEndpoint.new(self) ],
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
@@ -541,10 +546,16 @@ module ChefZero
         [ "/organizations/*/environments/*/nodes", EnvironmentNodesEndpoint.new(self) ],
         [ "/organizations/*/environments/*/recipes", EnvironmentRecipesEndpoint.new(self) ],
         [ "/organizations/*/environments/*/roles/*", EnvironmentRoleEndpoint.new(self) ],
-        [ "/organizations/*/nodes", RestListEndpoint.new(self) ],
+        [ "/organizations/*/nodes", NodesEndpoint.new(self) ],
         [ "/organizations/*/nodes/*", NodeEndpoint.new(self) ],
         [ "/organizations/*/nodes/*/_identifiers", NodeIdentifiersEndpoint.new(self) ],
-        [ "/organizations/*/policies/*/*", PoliciesEndpoint.new(self) ],
+        [ "/organizations/*/policies", OrganizationPoliciesEndpoint.new(self) ],
+        [ "/organizations/*/policies/*", OrganizationPoliciesEndpoint.new(self) ],
+        [ "/organizations/*/policies/*/revisions", OrganizationPoliciesEndpoint.new(self) ],
+        [ "/organizations/*/policies/*/revisions/*", OrganizationPoliciesEndpoint.new(self) ],
+        [ "/organizations/*/policy_groups", OrganizationPolicyGroupsEndpoint.new(self) ],
+        [ "/organizations/*/policy_groups/*", OrganizationPolicyGroupsEndpoint.new(self) ],
+        [ "/organizations/*/policy_groups/*/policies/*", OrganizationPolicyGroupsEndpoint.new(self) ],
         [ "/organizations/*/principals/*", PrincipalEndpoint.new(self) ],
         [ "/organizations/*/roles", RestListEndpoint.new(self) ],
         [ "/organizations/*/roles/*", RoleEndpoint.new(self) ],

@@ -18,6 +18,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'ffi-yajl', '~> 2.2'
   s.add_dependency 'rack'
 
+  s.add_development_dependency 'pry'
+  s.add_development_dependency 'pry-byebug'
+  s.add_development_dependency 'pry-stack_explorer'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'github_changelog_generator'

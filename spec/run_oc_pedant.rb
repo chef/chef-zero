@@ -58,12 +58,19 @@ begin
   require 'pedant'
   require 'pedant/organization'
 
-  #Pedant::Config.rerun = true
+  # Pedant::Config.rerun = true
 
   Pedant.config.suite = 'api'
-  Pedant.config.internal_server = 'http://localhost:8889'
+  Pedant.config.internal_server = Pedant::Config.search_server = 'http://localhost:8889'
+
+  # see dummy_endpoint.rb.
+  Pedant.config.search_commit_url = "/dummy"
+  Pedant::Config.search_url_fmt = "/dummy?fq=+X_CHEF_type_CHEF_X:%{type}&q=%{query}&wt=json"
+
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
   Pedant.config[:server_api_version] = 0
+
+  # "the goal is that only authorization, authentication and validation tests are turned off" - @jkeiser
   Pedant.setup([
     '--skip-knife',
     '--skip-keys',
@@ -78,7 +85,6 @@ begin
     '--skip-headers',
 
     # Chef 12 features not yet 100% supported by Chef Zero
-    '--skip-policies',
     '--skip-cookbook-artifacts',
     '--skip-containers',
     '--skip-api-v1'
