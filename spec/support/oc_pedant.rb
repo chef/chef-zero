@@ -64,7 +64,7 @@ include_internal false
 key = 'spec/support/stickywicket.pem'
 
 org(name: "pedant-testorg",
-    create_me: true,
+    create_me: !ENV['CHEF_FS'],
     validator_key: key)
 
 internal_account_url chef_server
