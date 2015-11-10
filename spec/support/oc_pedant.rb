@@ -82,6 +82,10 @@ superuser_name 'pivotal'
 superuser_key key
 webui_key key
 
+def cheffs_or_else_user(value)
+  ENV['CHEF_FS'] ? "pivotal" : value
+end
+
 requestors({
              :clients => {
                # The the admin user, for the purposes of getting things rolling
@@ -107,20 +111,20 @@ requestors({
              :users => {
                # An administrator in the testing organization
                :admin => {
-                 :name => "pedant_admin_user",
+                 :name => cheffs_or_else_user("pedant_admin_user"),
                  :create_me => true,
                  :create_knife => true
                },
 
                :non_admin => {
-                 :name => "pedant_user",
+                 :name => cheffs_or_else_user("pedant_user"),
                  :create_me => true,
                  :create_knife => true
                },
 
                # A user that is not a member of the testing organization
                :bad => {
-                 :name => "pedant-nobody",
+                 :name => cheffs_or_else_user("pedant-nobody"),
                  :create_me => true,
                  :create_knife => true,
                  :associate => false
