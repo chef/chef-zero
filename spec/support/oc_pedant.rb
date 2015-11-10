@@ -113,12 +113,14 @@ requestors({
                :admin => {
                  :name => cheffs_or_else_user("pedant_admin_user"),
                  :create_me => !ENV['CHEF_FS'],
+                 :associate => !ENV['CHEF_FS'],
                  :create_knife => true
                },
 
                :non_admin => {
                  :name => cheffs_or_else_user("pedant_user"),
                  :create_me => !ENV['CHEF_FS'],
+                 :associate => !ENV['CHEF_FS'],
                  :create_knife => true
                },
 
