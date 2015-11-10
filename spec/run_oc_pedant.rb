@@ -56,7 +56,7 @@ begin
   elsif ENV['CHEF_FS']
     require 'tmpdir'
     tmpdir = Dir.mktmpdir
-    start_server(tmpdir)
+    server = start_server(tmpdir)
 
   else
     server = ChefZero::Server.new(:port => 8889, :single_org => false)#, :log_level => :debug)
