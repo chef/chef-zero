@@ -112,20 +112,20 @@ requestors({
                # An administrator in the testing organization
                :admin => {
                  :name => cheffs_or_else_user("pedant_admin_user"),
-                 :create_me => true,
+                 :create_me => !ENV['CHEF_FS'],
                  :create_knife => true
                },
 
                :non_admin => {
                  :name => cheffs_or_else_user("pedant_user"),
-                 :create_me => true,
+                 :create_me => !ENV['CHEF_FS'],
                  :create_knife => true
                },
 
                # A user that is not a member of the testing organization
                :bad => {
                  :name => cheffs_or_else_user("pedant-nobody"),
-                 :create_me => true,
+                 :create_me => !ENV['CHEF_FS'],
                  :create_knife => true,
                  :associate => false
                },
