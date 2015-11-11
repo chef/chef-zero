@@ -8,3 +8,4 @@ gem 'rest-client', :github => 'chef/rest-client'
 gem 'oc-chef-pedant', :path => "#{ENV['HOME']}/repos/chef-server"
 
 gem 'chef', :github => 'chef/chef'
+# gem 'chef', :path => "#{ENV['HOME']}/repos/chef"

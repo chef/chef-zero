@@ -47,6 +47,14 @@ explicit_port_url true
 
 server_api_version 0
 
+internal_server chef_server
+
+# see dummy_endpoint.rb for details.
+search_server   chef_server
+search_commit_url "/dummy"
+search_url_fmt    "/dummy?fq=+X_CHEF_type_CHEF_X:%{type}&q=%{query}&wt=json"
+
+
 # We're starting to break tests up into groups based on different
 # criteria.  The proper API tests (the results of which are viewable
 # to OPC customers) should be the only ones run by Pedant embedded in
