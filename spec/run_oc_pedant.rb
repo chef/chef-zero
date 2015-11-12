@@ -67,11 +67,17 @@ begin
   require 'pedant'
   require 'pedant/organization'
 
-  Pedant::Config.rerun = true
+  # Pedant::Config.rerun = true
 
   Pedant.config.suite = 'api'
 
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
+
+  chef_fs_skips = if ENV['CHEF_FS']
+    [ '--skip-association' ]
+  else
+    []
+  end
 
   # "the goal is that only authorization, authentication and validation tests are turned off" - @jkeiser
   Pedant.setup([
@@ -91,9 +97,12 @@ begin
     '--skip-cookbook-artifacts',
     '--skip-containers',
     '--skip-api-v1'
-  ])
+  ] + chef_fs_skips)
 
-  result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
+  # fail_fast = ["--fail-fast"]
+  fail_fast = []
+
+  result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
 
   server.stop if server.running?
 ensure
