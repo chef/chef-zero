@@ -7,5 +7,8 @@ gem 'rest-client', :github => 'chef/rest-client'
 # gem 'oc-chef-pedant', :github => 'chef/chef-server'
 gem 'oc-chef-pedant', :path => "#{ENV['HOME']}/repos/chef-server"
 
-gem 'chef', :github => 'chef/chef'
-# gem 'chef', :path => "#{ENV['HOME']}/repos/chef"
+# bundler resolve failure on "rspec_junit_formatter"
+# gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => "server-cli-option"
+
+# gem 'chef', :github => 'chef/chef'
+gem 'chef', :path => "#{ENV['HOME']}/repos/chef"
