@@ -5,7 +5,7 @@ require 'bundler/setup'
 require 'chef_zero/server'
 require 'rspec/core'
 
-def start_server(chef_repo_path)
+def start_cheffs_server(chef_repo_path)
   require 'chef/version'
   require 'chef/config'
   require 'chef/chef_fs/config'
@@ -56,7 +56,7 @@ begin
   elsif ENV['CHEF_FS']
     require 'tmpdir'
     tmpdir = Dir.mktmpdir
-    server = start_server(tmpdir)
+    server = start_cheffs_server(tmpdir)
 
   else
     server = ChefZero::Server.new(:port => 8889, :single_org => false)#, :log_level => :debug)
