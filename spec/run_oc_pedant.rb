@@ -22,7 +22,7 @@ def start_cheffs_server(chef_repo_path)
   end
 
   # Start the new server
-  Chef::Config.repo_mode = 'everything'
+  Chef::Config.repo_mode = 'hosted_everything'
   Chef::Config.chef_repo_path = chef_repo_path
   Chef::Config.versioned_cookbooks = true
   chef_fs = Chef::ChefFS::Config.new.local_fs
@@ -74,7 +74,11 @@ begin
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
 
   chef_fs_skips = if ENV['CHEF_FS']
-    [ '--skip-association' ]
+    [ '--skip-association',
+      '--skip-users',
+      '--skip-organizations',
+      '--skip-policies'        # these are expected to be broken.
+    ]
   else
     []
   end
@@ -99,8 +103,8 @@ begin
     '--skip-api-v1'
   ] + chef_fs_skips)
 
-  # fail_fast = ["--fail-fast"]
   fail_fast = []
+  # fail_fast = ["--fail-fast"]
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
 
