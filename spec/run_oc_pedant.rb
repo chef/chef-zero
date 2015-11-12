@@ -67,7 +67,7 @@ begin
   require 'pedant'
   require 'pedant/organization'
 
-  # Pedant::Config.rerun = true
+  Pedant::Config.rerun = true
 
   Pedant.config.suite = 'api'
 
