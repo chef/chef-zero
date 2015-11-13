@@ -378,11 +378,12 @@ module ChefZero
           # Non-default containers do not get superusers added to them,
           # because reasons.
           unless path.size == 4 && path[0] == 'organizations' && path[2] == 'containers' && !exists?(path)
-            owners |= superusers
+            owners += superusers
           end
         end
 
-        owners.uniq
+        # we don't de-dup this list, because pedant expects to see ["pivotal", "pivotal"] in some cases.
+        owners
       end
 
       def default_acl(acl_path, acl={})
