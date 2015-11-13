@@ -77,7 +77,7 @@ begin
     [ '--skip-association',
       '--skip-users',
       '--skip-organizations',
-      '--skip-policies'        # these are expected to be broken.
+      '--skip-policies'        # these are expected to be broken, they're what we're trying to fix.
     ]
   else
     []
