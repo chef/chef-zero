@@ -74,10 +74,13 @@ begin
 
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
 
+  # Because ChefFS can only ever have one user (pivotal), we can't do most of the
+  # tests that involve multiple
   chef_fs_skips = if ENV['CHEF_FS']
     [ '--skip-association',
       '--skip-users',
       '--skip-organizations',
+      '--skip-multiuser',
       '--skip-policies'        # these are expected to be broken, they're what we're trying to fix.
     ]
   else
