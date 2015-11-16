@@ -25,9 +25,9 @@ def start_cheffs_server(chef_repo_path)
   Chef::Config.repo_mode = 'hosted_everything'
   Chef::Config.chef_repo_path = chef_repo_path
   Chef::Config.versioned_cookbooks = true
-  chef_fs = Chef::ChefFS::Config.new.local_fs
+  chef_fs_config = Chef::ChefFS::Config.new
 
-  data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs)
+  data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs_config.local_fs, chef_fs_config.chef_config)
   data_store = ChefZero::DataStore::V1ToV2Adapter.new(data_store, 'pedant-testorg')
   data_store = ChefZero::DataStore::DefaultFacade.new(data_store, 'pedant-testorg', false)
   data_store.create(%w(organizations pedant-testorg users), 'pivotal', '{}')
