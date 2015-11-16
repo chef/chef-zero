@@ -31,6 +31,8 @@ def start_cheffs_server(chef_repo_path)
   data_store = ChefZero::DataStore::V1ToV2Adapter.new(data_store, 'pedant-testorg')
   data_store = ChefZero::DataStore::DefaultFacade.new(data_store, 'pedant-testorg', false)
   data_store.create(%w(organizations pedant-testorg users), 'pivotal', '{}')
+  data_store.set(%w(organizations pedant-testorg groups admins), '{ "users": [ "pivotal" ] }')
+  data_store.set(%w(organizations pedant-testorg groups users), '{ "users": [ "pivotal" ] }')
 
   server = ChefZero::Server.new(
     port: 8889,
