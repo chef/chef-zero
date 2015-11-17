@@ -15,6 +15,18 @@ task :pedant do
   require File.expand_path('spec/run_oc_pedant')
 end
 
+desc "run pedant with CHEF_FS set"
+task :cheffs do
+  ENV['CHEF_FS'] = "yes"
+  require File.expand_path('spec/run_oc_pedant')
+end
+
+desc "run pedant with FILE_STORE set"
+task :filestore do
+  ENV['FILE_STORE'] = "yes"
+  require File.expand_path('spec/run_oc_pedant')
+end
+
 desc "run oc pedant"
 task :oc_pedant do
   require File.expand_path('spec/run_oc_pedant')

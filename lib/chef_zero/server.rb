@@ -485,7 +485,7 @@ module ChefZero
 
     private
 
-    def open_source_endpoints
+    def endpoints
       result = if options[:osc_compat]
         # OSC-only
         [
@@ -581,7 +581,7 @@ module ChefZero
 
     def app
       return @app if @app
-      router = RestRouter.new(open_source_endpoints)
+      router = RestRouter.new(endpoints)
       router.not_found = NotFoundEndpoint.new
 
       if options[:single_org]

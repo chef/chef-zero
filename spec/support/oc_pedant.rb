@@ -45,6 +45,16 @@ maximum_search_time 0
 # # to be enabled for Pedant tests to work correctly
 explicit_port_url true
 
+server_api_version 0
+
+internal_server chef_server
+
+# see dummy_endpoint.rb for details.
+search_server   chef_server
+search_commit_url "/dummy"
+search_url_fmt    "/dummy?fq=+X_CHEF_type_CHEF_X:%{type}&q=%{query}&wt=json"
+
+
 # We're starting to break tests up into groups based on different
 # criteria.  The proper API tests (the results of which are viewable
 # to OPC customers) should be the only ones run by Pedant embedded in
@@ -59,9 +69,12 @@ explicit_port_url true
 # value.
 include_internal false
 
-# This is the bit that is different from pedant.rb
-org({:name => "pedant-testorg",
-     :create_me => true})
+key = 'spec/support/stickywicket.pem'
+
+org(name: "pedant-testorg",
+    create_me: !ENV['CHEF_FS'],
+    validator_key: key)
+
 internal_account_url chef_server
 delete_org true
 
@@ -76,6 +89,12 @@ key = 'spec/support/stickywicket.pem'
 superuser_name 'pivotal'
 superuser_key key
 webui_key key
+
+def cheffs_or_else_user(value)
+  ENV['CHEF_FS'] ? "pivotal" : value
+end
+
+keyfile_maybe = ENV['CHEF_FS'] ? { key_file: key } : { key_file: nil }
 
 requestors({
              :clients => {
@@ -102,24 +121,26 @@ requestors({
              :users => {
                # An administrator in the testing organization
                :admin => {
-                 :name => "pedant_admin_user",
-                 :create_me => true,
+                 :name => cheffs_or_else_user("pedant_admin_user"),
+                 :create_me => !ENV['CHEF_FS'],
+                 :associate => !ENV['CHEF_FS'],
                  :create_knife => true
-               },
+               }.merge(keyfile_maybe),
 
                :non_admin => {
-                 :name => "pedant_user",
-                 :create_me => true,
+                 :name => cheffs_or_else_user("pedant_user"),
+                 :create_me => !ENV['CHEF_FS'],
+                 :associate => !ENV['CHEF_FS'],
                  :create_knife => true
-               },
+               }.merge(keyfile_maybe),
 
                # A user that is not a member of the testing organization
                :bad => {
-                 :name => "pedant-nobody",
-                 :create_me => true,
+                 :name => cheffs_or_else_user("pedant-nobody"),
+                 :create_me => !ENV['CHEF_FS'],
                  :create_knife => true,
                  :associate => false
-               },
+               }.merge(keyfile_maybe),
              }
            })
 

@@ -5,7 +5,7 @@ require 'bundler/setup'
 require 'chef_zero/server'
 require 'rspec/core'
 
-def start_server(chef_repo_path)
+def start_cheffs_server(chef_repo_path)
   require 'chef/version'
   require 'chef/config'
   require 'chef/chef_fs/config'
@@ -22,12 +22,24 @@ def start_server(chef_repo_path)
   end
 
   # Start the new server
-  Chef::Config.repo_mode = 'everything'
+  Chef::Config.repo_mode = 'hosted_everything'
   Chef::Config.chef_repo_path = chef_repo_path
   Chef::Config.versioned_cookbooks = true
-  chef_fs = Chef::ChefFS::Config.new.local_fs
-  data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs)
-  server = ChefZero::Server.new(:port => 8889, :single_org => false, :data_store => data_store)#, :log_level => :debug)
+  chef_fs_config = Chef::ChefFS::Config.new
+
+  data_store = Chef::ChefFS::ChefFSDataStore.new(chef_fs_config.local_fs, chef_fs_config.chef_config)
+  data_store = ChefZero::DataStore::V1ToV2Adapter.new(data_store, 'pedant-testorg')
+  data_store = ChefZero::DataStore::DefaultFacade.new(data_store, 'pedant-testorg', false)
+  data_store.create(%w(organizations pedant-testorg users), 'pivotal', '{}')
+  data_store.set(%w(organizations pedant-testorg groups admins), '{ "users": [ "pivotal" ] }')
+  data_store.set(%w(organizations pedant-testorg groups users), '{ "users": [ "pivotal" ] }')
+
+  server = ChefZero::Server.new(
+    port: 8889,
+    data_store: data_store,
+    single_org: false,
+    #log_level: :debug
+  )
   server.start_background
   server
 end
@@ -47,7 +59,7 @@ begin
   elsif ENV['CHEF_FS']
     require 'tmpdir'
     tmpdir = Dir.mktmpdir
-    start_server(tmpdir)
+    server = start_cheffs_server(tmpdir)
 
   else
     server = ChefZero::Server.new(:port => 8889, :single_org => false)#, :log_level => :debug)
@@ -61,14 +73,21 @@ begin
   # Pedant::Config.rerun = true
 
   Pedant.config.suite = 'api'
-  Pedant.config.internal_server = Pedant::Config.search_server = 'http://localhost:8889'
-
-  # see dummy_endpoint.rb.
-  Pedant.config.search_commit_url = "/dummy"
-  Pedant::Config.search_url_fmt = "/dummy?fq=+X_CHEF_type_CHEF_X:%{type}&q=%{query}&wt=json"
 
   Pedant.config[:config_file] = 'spec/support/oc_pedant.rb'
-  Pedant.config[:server_api_version] = 0
+
+  # Because ChefFS can only ever have one user (pivotal), we can't do most of the
+  # tests that involve multiple
+  chef_fs_skips = if ENV['CHEF_FS']
+    [ '--skip-association',
+      '--skip-users',
+      '--skip-organizations',
+      '--skip-multiuser',
+      '--skip-policies'        # these are expected to be broken, they're what we're trying to fix.
+    ]
+  else
+    []
+  end
 
   # "the goal is that only authorization, authentication and validation tests are turned off" - @jkeiser
   Pedant.setup([
@@ -88,10 +107,12 @@ begin
     '--skip-cookbook-artifacts',
     '--skip-containers',
     '--skip-api-v1'
+  ] + chef_fs_skips)
 
-  ])
+  fail_fast = []
+  # fail_fast = ["--fail-fast"]
 
-  result = RSpec::Core::Runner.run(Pedant.config.rspec_args)
+  result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
 
   server.stop if server.running?
 ensure
