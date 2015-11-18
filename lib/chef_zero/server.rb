@@ -443,6 +443,16 @@ module ChefZero
         end
       end
 
+      if contents['policies']
+        contents['policies'].each_pair do |policy_name, policy_struct|
+          # data_store.create_dir(['organizations', org_name, 'policies', policy_name], "revisions", :recursive)
+          dejsonize_children(policy_struct).each do |revision, policy_data|
+            data_store.set(['organizations', org_name, 'policies', policy_name,
+                            "revisions", revision], policy_data, :create, :create_dir)
+          end
+        end
+      end
+
       if contents['cookbooks']
         contents['cookbooks'].each_pair do |name_version, cookbook|
           if name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
