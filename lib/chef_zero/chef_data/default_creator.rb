@@ -155,6 +155,8 @@ module ChefZero
           'checksums' => {}
         },
         'nodes' => {},
+        'policies' => {},
+        'policy_groups' => {},
         'roles' => {},
         'sandboxes' => {},
         'users' => {},

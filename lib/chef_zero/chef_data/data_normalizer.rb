@@ -166,6 +166,20 @@ module ChefZero
         node
       end
 
+      def self.normalize_policy(policy, name, revision)
+        policy['name'] ||= name
+        policy['revision_id'] ||= revision
+        policy['run_list'] ||= []
+        policy['cookbook_locks'] ||= {}
+        policy
+      end
+
+      def self.normalize_policy_group(policy_group, name)
+        policy_group[name] ||= 'name'
+        policy_group['policies'] ||= {}
+        policy_group
+      end
+
       def self.normalize_organization(org, name)
         org['name'] ||= name
         org['full_name'] ||= name

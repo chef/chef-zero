@@ -1,3 +1,4 @@
+require 'chef_zero/chef_data/data_normalizer'
 
 module ChefZero
   module Endpoints
@@ -43,8 +44,9 @@ module ChefZero
           if !exists_data?(request, nil)
             return error(404, "Revision ID #{request.rest_path.last} not found" )
           else
-            data = get_data(request)
-            return already_json_response(200, data)
+            data = parse_json(get_data(request))
+            data = ChefData::DataNormalizer.normalize_policy(data, request.rest_path[3], request.rest_path[5])
+            return json_response(200, data)
           end
         end
       end
@@ -82,9 +84,10 @@ module ChefZero
 
         if request.rest_path[-2] == "revisions"
           if exists_data?(request)
-            policyfile_data = get_data(request)
+            policyfile_data = parse_json(get_data(request))
+            policyfile_data = ChefData::DataNormalizer.normalize_policy(policyfile_data)
             delete_data(request)
-            return already_json_response(200, policyfile_data)
+            return json_response(200, policyfile_data)
           else
             return error(404, "Revision ID #{request.rest_path.last} not found")
           end

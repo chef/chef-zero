@@ -457,6 +457,14 @@ module ChefZero
         end
       end
 
+      if contents['policy_groups']
+        contents['policy_groups'].each_pair do |group_name, group|
+          group['policies'].each do |policy_name, policy_revision|
+            data_store.set(['organizations', org_name, 'policy_groups', group_name, 'policies', policy_name], FFI_Yajl::Encoder.encode(policy_revision['revision_id'], :pretty => true), :create, :create_dir)
+          end
+        end
+      end
+
       if contents['cookbooks']
         contents['cookbooks'].each_pair do |name_version, cookbook|
           if name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
