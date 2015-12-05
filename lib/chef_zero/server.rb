@@ -69,11 +69,16 @@ require 'chef_zero/endpoints/organization_endpoint'
 require 'chef_zero/endpoints/organization_association_requests_endpoint'
 require 'chef_zero/endpoints/organization_association_request_endpoint'
 require 'chef_zero/endpoints/organization_authenticate_user_endpoint'
-require 'chef_zero/endpoints/organization_policies_endpoint'
-require 'chef_zero/endpoints/organization_policy_groups_endpoint'
 require 'chef_zero/endpoints/organization_users_endpoint'
 require 'chef_zero/endpoints/organization_user_endpoint'
 require 'chef_zero/endpoints/organization_validator_key_endpoint'
+require 'chef_zero/endpoints/policies_endpoint'
+require 'chef_zero/endpoints/policy_endpoint'
+require 'chef_zero/endpoints/policy_revisions_endpoint'
+require 'chef_zero/endpoints/policy_revision_endpoint'
+require 'chef_zero/endpoints/policy_groups_endpoint'
+require 'chef_zero/endpoints/policy_group_endpoint'
+require 'chef_zero/endpoints/policy_group_policy_endpoint'
 require 'chef_zero/endpoints/principal_endpoint'
 require 'chef_zero/endpoints/role_endpoint'
 require 'chef_zero/endpoints/role_environments_endpoint'
@@ -567,13 +572,13 @@ module ChefZero
         [ "/organizations/*/nodes", NodesEndpoint.new(self) ],
         [ "/organizations/*/nodes/*", NodeEndpoint.new(self) ],
         [ "/organizations/*/nodes/*/_identifiers", NodeIdentifiersEndpoint.new(self) ],
-        [ "/organizations/*/policies", OrganizationPoliciesEndpoint.new(self) ],
-        [ "/organizations/*/policies/*", OrganizationPoliciesEndpoint.new(self) ],
-        [ "/organizations/*/policies/*/revisions", OrganizationPoliciesEndpoint.new(self) ],
-        [ "/organizations/*/policies/*/revisions/*", OrganizationPoliciesEndpoint.new(self) ],
-        [ "/organizations/*/policy_groups", OrganizationPolicyGroupsEndpoint.new(self) ],
-        [ "/organizations/*/policy_groups/*", OrganizationPolicyGroupsEndpoint.new(self) ],
-        [ "/organizations/*/policy_groups/*/policies/*", OrganizationPolicyGroupsEndpoint.new(self) ],
+        [ "/organizations/*/policies", PoliciesEndpoint.new(self) ],
+        [ "/organizations/*/policies/*", PolicyEndpoint.new(self) ],
+        [ "/organizations/*/policies/*/revisions", PolicyRevisionsEndpoint.new(self) ],
+        [ "/organizations/*/policies/*/revisions/*", PolicyRevisionEndpoint.new(self) ],
+        [ "/organizations/*/policy_groups", PolicyGroupsEndpoint.new(self) ],
+        [ "/organizations/*/policy_groups/*", PolicyGroupEndpoint.new(self) ],
+        [ "/organizations/*/policy_groups/*/policies/*", PolicyGroupPolicyEndpoint.new(self) ],
         [ "/organizations/*/principals/*", PrincipalEndpoint.new(self) ],
         [ "/organizations/*/roles", RestListEndpoint.new(self) ],
         [ "/organizations/*/roles/*", RoleEndpoint.new(self) ],

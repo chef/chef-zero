@@ -264,6 +264,10 @@ module ChefZero
       end
     end
 
+    def hashify_list(list)
+      list.reduce({}) { |acc, obj| acc.merge( obj => {} ) }
+    end
+
     def policy_name_invalid?(name)
       !name.is_a?(String) ||
        name.size > 255 ||
