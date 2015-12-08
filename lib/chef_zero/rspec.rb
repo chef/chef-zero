@@ -150,7 +150,7 @@ module ChefZero
       end
 
       def policy(name, data, &block)
-        before(chef_server_options[:server_scope]) { node(name, data, &block) }
+        before(chef_server_options[:server_scope]) { policy(name, data, &block) }
       end
 
       def policy_group(name, data, &block)
