@@ -55,6 +55,11 @@ OptionParser.new do |opts|
     options[:log_file] = value
   end
 
+  opts.on("--enterprise", "Whether to run in enterprise mode") do |value|
+    options[:single_org] = nil
+    options[:osc_compat] = false
+  end
+
   opts.on("--multi-org", "Whether to run in multi-org mode") do |value|
     options[:single_org] = nil
   end

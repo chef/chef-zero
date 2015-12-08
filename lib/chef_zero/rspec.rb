@@ -149,6 +149,14 @@ module ChefZero
         before(chef_server_options[:server_scope]) { org_member(*usernames) }
       end
 
+      def policy(name, data, &block)
+        before(chef_server_options[:server_scope]) { policy(name, data, &block) }
+      end
+
+      def policy_group(name, data, &block)
+        before(chef_server_options[:server_scope]) { policy_group(name, data, &block) }
+      end
+
       def role(name, data, &block)
         before(chef_server_options[:server_scope]) { role(name, data, &block) }
       end
@@ -249,6 +257,20 @@ module ChefZero
 
       def org_member(*usernames)
         ChefZero::RSpec.server.load_data({ 'members' => usernames }, current_org)
+      end
+
+      def policy(name, version, data, &block)
+        with_object_path("policies/#{name}") do
+          ChefZero::RSpec.server.load_data({ 'policies' => { name => { version => data } } }, current_org)
+          instance_eval(&block) if block_given?
+        end
+      end
+
+      def policy_group(name, data, &block)
+        with_object_path("policy_groups/#{name}") do
+          ChefZero::RSpec.server.load_data({ 'policy_groups' => { name => data } }, current_org)
+          instance_eval(&block) if block_given?
+        end
       end
 
       def role(name, data, &block)
