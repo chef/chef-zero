@@ -85,10 +85,10 @@ module ChefZero
 
       private
 
-      def hoover_unused_checksums(deleted_checksums, request)
-        data_store.list(request.rest_path[0..1] + ['cookbooks']).each do |cookbook_name|
-          data_store.list(request.rest_path[0..1] + ['cookbooks', cookbook_name]).each do |version|
-            cookbook = data_store.get(request.rest_path[0..1] + ['cookbooks', cookbook_name, version], request)
+      def hoover_unused_checksums(deleted_checksums, request, data_type='cookbooks')
+        data_store.list(request.rest_path[0..1] + [data_type]).each do |cookbook_name|
+          data_store.list(request.rest_path[0..1] + [data_type, cookbook_name]).each do |version|
+            cookbook = data_store.get(request.rest_path[0..1] + [data_type, cookbook_name, version], request)
             deleted_checksums = deleted_checksums - get_checksums(cookbook)
           end
         end
