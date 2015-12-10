@@ -79,7 +79,8 @@ module ChefZero
         data_bag_item
       end
 
-      def self.normalize_cookbook(endpoint, org_prefix, cookbook, name, version, base_uri, method)
+      def self.normalize_cookbook(endpoint, org_prefix, cookbook, name, version, base_uri, method,
+                                  is_cookbook_artifact=false)
         # TODO I feel dirty
         if method != 'PUT'
           cookbook.each_pair do |key, value|
@@ -92,24 +93,28 @@ module ChefZero
             end
           end
           cookbook['name'] ||= "#{name}-#{version}"
-          # TODO this feels wrong, but the real chef server doesn't expand this default
-    #      cookbook['version'] ||= version
-          cookbook['cookbook_name'] ||= name
+          # TODO it feels wrong, but the real chef server doesn't expand 'version', so we don't either.
+
           cookbook['frozen?'] ||= false
           cookbook['metadata'] ||= {}
           cookbook['metadata']['version'] ||= version
-          # Sad to not be expanding defaults just because Chef doesn't :(
-  #        cookbook['metadata']['name'] ||= name
-  #        cookbook['metadata']['description'] ||= "A fabulous new cookbook"
+
+          # defaults set by the client and not the Server:
+          # metadata[name, description, maintainer, maintainer_email, license]
+
           cookbook['metadata']['long_description'] ||= ""
-  #        cookbook['metadata']['maintainer'] ||= "YOUR_COMPANY_NAME"
-  #        cookbook['metadata']['maintainer_email'] ||= "YOUR_EMAIL"
-  #        cookbook['metadata']['license'] ||= "none"
           cookbook['metadata']['dependencies'] ||= {}
           cookbook['metadata']['attributes'] ||= {}
           cookbook['metadata']['recipes'] ||= {}
         end
-        cookbook['json_class'] ||= 'Chef::CookbookVersion'
+
+        if is_cookbook_artifact
+          cookbook.delete('json_class')
+        else
+          cookbook['cookbook_name'] ||= name
+          cookbook['json_class'] ||= 'Chef::CookbookVersion'
+        end
+
         cookbook['chef_type'] ||= 'cookbook_version'
         if method == 'MIN'
           cookbook['metadata'].delete('attributes')

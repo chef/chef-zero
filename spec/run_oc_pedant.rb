@@ -83,7 +83,10 @@ begin
       '--skip-users',
       '--skip-organizations',
       '--skip-multiuser',
-      '--skip-policies'        # these are expected to be broken, they're what we're trying to fix.
+
+      # will be supported.
+      '--skip-policies',
+      '--skip-cookbook-artifacts',
     ]
   else
     []
@@ -104,7 +107,6 @@ begin
     '--skip-headers',
 
     # Chef 12 features not yet 100% supported by Chef Zero
-    '--skip-cookbook-artifacts',
     '--skip-containers',
     '--skip-api-v1'
   ] + chef_fs_skips)
