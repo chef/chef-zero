@@ -125,6 +125,10 @@ module ChefZero
         end
       end
 
+      def cookbook_artifact(name, data, &block)
+        before(chef_server_options[:server_scope]) { cookbook_artifact(name, data, &block) }
+      end
+
       def data_bag(name, data, &block)
         before(chef_server_options[:server_scope]) { data_bag(name, data, &block) }
       end
@@ -219,6 +223,13 @@ module ChefZero
             data['metadata.rb'] = "name #{name.inspect}; version #{version.inspect}"
           end
           ChefZero::RSpec.server.load_data({ 'cookbooks' => { "#{name}-#{version}" => data.merge(options) }}, current_org)
+          instance_eval(&block) if block_given?
+        end
+      end
+
+      def cookbook_artifact(name, identifier, data, &block)
+        with_object_path("cookbook_artifacts/#{name}") do
+          ChefZero::RSpec.server.load_data({ 'cookbook_artifact' => { name => { identifier => data } } }, current_org)
           instance_eval(&block) if block_given?
         end
       end
