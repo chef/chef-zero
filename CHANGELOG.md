@@ -1,5 +1,25 @@
 # Change Log
 
+## [v4.4.0](https://github.com/chef/chef-zero/tree/v4.4.0) (2015-12-11)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.3.2...v4.4.0)
+
+**Closed issues:**
+
+- Please bump hashie version if possible [\#97](https://github.com/chef/chef-zero/issues/97)
+
+**Merged pull requests:**
+
+- ChefZero::RSpec support for cookbook\_artifacts. [\#179](https://github.com/chef/chef-zero/pull/179) ([randomcamel](https://github.com/randomcamel))
+- /cookbook\_artifacts support for in-memory and FILE\_STORE backends \(not ChefFS\) [\#178](https://github.com/chef/chef-zero/pull/178) ([randomcamel](https://github.com/randomcamel))
+- Update and refactor policy and policy\_groups endpoints [\#177](https://github.com/chef/chef-zero/pull/177) ([jkeiser](https://github.com/jkeiser))
+- Point at master of oc-chef-pedant and chef [\#174](https://github.com/chef/chef-zero/pull/174) ([stevendanna](https://github.com/stevendanna))
+- Upgrade pedant, and enable running in ChefFS mode [\#173](https://github.com/chef/chef-zero/pull/173) ([randomcamel](https://github.com/randomcamel))
+- Implement the /policies and /policy\_groups API routes [\#172](https://github.com/chef/chef-zero/pull/172) ([randomcamel](https://github.com/randomcamel))
+- Add gemspec files to allow bundler to run from the gem [\#169](https://github.com/chef/chef-zero/pull/169) ([ksubrama](https://github.com/ksubrama))
+
+## [v4.3.2](https://github.com/chef/chef-zero/tree/v4.3.2) (2015-09-30)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.3.1...v4.3.2)
+
 ## [v4.3.1](https://github.com/chef/chef-zero/tree/v4.3.1) (2015-09-30)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.3.0...v4.3.1)
 
@@ -234,7 +254,7 @@
 
 **Merged pull requests:**
 
-- Fix clear data when no data was added to chef zero [\#46](https://github.com/chef/chef-zero/pull/46) ([alex-slynko-wonga](https://github.com/alex-slynko-wonga))
+- Fix clear data when no data was added to chef zero [\#46](https://github.com/chef/chef-zero/pull/46) ([alex-slynko](https://github.com/alex-slynko))
 - Fix an issue with an incorrect number of parameters passed to build\_uri [\#45](https://github.com/chef/chef-zero/pull/45) ([sethvargo](https://github.com/sethvargo))
 - Make playground items more semantic [\#44](https://github.com/chef/chef-zero/pull/44) ([sethvargo](https://github.com/sethvargo))
 
