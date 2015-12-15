@@ -3,7 +3,7 @@ gemspec
 
 gem 'rest-client', :github => 'chef/rest-client'
 
-gem 'oc-chef-pedant', :github => 'chef/chef-server', :branch => 'tm/rfc-014-universe'
+gem 'oc-chef-pedant', :github => 'chef/chef-server'
 
 # gem 'oc-chef-pedant', :path => "../chef-server"
 
