@@ -16,7 +16,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'hashie',        '>= 2.0', '< 4.0'
   s.add_dependency 'uuidtools', '~> 2.1'
   s.add_dependency 'ffi-yajl', '~> 2.2'
-  s.add_dependency 'rack'
+
+  if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.2.2'
+    s.add_dependency 'rack'
+  else
+    s.add_dependency 'rack', '< 2.0'
+  end
 
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-byebug'
