@@ -98,7 +98,6 @@ begin
     '--skip-keys',
     '--skip-controls',
     '--skip-acl',
-    '--exclude-internal-orgs',
     '--skip-headers',
 
     # Chef Zero does not intend to support validation the way erchef does.
