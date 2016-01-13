@@ -1,6 +1,12 @@
 rvm: 2.0
 gemfile: Gemfile
 
+# This prevents testing branches that are created just for PRs
+branches:
+  only:
+  - master
+
+
 sudo: false
 script: bundle exec rake pedant
 
