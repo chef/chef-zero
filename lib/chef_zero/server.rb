@@ -473,20 +473,25 @@ module ChefZero
         end
       end
 
-      if contents['cookbooks']
-        contents['cookbooks'].each_pair do |name_version, cookbook|
-          if name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
-            cookbook_data = ChefData::CookbookData.to_hash(cookbook, $1, $2)
-          else
-            cookbook_data = ChefData::CookbookData.to_hash(cookbook, name_version)
-          end
-          raise "No version specified" if !cookbook_data[:version]
-          data_store.create_dir(['organizations', org_name, 'cookbooks'], cookbook_data[:cookbook_name], :recursive)
-          data_store.set(['organizations', org_name, 'cookbooks', cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, :pretty => true), :create)
-          cookbook_data.values.each do |files|
-            next unless files.is_a? Array
-            files.each do |file|
-              data_store.set(['organizations', org_name, 'file_store', 'checksums', file[:checksum]], get_file(cookbook, file[:path]), :create)
+      %w(cookbooks cookbook_artifacts).each do |cookbook_type|
+        if contents[cookbook_type]
+          contents[cookbook_type].each_pair do |name_version, cookbook|
+            if cookbook_type == 'cookbook_artifacts'
+              name, dash, identifier = name_version.rpartition('-')
+              cookbook_data = ChefData::CookbookData.to_hash(cookbook, name, identifier)
+            elsif name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
+              cookbook_data = ChefData::CookbookData.to_hash(cookbook, $1, $2)
+            else
+              cookbook_data = ChefData::CookbookData.to_hash(cookbook, name_version)
+            end
+            raise "No version specified" if !cookbook_data[:version]
+            data_store.create_dir(['organizations', org_name, cookbook_type], cookbook_data[:cookbook_name], :recursive)
+            data_store.set(['organizations', org_name, cookbook_type, cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, :pretty => true), :create)
+            cookbook_data.values.each do |files|
+              next unless files.is_a? Array
+              files.each do |file|
+                data_store.set(['organizations', org_name, 'file_store', 'checksums', file[:checksum]], get_file(cookbook, file[:path]), :create)
+              end
             end
           end
         end

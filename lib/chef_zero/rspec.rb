@@ -125,8 +125,8 @@ module ChefZero
         end
       end
 
-      def cookbook_artifact(name, data, &block)
-        before(chef_server_options[:server_scope]) { cookbook_artifact(name, data, &block) }
+      def cookbook_artifact(name, identifier, data = {}, &block)
+        before(chef_server_options[:server_scope]) { cookbook_artifact(name, identifier, data, &block) }
       end
 
       def data_bag(name, data, &block)
@@ -215,6 +215,8 @@ module ChefZero
 
       def cookbook(name, version, data = {}, options = {}, &block)
         with_object_path("cookbooks/#{name}") do
+          # If you didn't specify metadata.rb, we generate it for you. If you
+          # explicitly set it to nil, that means you don't want it at all.
           if data.has_key?('metadata.rb')
             if data['metadata.rb'].nil?
               data.delete('metadata.rb')
@@ -227,9 +229,18 @@ module ChefZero
         end
       end
 
-      def cookbook_artifact(name, identifier, data, &block)
+      def cookbook_artifact(name, identifier, data = {}, &block)
         with_object_path("cookbook_artifacts/#{name}") do
-          ChefZero::RSpec.server.load_data({ 'cookbook_artifact' => { name => { identifier => data } } }, current_org)
+          # If you didn't specify metadata.rb, we generate it for you. If you
+          # explicitly set it to nil, that means you don't want it at all.
+          if data.has_key?('metadata.rb')
+            if data['metadata.rb'].nil?
+              data.delete('metadata.rb')
+            end
+          else
+            data['metadata.rb'] = "name #{name.inspect}"
+          end
+          ChefZero::RSpec.server.load_data({ 'cookbook_artifacts' => { "#{name}-#{identifier}" => data } }, current_org)
           instance_eval(&block) if block_given?
         end
       end
