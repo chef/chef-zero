@@ -36,7 +36,6 @@ module ChefZero
 
       def self.normalize_user(user, name, identity_keys, osc_compat, method=nil)
         user[identity_keys.first] ||= name
-        user['public_key'] ||= PUBLIC_KEY
         user['admin'] ||= false
         user['admin'] = !!user['admin']
         user['openid'] ||= nil
