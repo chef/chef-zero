@@ -104,7 +104,9 @@ begin
     # are turned off" - @jkeiser
     #
     # ...but we're not there yet
-    '--skip-keys',
+    '--skip-client-keys',
+    '--skip-controls',
+    '--skip-acl',
 
     # Chef Zero does not intend to support validation the way erchef does.
     '--skip-validation',
