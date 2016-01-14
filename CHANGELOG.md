@@ -1,5 +1,15 @@
 # Change Log
 
+## [4.4.1](https://github.com/chef/chef-zero/tree/4.4.1) (2016-01-14)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.0...4.4.1)
+
+**Merged pull requests:**
+
+- Only test master branch and PRs [\#184](https://github.com/chef/chef-zero/pull/184) ([danielsdeleo](https://github.com/danielsdeleo))
+- Fix cookbook\_artifact rspec [\#182](https://github.com/chef/chef-zero/pull/182) ([jkeiser](https://github.com/jkeiser))
+- Point chef-server back to master [\#180](https://github.com/chef/chef-zero/pull/180) ([thommay](https://github.com/thommay))
+- Ignore the universe endpoint tests in pedant [\#176](https://github.com/chef/chef-zero/pull/176) ([thommay](https://github.com/thommay))
+
 ## [v4.4.0](https://github.com/chef/chef-zero/tree/v4.4.0) (2015-12-11)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.3.2...v4.4.0)
 
