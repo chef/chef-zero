@@ -98,13 +98,23 @@ begin
     '--skip-keys',
     '--skip-controls',
     '--skip-acl',
-    '--skip-validation',
-    '--skip-authentication',
-    '--skip-authorization',
-    '--skip-omnibus',
     '--skip-usags',
     '--exclude-internal-orgs',
     '--skip-headers',
+
+    # Chef Zero does not intend to support validation the way erchef does.
+    '--skip-validation',
+
+    # Chef Zero does not intend to support authentication the way erchef does.
+    '--skip-authentication',
+
+    # Chef Zero does not intend to support authorization the way erchef does.
+    '--skip-authorization',
+
+    # Omnibus tests depend on erchef features that are specific to erchef and
+    # bundled in the omnibus package. Currently the only test in this category
+    # is for the search reindexing script.
+    '--skip-omnibus',
 
     # Chef 12 features not yet 100% supported by Chef Zero
     '--skip-containers',
