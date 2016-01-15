@@ -1,7 +1,7 @@
 # Change Log
 
-## [4.3.3](https://github.com/chef/chef-zero/tree/4.3.3) (2016-01-15)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.1...4.3.3)
+## [v4.4.2](https://github.com/chef/chef-zero/tree/v4.4.2) (2016-01-15)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.1...v4.4.2)
 
 **Merged pull requests:**
 
