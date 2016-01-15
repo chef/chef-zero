@@ -2,7 +2,7 @@ require 'chef_zero/chef_data/data_normalizer'
 
 module ChefZero
   module Endpoints
-    class CookbookArtifactsCookbookIdentifierEndpoint < ChefZero::Endpoints::CookbookVersionEndpoint
+    class CookbookArtifactIdentifierEndpoint < ChefZero::Endpoints::CookbookVersionEndpoint
       # these endpoints are almost, but not quite, not entirely unlike the corresponding /cookbooks endpoints.
       # it could all be refactored for maximum reuse, but they're short REST methods with well-defined
       # behavioral specs (pedant), so there's not a huge benefit.
@@ -32,13 +32,14 @@ module ChefZero
           delete_data(request)
 
           # go through the recipes and delete stuff in the file store.
-          hoover_unused_checksums(get_checksums(doomed_cookbook_json), request, 'cookbook_artifacts')
+          hoover_unused_checksums(get_checksums(doomed_cookbook_json), request)
 
           # if this was the last revision, delete the directory so future requests will 404, instead of
           # returning 200 with an empty list.
-          artifact_path = request.rest_path[0..-2]
-          if list_data(request, artifact_path).size == 0
-            delete_data_dir(request, artifact_path)
+          # Last one out turns out the lights: delete /organizations/ORG/cookbooks/COOKBOOK if it no longer has versions
+          cookbook_path = request.rest_path[0..3]
+          if exists_data_dir?(request, cookbook_path) && list_data(request, cookbook_path).size == 0
+            delete_data_dir(request, cookbook_path)
           end
 
           json_response(200, identified_cookbook_data)

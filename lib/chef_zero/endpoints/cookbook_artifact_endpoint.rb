@@ -2,7 +2,7 @@ require 'chef_zero/chef_data/data_normalizer'
 
 module ChefZero
   module Endpoints
-    class CookbookArtifactsCookbookEndpoint < RestBase
+    class CookbookArtifactEndpoint < RestBase
       # GET /organizations/ORG/cookbook_artifacts/COOKBOOK
       def get(request)
         cookbook_name = request.rest_path.last

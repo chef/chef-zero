@@ -45,9 +45,9 @@ require 'chef_zero/endpoints/actor_endpoint'
 require 'chef_zero/endpoints/cookbooks_endpoint'
 require 'chef_zero/endpoints/cookbook_endpoint'
 require 'chef_zero/endpoints/cookbook_version_endpoint'
-require 'chef_zero/endpoints/cookbook_artifacts_cookbook_endpoint'
-require 'chef_zero/endpoints/cookbook_artifacts_cookbook_identifier'
 require 'chef_zero/endpoints/cookbook_artifacts_endpoint'
+require 'chef_zero/endpoints/cookbook_artifact_endpoint'
+require 'chef_zero/endpoints/cookbook_artifact_identifier_endpoint'
 require 'chef_zero/endpoints/containers_endpoint'
 require 'chef_zero/endpoints/container_endpoint'
 require 'chef_zero/endpoints/dummy_endpoint'
@@ -567,8 +567,8 @@ module ChefZero
         [ "/organizations/*/cookbooks/*", CookbookEndpoint.new(self) ],
         [ "/organizations/*/cookbooks/*/*", CookbookVersionEndpoint.new(self) ],
         [ "/organizations/*/cookbook_artifacts", CookbookArtifactsEndpoint.new(self) ],
-        [ "/organizations/*/cookbook_artifacts/*", CookbookArtifactsCookbookEndpoint.new(self) ],
-        [ "/organizations/*/cookbook_artifacts/*/*", CookbookArtifactsCookbookIdentifierEndpoint.new(self) ],
+        [ "/organizations/*/cookbook_artifacts/*", CookbookArtifactEndpoint.new(self) ],
+        [ "/organizations/*/cookbook_artifacts/*/*", CookbookArtifactIdentifierEndpoint.new(self) ],
         [ "/organizations/*/data", DataBagsEndpoint.new(self) ],
         [ "/organizations/*/data/*", DataBagEndpoint.new(self) ],
         [ "/organizations/*/data/*/*", DataBagItemEndpoint.new(self) ],
