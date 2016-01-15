@@ -84,9 +84,11 @@ begin
       '--skip-organizations',
       '--skip-multiuser',
 
-      # will be supported.
-      '--skip-policies',
-      '--skip-cookbook-artifacts',
+      # chef-zero has some non-removable quirks, such as the fact that files
+      # with 255-character names cannot be stored in local mode. This is
+      # reserved only for quirks that are *irrevocable* and by design; and
+      # should barely be used at all.
+      '--skip-chef-zero-quirks',
     ]
   else
     []
