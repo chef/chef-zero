@@ -58,8 +58,8 @@ module ChefZero
         deleted_cookbook = get_data(request)
 
         response = super(request)
-        cookbook_name = request.rest_path[3]
-        cookbook_path = request.rest_path[0..1] + ['cookbooks', cookbook_name]
+        # Last one out turns out the lights: delete /organizations/ORG/cookbooks/NAME if it no longer has versions
+        cookbook_path = request.rest_path[0..3]
         if exists_data_dir?(request, cookbook_path) && list_data(request, cookbook_path).size == 0
           delete_data_dir(request, cookbook_path)
         end
@@ -85,11 +85,13 @@ module ChefZero
 
       private
 
-      def hoover_unused_checksums(deleted_checksums, request, data_type='cookbooks')
-        data_store.list(request.rest_path[0..1] + [data_type]).each do |cookbook_name|
-          data_store.list(request.rest_path[0..1] + [data_type, cookbook_name]).each do |version|
-            cookbook = data_store.get(request.rest_path[0..1] + [data_type, cookbook_name, version], request)
-            deleted_checksums = deleted_checksums - get_checksums(cookbook)
+      def hoover_unused_checksums(deleted_checksums, request)
+        %w(cookbooks cookbook_artifacts).each do |cookbook_type|
+          data_store.list(request.rest_path[0..1] + [cookbook_type]).each do |cookbook_name|
+            data_store.list(request.rest_path[0..1] + [cookbook_type, cookbook_name]).each do |version|
+              cookbook = data_store.get(request.rest_path[0..1] + [cookbook_type, cookbook_name, version], request)
+              deleted_checksums = deleted_checksums - get_checksums(cookbook)
+            end
           end
         end
         deleted_checksums.each do |checksum|

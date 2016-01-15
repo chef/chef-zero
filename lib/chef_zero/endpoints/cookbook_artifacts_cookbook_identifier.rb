@@ -32,7 +32,7 @@ module ChefZero
           delete_data(request)
 
           # go through the recipes and delete stuff in the file store.
-          hoover_unused_checksums(get_checksums(doomed_cookbook_json), request, 'cookbook_artifacts')
+          hoover_unused_checksums(get_checksums(doomed_cookbook_json), request)
 
           # if this was the last revision, delete the directory so future requests will 404, instead of
           # returning 200 with an empty list.
