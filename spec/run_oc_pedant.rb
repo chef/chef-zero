@@ -98,7 +98,6 @@ begin
     '--skip-keys',
     '--skip-controls',
     '--skip-acl',
-    '--skip-usags',
     '--exclude-internal-orgs',
     '--skip-headers',
 
@@ -115,6 +114,13 @@ begin
     # bundled in the omnibus package. Currently the only test in this category
     # is for the search reindexing script.
     '--skip-omnibus',
+
+    # USAGs (user-specific association groups) are Authz groups that contain
+    # only one user and represent that user's association with an org. Though
+    # there are good reasons for them, they don't work well in practice and
+    # only the manage console really uses them. Since Chef Zero + Manage is a
+    # quite unusual configuration, we're ignoring them.
+    '--skip-usags',
 
     # Chef 12 features not yet 100% supported by Chef Zero
     '--skip-containers',
