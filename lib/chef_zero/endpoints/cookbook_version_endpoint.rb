@@ -87,7 +87,14 @@ module ChefZero
 
       def hoover_unused_checksums(deleted_checksums, request)
         %w(cookbooks cookbook_artifacts).each do |cookbook_type|
-          data_store.list(request.rest_path[0..1] + [cookbook_type]).each do |cookbook_name|
+          begin
+            cookbooks = data_store.list(request.rest_path[0..1] + [cookbook_type])
+          rescue ChefZero::DataStore::DataNotFoundError
+            # Not all chef versions support cookbook_artifacts
+            raise unless cookbook_type == "cookbook_artifacts"
+            cookbooks = []
+          end
+          cookbooks.each do |cookbook_name|
             data_store.list(request.rest_path[0..1] + [cookbook_type, cookbook_name]).each do |version|
               cookbook = data_store.get(request.rest_path[0..1] + [cookbook_type, cookbook_name, version], request)
               deleted_checksums = deleted_checksums - get_checksums(cookbook)
