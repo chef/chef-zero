@@ -1,11 +1,20 @@
 # Change Log
 
-## [4.4.1](https://github.com/chef/chef-zero/tree/4.4.1) (2016-01-14)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.0...4.4.1)
+## [4.3.3](https://github.com/chef/chef-zero/tree/4.3.3) (2016-01-15)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.1...4.3.3)
+
+**Merged pull requests:**
+
+- Make hoovering and deleting parent dir work everywhere for cookbook\_artifacts [\#186](https://github.com/chef/chef-zero/pull/186) ([jkeiser](https://github.com/jkeiser))
+- Explain why omnibus/authz/authN/validation checks are skipped [\#185](https://github.com/chef/chef-zero/pull/185) ([danielsdeleo](https://github.com/danielsdeleo))
+
+## [v4.4.1](https://github.com/chef/chef-zero/tree/v4.4.1) (2016-01-14)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.0...v4.4.1)
 
 **Merged pull requests:**
 
 - Only test master branch and PRs [\#184](https://github.com/chef/chef-zero/pull/184) ([danielsdeleo](https://github.com/danielsdeleo))
+- Internal orgs appears to be unused in oc-chef-pedant [\#183](https://github.com/chef/chef-zero/pull/183) ([danielsdeleo](https://github.com/danielsdeleo))
 - Fix cookbook\_artifact rspec [\#182](https://github.com/chef/chef-zero/pull/182) ([jkeiser](https://github.com/jkeiser))
 - Point chef-server back to master [\#180](https://github.com/chef/chef-zero/pull/180) ([thommay](https://github.com/thommay))
 - Ignore the universe endpoint tests in pedant [\#176](https://github.com/chef/chef-zero/pull/176) ([thommay](https://github.com/thommay))
