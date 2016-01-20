@@ -15,6 +15,8 @@ matrix:
     - rvm: 2.0
     - rvm: 2.1
     - rvm: 2.1
+      env: PEDANT_KNIFE_TESTS=true
+    - rvm: 2.1
       env: SINGLE_ORG=true
     - rvm: 2.1
       env: CHEF_FS=true
