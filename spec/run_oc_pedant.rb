@@ -94,9 +94,12 @@ begin
     []
   end
 
-  # "the goal is that only authorization, authentication and validation tests are turned off" - @jkeiser
-  Pedant.setup([
-    '--skip-knife',
+  # These things aren't supported by Chef Zero in any mode of operation:
+  default_skips = [
+    # "the goal is that only authorization, authentication and validation tests
+    # are turned off" - @jkeiser
+    #
+    # ...but we're not there yet
     '--skip-keys',
     '--skip-controls',
     '--skip-acl',
@@ -129,7 +132,18 @@ begin
 
     # The universe endpoint is unlikely to ever make sense for Chef Zero
     '--skip-universe'
-  ] + chef_fs_skips)
+  ]
+
+  # The knife tests are very slow and don't give us a lot of extra coverage,
+  # so we run them in a different entry in the travis test matrix.
+  pedant_args =
+    if ENV["PEDANT_KNIFE_TESTS"]
+      default_skips + %w{ --focus-knife }
+    else
+      default_skips + chef_fs_skips + %w{ --skip-knife }
+    end
+
+  Pedant.setup(pedant_args)
 
   fail_fast = []
   # fail_fast = ["--fail-fast"]
