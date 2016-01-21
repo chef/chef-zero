@@ -103,7 +103,6 @@ begin
     '--skip-keys',
     '--skip-controls',
     '--skip-acl',
-    '--skip-headers',
 
     # Chef Zero does not intend to support validation the way erchef does.
     '--skip-validation',
@@ -131,7 +130,7 @@ begin
     '--skip-api-v1',
 
     # The universe endpoint is unlikely to ever make sense for Chef Zero
-    '--skip-universe'
+    '--skip-universe',
   ]
 
   # The knife tests are very slow and don't give us a lot of extra coverage,
