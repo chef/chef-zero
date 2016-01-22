@@ -126,7 +126,6 @@ begin
     '--skip-usags',
 
     # Chef 12 features not yet 100% supported by Chef Zero
-    '--skip-containers',
     '--skip-api-v1',
 
     # The universe endpoint is unlikely to ever make sense for Chef Zero
