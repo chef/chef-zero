@@ -200,7 +200,7 @@ module ChefZero
     end
 
     def json_response(response_code, json, request_version=0, response_version=0, opts={pretty: true})
-      do_pretty_json = opts[:pretty] && true
+      do_pretty_json = !!opts[:pretty]    # make sure we have a proper Boolean.
       already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => do_pretty_json), request_version, response_version)
     end
 
