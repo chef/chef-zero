@@ -50,6 +50,7 @@ require 'chef_zero/endpoints/cookbook_artifact_endpoint'
 require 'chef_zero/endpoints/cookbook_artifact_identifier_endpoint'
 require 'chef_zero/endpoints/containers_endpoint'
 require 'chef_zero/endpoints/container_endpoint'
+require 'chef_zero/endpoints/controls_endpoint'
 require 'chef_zero/endpoints/dummy_endpoint'
 require 'chef_zero/endpoints/data_bags_endpoint'
 require 'chef_zero/endpoints/data_bag_endpoint'
@@ -563,6 +564,7 @@ module ChefZero
         [ "/dummy", DummyEndpoint.new(self) ],
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
+        [ "/organizations/*/controls", ControlsEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
         [ "/organizations/*/cookbooks/*", CookbookEndpoint.new(self) ],
         [ "/organizations/*/cookbooks/*/*", CookbookVersionEndpoint.new(self) ],
