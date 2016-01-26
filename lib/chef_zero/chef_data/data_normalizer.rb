@@ -8,7 +8,7 @@ module ChefZero
       def self.normalize_acls(acls)
         ChefData::DefaultCreator::PERMISSIONS.each do |perm|
           acls[perm] ||= {}
-          acls[perm]['actors'] ||= []
+          (acls[perm]['actors'] ||= []).uniq!    # this gets doubled sometimes, for reasons.
           acls[perm]['groups'] ||= []
         end
         acls
