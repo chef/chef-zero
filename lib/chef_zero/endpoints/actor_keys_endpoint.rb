@@ -4,8 +4,8 @@ require 'chef_zero/rest_base'
 module ChefZero
   module Endpoints
     # /users/USER/keys
-
-    class UserKeysEndpoint < RestBase
+    # /organizations/ORG/clients/CLIENT/keys
+    class ActorKeysEndpoint < RestBase
       DATE_FORMAT = "%FT%TZ" # e.g. 2015-12-24T21:00:00Z
 
       def get(request)

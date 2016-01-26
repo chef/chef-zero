@@ -4,7 +4,8 @@ require 'chef_zero/rest_base'
 module ChefZero
   module Endpoints
     # /users/USER/keys/NAME
-    class UserKeyEndpoint < RestBase
+    # /organizations/ORG/clients/CLIENT/keys/NAME
+    class ActorKeyEndpoint < RestBase
       def get(request)
         path = [ "user_keys", *request.rest_path[1..-1] ]
         already_json_response(200, get_data(request, path))

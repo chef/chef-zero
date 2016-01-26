@@ -94,8 +94,8 @@ require 'chef_zero/endpoints/system_recovery_endpoint'
 require 'chef_zero/endpoints/user_association_requests_endpoint'
 require 'chef_zero/endpoints/user_association_requests_count_endpoint'
 require 'chef_zero/endpoints/user_association_request_endpoint'
-require 'chef_zero/endpoints/user_key_endpoint'
-require 'chef_zero/endpoints/user_keys_endpoint'
+require 'chef_zero/endpoints/actor_key_endpoint'
+require 'chef_zero/endpoints/actor_keys_endpoint'
 require 'chef_zero/endpoints/user_organizations_endpoint'
 require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
@@ -539,8 +539,8 @@ module ChefZero
           [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
           [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
           [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
-          [ "/users/*/keys", UserKeysEndpoint.new(self) ],
-          [ "/users/*/keys/*", UserKeyEndpoint.new(self) ],
+          [ "/users/*/keys", ActorKeysEndpoint.new(self) ],
+          [ "/users/*/keys/*", ActorKeyEndpoint.new(self) ],
           [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
           [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
           [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
@@ -568,6 +568,8 @@ module ChefZero
         [ "/dummy", DummyEndpoint.new(self) ],
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
+        [ "/organizations/*/clients/*/keys", ActorKeysEndpoint.new(self) ],
+        [ "/organizations/*/clients/*/keys/*", ActorKeyEndpoint.new(self) ],
         [ "/organizations/*/controls", ControlsEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
         [ "/organizations/*/cookbooks/*", CookbookEndpoint.new(self) ],

@@ -145,10 +145,12 @@ begin
       default_skips + chef_fs_skips + %w{ --skip-knife }
     end
 
+  pedant_args << "--focus-client-keys"
+
   Pedant.setup(pedant_args)
 
-  fail_fast = %w()#--fail-fast)
-  #fail_fast = ["--fail-fast"]
+  # fail_fast = []
+  fail_fast = ["--fail-fast"]
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
 
