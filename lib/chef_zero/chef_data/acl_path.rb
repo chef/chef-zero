@@ -13,7 +13,8 @@ module ChefZero
     #   specified on X, they are not inherited from X's parent
     # - stop adding pivotal to acls (he already has access to what he needs)
     module AclPath
-      ORG_DATA_TYPES = %w(clients cookbooks containers data environments groups nodes roles sandboxes)
+      ORG_DATA_TYPES = %w(clients cookbook_artifacts cookbooks containers data environments groups
+                          nodes policies policy_groups roles sandboxes)
       TOP_DATA_TYPES = %w(containers organizations users)
 
       # ACL data paths for a partition are:

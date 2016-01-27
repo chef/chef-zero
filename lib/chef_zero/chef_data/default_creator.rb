@@ -148,6 +148,7 @@ module ChefZero
 
       DEFAULT_ORG_SPINE = {
         'clients' => {},
+        'cookbook_artifacts' => {},
         'cookbooks' => {},
         'data' => {},
         'environments' => %w(_default),
@@ -281,7 +282,8 @@ module ChefZero
               'delete' => { 'groups' => %w(admins) },
               'grant'  => { 'groups' => %w(admins) },
             }
-          when 'containers/cookbooks', 'containers/environments', 'containers/roles'
+          when 'containers/cookbook_artifacts', 'containers/cookbooks',
+               'containers/environments', 'containers/policies', 'containers/policy_groups', 'containers/roles'
             {
               'create' => { 'groups' => %w(admins users) },
               'read'   => { 'groups' => %w(admins users clients) },
@@ -289,7 +291,7 @@ module ChefZero
               'delete' => { 'groups' => %w(admins users) },
               'grant'  => { 'groups' => %w(admins) },
             }
-          when 'containers/cookbooks', 'containers/data'
+          when 'containers/data'
             {
               'create' => { 'groups' => %w(admins users clients) },
               'read'   => { 'groups' => %w(admins users clients) },

@@ -114,6 +114,7 @@ module ChefZero
         begin
           value = _get(path)
           if value.is_a?(Hash) && !options[:allow_dirs]
+            require 'pry'; binding.pry
             raise "exists? does not work with directories (#{path} = #{value.class})"
           end
           return true
