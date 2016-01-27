@@ -282,13 +282,21 @@ module ChefZero
               'delete' => { 'groups' => %w(admins) },
               'grant'  => { 'groups' => %w(admins) },
             }
-          when 'containers/environments', 'containers/policies', 'containers/policy_groups', 'containers/roles'
+          when 'containers/environments', 'containers/roles'
             {
               'create' => { 'groups' => %w(admins users) },
               'read'   => { 'groups' => %w(admins users clients) },
               'update' => { 'groups' => %w(admins users) },
               'delete' => { 'groups' => %w(admins users) },
               'grant'  => { 'groups' => %w(admins) },
+            }
+          when 'containers/policy_groups', 'container/policies'
+            {
+              'create' => { 'groups' => %w(admins) },
+              'read'   => { 'groups' => %w(admins) },
+              'update' => { 'groups' => %w(admins) },
+              'delete' => { 'groups' => %w(admins) },
+              'grant'  => { 'groups' => %w(admins users clients) },
             }
           when 'containers/cookbooks', 'containers/cookbook_artifacts', 'containers/data'
             {
