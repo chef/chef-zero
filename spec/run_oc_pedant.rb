@@ -83,7 +83,6 @@ begin
       '--skip-users',
       '--skip-organizations',
       '--skip-multiuser',
-      '--skip-acl',
 
       # chef-zero has some non-removable quirks, such as the fact that files
       # with 255-character names cannot be stored in local mode. This is
@@ -142,7 +141,8 @@ begin
 
   Pedant.setup(pedant_args)
 
-  # fail_fast = ["--fail-fast"]
+  fail_fast = []
+  #fail_fast = ["--fail-fast"]
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
 
