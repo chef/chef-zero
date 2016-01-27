@@ -3,7 +3,7 @@ gemspec
 
 gem 'rest-client', :github => 'chef/rest-client'
 
-gem 'oc-chef-pedant', :github => 'chef/chef-server'
+gem 'oc-chef-pedant', :github => 'chef/chef-server', :branch => "jk/authorization-tags"
 
 # gem 'oc-chef-pedant', :path => "../chef-server"
 
