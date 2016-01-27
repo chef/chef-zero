@@ -282,8 +282,7 @@ module ChefZero
               'delete' => { 'groups' => %w(admins) },
               'grant'  => { 'groups' => %w(admins) },
             }
-          when 'containers/cookbook_artifacts', 'containers/cookbooks',
-               'containers/environments', 'containers/policies', 'containers/policy_groups', 'containers/roles'
+          when 'containers/environments', 'containers/policies', 'containers/policy_groups', 'containers/roles'
             {
               'create' => { 'groups' => %w(admins users) },
               'read'   => { 'groups' => %w(admins users clients) },
@@ -291,7 +290,7 @@ module ChefZero
               'delete' => { 'groups' => %w(admins users) },
               'grant'  => { 'groups' => %w(admins) },
             }
-          when 'containers/data'
+          when 'containers/cookbooks', 'containers/cookbook_artifacts', 'containers/data'
             {
               'create' => { 'groups' => %w(admins users clients) },
               'read'   => { 'groups' => %w(admins users clients) },
@@ -441,7 +440,7 @@ module ChefZero
         when 4
           return path[0] == 'organizations' && (
             (path[2] == 'acls' && path[1] != 'root') ||
-            %w(cookbooks data).include?(path[2]))
+            %w(cookbooks cookbook_artifacts data policies policy_groups).include?(path[2]))
         else
           return false
         end
