@@ -141,7 +141,7 @@ begin
 
   Pedant.setup(pedant_args)
 
-  fail_fast = []
+  fail_fast = %w()#--fail-fast)
   #fail_fast = ["--fail-fast"]
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
