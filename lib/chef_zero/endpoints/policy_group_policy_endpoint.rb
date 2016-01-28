@@ -56,7 +56,7 @@ module ChefZero
         # group.
         # Storage: /organizations/ORG/policies/POLICY/revisions/REVISION
         response_code = exists_data?(request) ? 200 : 201
-        set_data(request, nil, to_json(revision_id), :create_dir)
+        set_data(request, nil, to_json(revision_id), :create, :create_dir)
 
         already_json_response(response_code, request.body)
       end

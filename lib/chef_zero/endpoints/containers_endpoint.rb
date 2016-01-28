@@ -16,8 +16,7 @@ module ChefZero
         # if they don't match, id wins.
         container_name = data["id"] || data["containername"]
         container_path_suffix = data["containerpath"].split("/").reject { |o| o.empty? }
-        container_data_path = request.rest_path + container_path_suffix
-        create_data(request, container_data_path, container_name, to_json({}), :create_dir)
+        create_data(request, request.rest_path, container_name, to_json({}), :create_dir)
 
         json_response(201, { uri: build_uri(request.base_uri, request.rest_path + container_path_suffix + [container_name]) })
       end

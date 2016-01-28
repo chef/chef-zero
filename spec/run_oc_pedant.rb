@@ -101,7 +101,6 @@ begin
     #
     # ...but we're not there yet
     '--skip-keys',
-    '--skip-acl',
 
     # Chef Zero does not intend to support validation the way erchef does.
     '--skip-validation',
@@ -142,8 +141,8 @@ begin
 
   Pedant.setup(pedant_args)
 
-  fail_fast = []
-  # fail_fast = ["--fail-fast"]
+  fail_fast = %w()#--fail-fast)
+  #fail_fast = ["--fail-fast"]
 
   result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
 
