@@ -1,5 +1,18 @@
 # Change Log
 
+## [Unreleased](https://github.com/chef/chef-zero/tree/HEAD)
+
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.2...HEAD)
+
+**Merged pull requests:**
+
+- Make ACLs for policies/policy\_groups/cookbook\_artifacts work [\#194](https://github.com/chef/chef-zero/pull/194) ([jkeiser](https://github.com/jkeiser))
+- Return 410 on /controls so we stop skipping that pedant spec. [\#192](https://github.com/chef/chef-zero/pull/192) ([randomcamel](https://github.com/randomcamel))
+- Enable container specs. [\#191](https://github.com/chef/chef-zero/pull/191) ([randomcamel](https://github.com/randomcamel))
+- Enable headers pedant tests [\#190](https://github.com/chef/chef-zero/pull/190) ([danielsdeleo](https://github.com/danielsdeleo))
+- Enable knife pedant tests [\#189](https://github.com/chef/chef-zero/pull/189) ([danielsdeleo](https://github.com/danielsdeleo))
+- Start running policy and cookbook artifact tests [\#187](https://github.com/chef/chef-zero/pull/187) ([jkeiser](https://github.com/jkeiser))
+
 ## [v4.4.2](https://github.com/chef/chef-zero/tree/v4.4.2) (2016-01-15)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.1...v4.4.2)
 
