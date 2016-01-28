@@ -13,22 +13,18 @@ module ChefZero
 
       def delete(request)
         result = super
-        username = request.rest_path[1]
+        client_or_user_name = request.rest_path.last
 
         if request.rest_path[0] == 'users'
           list_data(request, [ 'organizations' ]).each do |org|
             begin
-              delete_data(request, [ 'organizations', org, 'users', username ], :data_store_exceptions)
+              delete_data(request, [ 'organizations', org, 'users', client_or_user_name ], :data_store_exceptions)
             rescue DataStore::DataNotFoundError
             end
           end
-
-          begin
-            path = [ 'user_keys', username ]
-            delete_data_dir(request, path, :data_store_exceptions)
-          rescue DataStore::DataNotFoundError
-          end
         end
+
+        delete_actor_keys!(request, client_or_user_name)
         result
       end
 
@@ -65,32 +61,29 @@ module ChefZero
 
         # Inject private_key into response, delete public_key/password if applicable
         if result[0] == 200 || result[0] == 201
-          username = identity_key_value(request) || request.rest_path[-1]
+          client_or_user_name = identity_key_value(request) || request.rest_path[-1]
 
-          # TODO Implement for clients
-          if request.rest_path[2] != 'clients' && is_rename?(request)
-            rename_user_keys!(request, username)
+          if is_rename?(request)
+            rename_keys!(request, client_or_user_name)
           end
 
           if request.rest_path[0] == 'users'
             response = {
-              'uri' => build_uri(request.base_uri, [ 'users', username ])
+              'uri' => build_uri(request.base_uri, [ 'users', client_or_user_name ])
             }
           else
             response = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
           end
 
-          if request.rest_path[2] == 'clients'
+          if updating_public_key
+            update_default_public_key!(request, client_or_user_name, public_key)
+            response['public_key'] = public_key
+          end
+
+          if client?(request)
             response['private_key'] = private_key ? private_key : false
           else
             response['private_key'] = private_key if private_key
-
-            if updating_public_key
-              update_user_default_key!(request, public_key)
-            end
-          end
-
-          if request.rest_path[2] == 'users' && !updating_public_key
             response.delete('public_key')
           end
 
@@ -107,61 +100,66 @@ module ChefZero
       def populate_defaults(request, response_json)
         response = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
 
-        response =
-          if request.rest_path[2] == 'clients'
-            ChefData::DataNormalizer.normalize_client(response, request.rest_path[3], request.rest_path[1])
+        client_or_user_name =
+          if client?(request)
+            response["name"]
           else
-            public_key = get_user_default_public_key(request, response['username'])
+            response["username"]
+          end || request.rest_path.last
 
-            if public_key
-              response['public_key'] = public_key
-            end
-
-            ChefData::DataNormalizer.normalize_user(response, request.rest_path[3], identity_keys, server.options[:osc_compat], request.method)
+        response =
+          if client?(request)
+            ChefData::DataNormalizer.normalize_client(
+              data_store,
+              response,
+              client_or_user_name,
+              request.rest_path[1]
+            )
+          else
+            ChefData::DataNormalizer.normalize_user(
+              data_store,
+              response,
+              client_or_user_name,
+              identity_keys,
+              server.options[:osc_compat],
+              request.method
+            )
           end
 
         FFI_Yajl::Encoder.encode(response, :pretty => true)
       end
 
-      # Returns the user's default public_key from user_keys store
-      def get_user_default_public_key(request, username)
-        path = [ "user_keys", username, "keys", DEFAULT_PUBLIC_KEY_NAME ]
-        key_json = get_data(request, path, :nil)
-        return unless key_json
-
-        key_data = FFI_Yajl::Parser.parse(key_json, create_additions: false)
-        key_data && key_data["public_key"]
-      end
-
       # Move key data to new path
-      def rename_user_keys!(request, new_username)
-        orig_username = request.rest_path[-1]
-        orig_user_keys_path = [ 'user_keys', orig_username, 'keys' ]
-        new_user_keys_path = [ 'user_keys', new_username, 'keys' ]
+      def rename_keys!(request, new_client_or_user_name)
+        orig_client_or_user_name = request.rest_path.last
 
-        user_key_names = list_data(request, orig_user_keys_path, :data_store_exceptions)
+        path_root = "#{client_or_user(request)}_keys"
+        orig_keys_path = [ path_root, orig_client_or_user_name, "keys" ]
+        new_keys_path = [ path_root, new_client_or_user_name, "keys" ]
 
-        user_key_names.each do |key_name|
+        key_names = list_data(request, orig_keys_path, :data_store_exceptions)
+
+        key_names.each do |key_name|
           # Get old data
-          orig_path = orig_user_keys_path + [ key_name ]
+          orig_path = orig_keys_path + [ key_name ]
           data = get_data(request, orig_path, :data_store_exceptions)
 
           # Copy data to new path
           create_data(
             request,
-            new_user_keys_path, key_name,
+            new_keys_path, key_name,
             data,
             :create_dir
           )
         end
 
         # Delete original data
-        delete_data_dir(request, orig_user_keys_path, :data_store_exceptions)
+        delete_data_dir(request, orig_keys_path, :recursive, :data_store_exceptions)
       end
 
-      def update_user_default_key!(request, public_key)
-        username = request.rest_path[1]
-        path = [ "user_keys", username, "keys", DEFAULT_PUBLIC_KEY_NAME ]
+      def update_default_public_key!(request, client_or_user_name, public_key)
+        path = [ "#{client_or_user(request)}_keys", client_or_user_name,
+                 "keys", DEFAULT_PUBLIC_KEY_NAME ]
 
         data = FFI_Yajl::Encoder.encode(
           "name" => DEFAULT_PUBLIC_KEY_NAME,
@@ -170,6 +168,20 @@ module ChefZero
         )
 
         set_data(request, path, data, :create, :data_store_exceptions)
+      end
+
+      def delete_actor_keys!(request, client_or_user_name)
+        path = [ "#{client_or_user(request)}_keys", client_or_user_name ]
+        delete_data_dir(request, path, :recursive, :data_store_exceptions)
+      rescue DataStore::DataNotFoundError
+      end
+
+      def client_or_user(request)
+        request.rest_path[2] == "clients" ? :client : :user
+      end
+
+      def client?(request)
+        client_or_user(request) == :client
       end
     end
   end

@@ -5,6 +5,42 @@ require 'bundler/setup'
 require 'chef_zero/server'
 require 'rspec/core'
 
+# This file runs oc-chef-pedant specs and is invoked by `rake pedant`
+# and other Rake tasks. Run `rake -T` to list tasks.
+#
+# Options for oc-chef-pedant and rspec can be specified via
+# ENV['PEDANT_OPTS'] and ENV['RSPEC_OPTS'], respectively.
+#
+# The log level can be specified via ENV['LOG_LEVEL'].
+#
+# Example:
+#
+#     $ PEDANT_OPTS="--focus-users --skip-keys" \
+#     >   RSPEC_OPTS="--fail-fast --profile 5" \
+#     >   LOG_LEVEL=debug \
+#     >   rake pedant
+#
+
+DEFAULT_SERVER_OPTIONS = {
+  port: 8889,
+  single_org: false,
+}.freeze
+
+DEFAULT_LOG_LEVEL = :warn
+
+def log_level
+  return ENV['LOG_LEVEL'].downcase.to_sym if ENV['LOG_LEVEL']
+  return :debug if ENV['DEBUG']
+  DEFAULT_LOG_LEVEL
+end
+
+def start_chef_server(opts={})
+  opts = DEFAULT_SERVER_OPTIONS.merge(opts)
+  opts[:log_level] = log_level
+
+  ChefZero::Server.new(opts).tap {|server| server.start_background }
+end
+
 def start_cheffs_server(chef_repo_path)
   require 'chef/version'
   require 'chef/config'
@@ -34,37 +70,42 @@ def start_cheffs_server(chef_repo_path)
   data_store.set(%w(organizations pedant-testorg groups admins), '{ "users": [ "pivotal" ] }')
   data_store.set(%w(organizations pedant-testorg groups users), '{ "users": [ "pivotal" ] }')
 
-  server = ChefZero::Server.new(
-    port: 8889,
-    data_store: data_store,
-    single_org: false,
-    #log_level: :debug
-  )
-  server.start_background
-  server
+  start_chef_server(data_store: data_store)
 end
 
-tmpdir = nil
+def pedant_args_from_env
+  args_from_env('PEDANT_OPTS')
+end
+
+def rspec_args_from_env
+  args_from_env('RSPEC_OPTS')
+end
+
+def args_from_env(key)
+  return [] unless ENV[key]
+  ENV[key].split
+end
 
 begin
-  if ENV['FILE_STORE']
-    require 'tmpdir'
-    require 'chef_zero/data_store/raw_file_store'
-    tmpdir = Dir.mktmpdir
-    data_store = ChefZero::DataStore::RawFileStore.new(tmpdir, true)
-    data_store = ChefZero::DataStore::DefaultFacade.new(data_store, false, false)
-    server = ChefZero::Server.new(:port => 8889, :single_org => false, :data_store => data_store)
-    server.start_background
+  tmpdir = nil
+  server =
+    if ENV['FILE_STORE']
+      require 'tmpdir'
+      require 'chef_zero/data_store/raw_file_store'
+      tmpdir = Dir.mktmpdir
+      data_store = ChefZero::DataStore::RawFileStore.new(tmpdir, true)
+      data_store = ChefZero::DataStore::DefaultFacade.new(data_store, false, false)
 
-  elsif ENV['CHEF_FS']
-    require 'tmpdir'
-    tmpdir = Dir.mktmpdir
-    server = start_cheffs_server(tmpdir)
+      start_chef_server(data_store: data_store)
 
-  else
-    server = ChefZero::Server.new(:port => 8889, :single_org => false)#, :log_level => :debug)
-    server.start_background
-  end
+    elsif ENV['CHEF_FS']
+      require 'tmpdir'
+      tmpdir = Dir.mktmpdir
+      start_cheffs_server(tmpdir)
+
+    else
+      start_chef_server
+    end
 
   require 'rspec/core'
   require 'pedant'
@@ -104,7 +145,6 @@ begin
     # are turned off" - @jkeiser
     #
     # ...but we're not there yet
-    '--skip-client-keys',
     '--skip-controls',
     '--skip-acl',
 
@@ -145,14 +185,10 @@ begin
       default_skips + chef_fs_skips + %w{ --skip-knife }
     end
 
-  pedant_args << "--focus-client-keys"
+  Pedant.setup(pedant_args + pedant_args_from_env)
 
-  Pedant.setup(pedant_args)
-
-  # fail_fast = []
-  fail_fast = ["--fail-fast"]
-
-  result = RSpec::Core::Runner.run(Pedant.config.rspec_args + fail_fast)
+  rspec_args = Pedant.config.rspec_args + rspec_args_from_env
+  result = RSpec::Core::Runner.run(rspec_args)
 
   server.stop if server.running?
 ensure

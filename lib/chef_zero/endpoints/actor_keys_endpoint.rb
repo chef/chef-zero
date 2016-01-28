@@ -9,8 +9,12 @@ module ChefZero
       DATE_FORMAT = "%FT%TZ" # e.g. 2015-12-24T21:00:00Z
 
       def get(request)
-        username = request.rest_path[1]
-        path = [ "user_keys", username, "keys" ]
+        path =
+          if client?(request)
+            [ "client_keys", request.rest_path[3], "keys" ]
+          else
+            [ "user_keys", request.rest_path[1], "keys" ]
+          end
 
         result = list_data(request, path).map do |key_name|
           list_key(request, [ *path, key_name ])
@@ -20,10 +24,10 @@ module ChefZero
       end
 
       def post(request)
-        username = request.rest_path[1]
+        client_or_user_name = client?(request) ? request.rest_path[3] : request.rest_path[1]
         request_body = FFI_Yajl::Parser.parse(request.body)
 
-        validate_user!(request)
+        validate_client_or_user!(request)
 
         generate_keys = request_body["public_key"].nil?
 
@@ -34,7 +38,7 @@ module ChefZero
         end
 
         key_name = request_body["name"]
-        path = [ "user_keys", username, "keys" ]
+        path = [ "#{client_or_user(request)}_keys", client_or_user_name, "keys" ]
 
         data = FFI_Yajl::Encoder.encode(
           "name" => key_name,
@@ -44,10 +48,7 @@ module ChefZero
 
         create_data(request, path, key_name, data, :create_dir)
 
-        response_body = {
-          "uri" => build_uri(request.base_uri,
-                     [ "users", username, "keys", key_name ])
-        }
+        response_body = { "uri" => key_uri(request, key_name) }
         response_body["private_key"] = private_key if generate_keys
 
         json_response(201, response_body,
@@ -58,7 +59,7 @@ module ChefZero
 
       def list_key(request, data_path)
         data = FFI_Yajl::Parser.parse(get_data(request, data_path), create_additions: false)
-        uri = build_uri(request.base_uri, [ "users", *data_path[1..-1] ])
+        key_name = data["name"]
 
         expiration_date = if data["expiration_date"] == "infinity"
           Float::INFINITY
@@ -66,14 +67,27 @@ module ChefZero
           DateTime.strptime(data["expiration_date"], DATE_FORMAT)
         end
 
-        { "name" => data_path[-1],
-          "uri" => uri,
+        { "name" => key_name,
+          "uri" => key_uri(request, key_name),
           "expired" => DateTime.now > expiration_date }
       end
 
-      def validate_user!(request)
-        # Try loading the user so a 404 is returned if the user doesn't
-        get_data(request, request.rest_path[0, 2])
+      def validate_client_or_user!(request)
+        # Try loading the client or user so a 404 is returned if it doesn't exist
+        path = client?(request) ? request.rest_path[0..3] : request.rest_path[0..1]
+        get_data(request, path)
+      end
+
+      def client_or_user(request)
+        request.rest_path[2] == "clients" ? :client : :user
+      end
+
+      def client?(request)
+        client_or_user(request) == :client
+      end
+
+      def key_uri(request, key_name)
+        build_uri(request.base_uri, [ *request.rest_path, key_name ])
       end
     end
   end

@@ -15,7 +15,7 @@ module ChefZero
         end
 
         user = FFI_Yajl::Parser.parse(user, :create_additions => false)
-        user = ChefData::DataNormalizer.normalize_user(user, name, [ 'username' ], server.options[:osc_compat])
+        user = ChefData::DataNormalizer.normalize_user(data_store, user, name, [ 'username' ], server.options[:osc_compat])
         if !user['recovery_authentication_enabled']
           raise RestErrorResponse.new(403, "Only users with recovery_authentication_enabled=true may use /system_recovery to log in")
         end

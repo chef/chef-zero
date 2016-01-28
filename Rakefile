@@ -3,33 +3,43 @@ require 'bundler/gem_tasks'
 
 require 'chef_zero/version'
 
+def run_oc_pedant(env={})
+  ENV.update(env)
+  require File.expand_path('spec/run_oc_pedant')
+end
+
+ENV_DOCS = <<END
+Environment:
+ - RSPEC_OPTS   Options to pass to RSpec
+                e.g. RSPEC_OPTS="--fail-fast --profile 5"
+ - PEDANT_OPTS  Options to pass to oc-chef-pedant
+                e.g. PEDANT_OPTS="--focus-keys --skip-users"
+ - LOG_LEVEL    Set the log level (default: warn)
+                e.g. LOG_LEVEL=debug
+END
+
 task :default => :pedant
 
-desc "run specs"
+desc "Run specs"
 task :spec do
   system('rspec spec/*_spec.rb')
 end
 
-desc "run oc pedant"
-task :pedant do
-  require File.expand_path('spec/run_oc_pedant')
-end
+desc "Run oc-chef-pedant\n\n#{ENV_DOCS}"
+task :pedant => :oc_pedant
 
-desc "run pedant with CHEF_FS set"
+desc "Run oc-chef-pedant with CHEF_FS set\n\n#{ENV_DOCS}"
 task :cheffs do
-  ENV['CHEF_FS'] = "yes"
-  require File.expand_path('spec/run_oc_pedant')
+  run_oc_pedant('CHEF_FS' => 'yes')
 end
 
-desc "run pedant with FILE_STORE set"
+desc "Run oc-chef-pedant with FILE_STORE set\n\n#{ENV_DOCS}"
 task :filestore do
-  ENV['FILE_STORE'] = "yes"
-  require File.expand_path('spec/run_oc_pedant')
+  run_oc_pedant('FILE_STORE' => 'yes')
 end
 
-desc "run oc pedant"
 task :oc_pedant do
-  require File.expand_path('spec/run_oc_pedant')
+  run_oc_pedant
 end
 
 task :chef_spec do

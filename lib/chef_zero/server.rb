@@ -109,7 +109,7 @@ module ChefZero
     DEFAULT_OPTIONS = {
       :host => '127.0.0.1',
       :port => 8889,
-      :log_level => :info,
+      :log_level => :warn,
       :generate_real_keys => true,
       :single_org => 'chef',
       :ssl => false

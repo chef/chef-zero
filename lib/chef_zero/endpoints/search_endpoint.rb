@@ -48,22 +48,21 @@ module ChefZero
       private
 
       def search_container(request, index, orgname)
-        relative_parts, normalize_proc = case index
-        when 'client'
-          [ ['clients'], Proc.new { |client, name| ChefData::DataNormalizer.normalize_client(client, name, orgname) } ]
-        when 'node'
-          [ ['nodes'], Proc.new { |node, name| ChefData::DataNormalizer.normalize_node(node, name) } ]
-        when 'environment'
-          [ ['environments'], Proc.new { |environment, name| ChefData::DataNormalizer.normalize_environment(environment, name) } ]
-        when 'role'
-          [ ['roles'], Proc.new { |role, name| ChefData::DataNormalizer.normalize_role(role, name) } ]
-        else
-          [ ['data', index], Proc.new { |data_bag_item, id| ChefData::DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') } ]
-        end
-        [
-          request.rest_path[0..1] + relative_parts,
-          normalize_proc
-        ]
+        *relative_parts, normalize_proc =
+          case index
+          when 'client'
+            [ 'clients', method(:normalize_client).to_proc.curry[orgname] ]
+          when 'node'
+            [ 'nodes', ChefData::DataNormalizer.method(:normalize_node) ]
+          when 'environment'
+            [ 'environments', ChefData::DataNormalizer.method(:normalize_environment) ]
+          when 'role'
+            [ 'roles', ChefData::DataNormalizer.method(:normalize_role) ]
+          else
+            [ 'data', index, method(:normalize_data_bag_item).to_proc.curry[index] ]
+          end
+
+        [ request.rest_path[0..1] + relative_parts, normalize_proc ]
       end
 
       def expand_for_indexing(value, index, id)
@@ -189,6 +188,14 @@ module ChefZero
         dest
       end # deep_merge!
 
+      def normalize_client(orgname, client, name)
+        ChefData::DataNormalizer.normalize_client(data_store, client, name, orgname)
+      end
+
+      def normalize_data_bag_item(index, data_bag_item, id)
+        ChefData::DataNormalizer
+          .normalize_data_bag_item(data_bag_item, index, id, 'DELETE')
+      end
     end
   end
 end

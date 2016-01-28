@@ -5,6 +5,8 @@ require 'chef_zero/chef_data/default_creator'
 module ChefZero
   module ChefData
     class DataNormalizer
+      DEFAULT_PUBLIC_KEY_NAME = "default"
+
       def self.normalize_acls(acls)
         ChefData::DefaultCreator::PERMISSIONS.each do |perm|
           acls[perm] ||= {}
@@ -14,11 +16,14 @@ module ChefZero
         acls
       end
 
-      def self.normalize_client(client, name, orgname = nil)
+      def self.normalize_client(data_store, client, name, orgname = nil)
+        unless client['public_key']
+          client['public_key'] = get_default_public_key(data_store, :client, name)
+        end
+
         client['name'] ||= name
         client['clientname'] ||= name
         client['admin'] = !!client['admin'] if client.has_key?('admin')
-        client['public_key'] ||= PUBLIC_KEY
         client['orgname'] ||= orgname
         client['validator'] ||= false
         client['validator'] = !!client['validator']
@@ -34,7 +39,11 @@ module ChefZero
         container
       end
 
-      def self.normalize_user(user, name, identity_keys, osc_compat, method=nil)
+      def self.normalize_user(data_store, user, name, identity_keys, osc_compat, method=nil)
+        unless user['public_key']
+          user['public_key'] = get_default_public_key(data_store, :user, name)
+        end
+
         user[identity_keys.first] ||= name
         user['admin'] ||= false
         user['admin'] = !!user['admin']
@@ -220,6 +229,16 @@ module ChefZero
             "recipe[#{item}]"
           end
         }.uniq
+      end
+
+      private
+
+      def self.get_default_public_key(data_store, user_or_client, user_or_client_name)
+        key_json = data_store.get([ "#{user_or_client}_keys", user_or_client_name, "keys", DEFAULT_PUBLIC_KEY_NAME ])
+        return unless key_json
+
+        FFI_Yajl::Parser.parse(key_json, create_additions: false)["public_key"]
+      rescue DataStore::DataNotFoundError
       end
     end
   end

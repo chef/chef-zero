@@ -114,7 +114,7 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
       end
 
@@ -133,7 +133,7 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
       end
 
@@ -152,7 +152,7 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
       end
     end
@@ -165,13 +165,13 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, rest_path)}")
         end
       rescue DataStore::DataAlreadyExistsError
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, rest_path + [name])}")
         end
       end
     end
@@ -184,13 +184,13 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, rest_path)}")
         end
       rescue DataStore::DataAlreadyExistsError
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, rest_path + [name])}")
         end
       end
     end
