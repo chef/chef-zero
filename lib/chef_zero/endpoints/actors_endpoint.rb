@@ -5,6 +5,8 @@ module ChefZero
   module Endpoints
     # /users, /organizations/ORG/clients or /organizations/ORG/users
     class ActorsEndpoint < RestListEndpoint
+      DEFAULT_PUBLIC_KEY_NAME = "default"
+
       def get(request)
         response = super(request)
 
@@ -37,19 +39,29 @@ module ChefZero
       end
 
       def post(request)
-        # First, find out if the user actually posted a public key.  If not, make
-        # one.
         request_body = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
-        public_key = request_body['public_key']
-        if !public_key
+        username = request_body['username']
+
+        public_key = request_body["public_key"]
+
+        # Did the user post a public_key? If not, generate one.
+        unless public_key
           private_key, public_key = server.gen_key_pair
-          request_body['public_key'] = public_key
-          request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true)
         end
 
+        if request.rest_path[2] == "clients"
+          request_body['public_key'] = public_key
+        else
+          request_body.delete('public_key')
+        end
+
+        request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true)
         result = super(request)
 
         if result[0] == 201
+          # Store the received or generated public key
+          create_user_default_key!(request, username, public_key)
+
           # If we generated a key, stuff it in the response.
           response = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
           response['private_key'] = private_key if private_key
@@ -58,6 +70,24 @@ module ChefZero
         else
           result
         end
+      end
+
+      private
+
+      # Store the public key in user_keys
+      def create_user_default_key!(request, username, public_key)
+        # TODO Implement for clients
+        return if request.rest_path[2] == "clients"
+
+        path = [ "user_keys", username, "keys" ]
+
+        data = FFI_Yajl::Encoder.encode(
+          "name" => DEFAULT_PUBLIC_KEY_NAME,
+          "public_key" => public_key,
+          "expiration_date" => "infinity"
+        )
+
+        create_data(request, path, DEFAULT_PUBLIC_KEY_NAME, data, :create_dir)
       end
     end
   end
