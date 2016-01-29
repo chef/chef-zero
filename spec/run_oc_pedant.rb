@@ -93,6 +93,10 @@ begin
   else
     []
   end
+  # The latest released Chef doesn't do ACLs, Cookbook Artifacts or Policies yet
+  chef_fs_skips << '--skip-acl'
+  chef_fs_skips << '--skip-cookbook-artifacts'
+  chef_fs_skips << '--skip-policies'
 
   # These things aren't supported by Chef Zero in any mode of operation:
   default_skips = [
