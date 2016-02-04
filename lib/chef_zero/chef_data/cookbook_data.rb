@@ -108,6 +108,11 @@ module ChefZero
           cookbook_arg(:replacing, cookbook, version_constraints)
         end
 
+        def gem(*opts)
+          self[:gems] ||= []
+          self[:gems] << opts
+        end
+
         def recipe(recipe, description)
           self[:recipes][recipe] = description
         end
