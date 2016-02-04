@@ -61,7 +61,7 @@ module ChefZero
       begin
         self.send(method, request)
       rescue RestErrorResponse => e
-        ChefZero::Log.debug("#{e.inspect}\n#{e.backtrace.join("\n")}")
+        ChefZero::Log.info("#{e.inspect}\n#{e.backtrace.join("\n")}")
         error(e.response_code, e.error)
       end
     end

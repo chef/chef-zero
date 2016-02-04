@@ -60,7 +60,9 @@ module ChefZero
       end
 
       def create_validator_client!(request, org_path)
-        name = validator_name(org_path.last)
+        org_name = org_path.last
+        name = validator_name(org_name)
+
         validator_path = [ *org_path, 'clients', name ]
 
         private_key, public_key = server.gen_key_pair
@@ -71,14 +73,15 @@ module ChefZero
 
         set_data(request, validator_path, validator)
 
-        store_default_public_key!(request, name, public_key)
+        store_validator_public_key!(request, org_name, name, public_key)
 
         private_key
       end
 
       # Store the validator client's public key in client_keys
-      def store_default_public_key!(request, client_name, public_key)
-        path = [ "client_keys", client_name, "keys" ]
+      def store_validator_public_key!(request, org_name, client_name, public_key)
+        path = [ "organizations", org_name,
+                 "client_keys", client_name, "keys" ]
 
         data = FFI_Yajl::Encoder.encode(
           "name" => DEFAULT_PUBLIC_KEY_NAME,

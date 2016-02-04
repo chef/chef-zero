@@ -73,7 +73,13 @@ module ChefZero
 
       # Store the public key in user_keys
       def store_default_public_key!(request, client_or_user_name, public_key)
-        path = [ "#{client_or_user(request)}_keys", client_or_user_name, "keys" ]
+        path =
+          if client?(request)
+            [ *request.rest_path[0..1], "client_keys" ]
+          else
+            [ "user_keys" ]
+          end
+          .push(client_or_user_name, "keys")
 
         data = FFI_Yajl::Encoder.encode(
           "name" => DEFAULT_PUBLIC_KEY_NAME,
@@ -84,12 +90,8 @@ module ChefZero
         create_data(request, path, DEFAULT_PUBLIC_KEY_NAME, data, :create_dir)
       end
 
-      def client_or_user(request)
-        request.rest_path[2] == "clients" ? :client : :user
-      end
-
       def client?(request)
-        client_or_user(request) == :client
+        request.rest_path[2] == "clients"
       end
     end
   end

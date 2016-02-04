@@ -64,7 +64,8 @@ module ChefZero
       end
 
       def delete_validator_client_keys!(request, org_name)
-        keys_path = [ "client_keys", validator_name(org_name) ]
+        keys_path = [ "organizations", org_name,
+                      "client_keys", validator_name(org_name) ]
         delete_data_dir(request, keys_path, :recursive, :data_store_exceptions)
       rescue DataStore::DataNotFoundError
       end

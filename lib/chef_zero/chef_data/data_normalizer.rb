@@ -17,14 +17,15 @@ module ChefZero
       end
 
       def self.normalize_client(data_store, client, name, orgname = nil)
+        client['orgname'] ||= orgname
+
         unless client['public_key']
-          client['public_key'] = get_default_public_key(data_store, :client, name)
+          client['public_key'] = get_default_public_key(data_store, :client, name, client['orgname'])
         end
 
         client['name'] ||= name
         client['clientname'] ||= name
         client['admin'] = !!client['admin'] if client.has_key?('admin')
-        client['orgname'] ||= orgname
         client['validator'] ||= false
         client['validator'] = !!client['validator']
         client['json_class'] ||= "Chef::ApiClient"
@@ -233,8 +234,16 @@ module ChefZero
 
       private
 
-      def self.get_default_public_key(data_store, user_or_client, user_or_client_name)
-        key_json = data_store.get([ "#{user_or_client}_keys", user_or_client_name, "keys", DEFAULT_PUBLIC_KEY_NAME ])
+      def self.get_default_public_key(data_store, user_or_client, user_or_client_name, orgname=nil)
+        path =
+          if user_or_client == :client
+            [ "organizations", orgname, "client_keys" ]
+          else
+            [ "user_keys" ]
+          end
+          .push(user_or_client_name, "keys", DEFAULT_PUBLIC_KEY_NAME)
+
+        key_json = data_store.get(path)
         return unless key_json
 
         FFI_Yajl::Parser.parse(key_json, create_additions: false)["public_key"]

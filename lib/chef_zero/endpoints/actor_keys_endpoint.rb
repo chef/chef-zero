@@ -9,12 +9,7 @@ module ChefZero
       DATE_FORMAT = "%FT%TZ" # e.g. 2015-12-24T21:00:00Z
 
       def get(request)
-        path =
-          if client?(request)
-            [ "client_keys", request.rest_path[3], "keys" ]
-          else
-            [ "user_keys", request.rest_path[1], "keys" ]
-          end
+        path = data_path(request)
 
         result = list_data(request, path).map do |key_name|
           list_key(request, [ *path, key_name ])
@@ -24,7 +19,6 @@ module ChefZero
       end
 
       def post(request)
-        client_or_user_name = client?(request) ? request.rest_path[3] : request.rest_path[1]
         request_body = FFI_Yajl::Parser.parse(request.body)
 
         validate_client_or_user!(request)
@@ -38,7 +32,7 @@ module ChefZero
         end
 
         key_name = request_body["name"]
-        path = [ "#{client_or_user(request)}_keys", client_or_user_name, "keys" ]
+        path = data_path(request)
 
         data = FFI_Yajl::Encoder.encode(
           "name" => key_name,
@@ -56,6 +50,19 @@ module ChefZero
       end
 
       private
+
+      # Returns the keys data store path, which is the same as
+      # `request.rest_path` except with "user_keys" instead of "users" or
+      # "client_keys" instead of "clients."
+      def data_path(request)
+        request.rest_path.dup.tap do |path|
+          if client?(request)
+            path[2] = "client_keys"
+          else
+            path[0] = "user_keys"
+          end
+        end
+      end
 
       def list_key(request, data_path)
         data = FFI_Yajl::Parser.parse(get_data(request, data_path), create_additions: false)
@@ -78,12 +85,8 @@ module ChefZero
         get_data(request, path)
       end
 
-      def client_or_user(request)
-        request.rest_path[2] == "clients" ? :client : :user
-      end
-
       def client?(request)
-        client_or_user(request) == :client
+        request.rest_path[2] == "clients"
       end
 
       def key_uri(request, key_name)

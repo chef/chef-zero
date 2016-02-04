@@ -29,9 +29,17 @@ module ChefZero
 
       private
 
+      # Returns the keys data store path, which is the same as
+      # `request.rest_path` except with "user_keys" instead of "users" or
+      # "client_keys" instead of "clients."
       def data_path(request)
-        root = request.rest_path[2] == "clients" ? "client_keys" : "user_keys"
-        [root, *request.rest_path.last(3) ]
+        request.rest_path.dup.tap do |path|
+          if request.rest_path[2] == "clients"
+            path[2] = "client_keys"
+          else
+            path[0] = "user_keys"
+          end
+        end
       end
     end
   end

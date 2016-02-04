@@ -124,6 +124,7 @@ begin
       '--skip-users',
       '--skip-organizations',
       '--skip-multiuser',
+      '--skip-user-keys',
 
       # chef-zero has some non-removable quirks, such as the fact that files
       # with 255-character names cannot be stored in local mode. This is

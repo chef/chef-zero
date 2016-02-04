@@ -24,7 +24,7 @@ module ChefZero
           end
         end
 
-        delete_actor_keys!(request, client_or_user_name)
+        delete_actor_keys!(request)
         result
       end
 
@@ -131,17 +131,15 @@ module ChefZero
 
       # Move key data to new path
       def rename_keys!(request, new_client_or_user_name)
-        orig_client_or_user_name = request.rest_path.last
-
-        path_root = "#{client_or_user(request)}_keys"
-        orig_keys_path = [ path_root, orig_client_or_user_name, "keys" ]
-        new_keys_path = [ path_root, new_client_or_user_name, "keys" ]
+        orig_keys_path = keys_path_base(request)
+        new_keys_path = orig_keys_path.dup
+                          .tap {|path| path[-2] = new_client_or_user_name }
 
         key_names = list_data(request, orig_keys_path, :data_store_exceptions)
 
         key_names.each do |key_name|
           # Get old data
-          orig_path = orig_keys_path + [ key_name ]
+          orig_path = [ *orig_keys_path, key_name ]
           data = get_data(request, orig_path, :data_store_exceptions)
 
           # Copy data to new path
@@ -158,8 +156,7 @@ module ChefZero
       end
 
       def update_default_public_key!(request, client_or_user_name, public_key)
-        path = [ "#{client_or_user(request)}_keys", client_or_user_name,
-                 "keys", DEFAULT_PUBLIC_KEY_NAME ]
+        path = [ *keys_path_base(request, client_or_user_name), DEFAULT_PUBLIC_KEY_NAME ]
 
         data = FFI_Yajl::Encoder.encode(
           "name" => DEFAULT_PUBLIC_KEY_NAME,
@@ -170,18 +167,35 @@ module ChefZero
         set_data(request, path, data, :create, :data_store_exceptions)
       end
 
-      def delete_actor_keys!(request, client_or_user_name)
-        path = [ "#{client_or_user(request)}_keys", client_or_user_name ]
+      def delete_actor_keys!(request)
+        path = keys_path_base(request)[0..-2]
         delete_data_dir(request, path, :recursive, :data_store_exceptions)
       rescue DataStore::DataNotFoundError
       end
 
-      def client_or_user(request)
-        request.rest_path[2] == "clients" ? :client : :user
+      def client?(request, rest_path=nil)
+        rest_path ||= request.rest_path
+        request.rest_path[2] == "clients"
       end
 
-      def client?(request)
-        client_or_user(request) == :client
+      # Return the data store keys path for the request client or user, e.g.
+      #
+      #     [ "organizations", <org>, "client_keys", <client>, "keys" ]
+      #
+      # Or:
+      #
+      #     [ "user_keys", <user>, "keys" ]
+      #
+      def keys_path_base(request, client_or_user_name=nil)
+        rest_path = (rest_path || request.rest_path).dup
+        rest_path[-1] = client_or_user_name if client_or_user_name
+
+        if client?(request, rest_path)
+          [ *rest_path[0..1], "client_keys" ]
+        else
+          [ "user_keys" ]
+        end
+        .push(rest_path.last, "keys")
       end
     end
   end
