@@ -21,12 +21,11 @@ module ChefZero
       def put(request)
         # We grab the old body to trigger a 404 if it doesn't exist
         old_body = get_data(request)
-        request_json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
-        key = identity_keys.map { |k| request_json[k] }.select { |v| v }.first
-        key ||= request.rest_path[-1]
+
         # If it's a rename, check for conflict and delete the old value
-        rename = key != request.rest_path[-1]
-        if rename
+        if is_rename?(request)
+          key = identity_key_value(request)
+
           begin
             create_data(request, request.rest_path[0..-2], key, request.body, :data_store_exceptions)
           rescue DataStore::DataAlreadyExistsError
@@ -56,7 +55,22 @@ module ChefZero
             return FFI_Yajl::Encoder.encode(merged_json, :pretty => true)
           end
         end
+
         request.body
+      end
+
+      private
+
+      # Get the value of the (first existing) identity key from the request body or nil
+      def identity_key_value(request)
+        request_json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+        identity_keys.map { |k| request_json[k] }.compact.first
+      end
+
+      # Does this request change the value of the identity key?
+      def is_rename?(request)
+        return false unless key = identity_key_value(request)
+        key != request.rest_path[-1]
       end
     end
   end

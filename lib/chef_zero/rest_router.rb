@@ -1,3 +1,5 @@
+require 'pp'
+
 module ChefZero
   class RestRouter
     def initialize(routes)
@@ -15,24 +17,18 @@ module ChefZero
     attr_accessor :not_found
 
     def call(request)
-      begin
-        ChefZero::Log.debug(request)
-        ChefZero::Log.debug(request.body) if request.body
+      log_request(request)
 
-        clean_path = "/" + request.rest_path.join("/")
+      clean_path = "/" + request.rest_path.join("/")
 
-        response = find_endpoint(clean_path).call(request)
-        ChefZero::Log.debug([
-          "",
-          "--- RESPONSE (#{response[0]}) ---",
-          response[2],
-          "--- END RESPONSE ---",
-        ].join("\n"))
-        return response
-      rescue
-        ChefZero::Log.error("#{$!.inspect}\n#{$!.backtrace.join("\n")}")
-        [500, {"Content-Type" => "text/plain"}, "Exception raised!  #{$!.inspect}\n#{$!.backtrace.join("\n")}"]
+      find_endpoint(clean_path).call(request).tap do |response|
+        log_response(response)
       end
+    rescue => ex
+      exception = "#{ex.inspect}\n#{ex.backtrace.join("\n")}"
+
+      ChefZero::Log.error(exception)
+      [ 500, { "Content-Type" => "text/plain" }, "Exception raised! #{exception}" ]
     end
 
     private
@@ -40,6 +36,37 @@ module ChefZero
       def find_endpoint(clean_path)
         _, endpoint = routes.find { |route, endpoint| route.match(clean_path) }
         endpoint || not_found
+      end
+
+      def log_request(request)
+        ChefZero::Log.info do
+          "#{request.method} /#{request.rest_path.join("/")}".tap do |msg|
+            next unless request.method =~ /^(POST|PUT)$/
+
+            if request.body.nil? || request.body.empty?
+              msg << " (no body)"
+            else
+              msg << [
+                "",
+                "--- #{request.method} BODY ---",
+                request.body.chomp,
+                "--- END #{request.method} BODY ---"
+              ].join("\n")
+            end
+          end
+        end
+
+        ChefZero::Log.debug { request.pretty_inspect }
+      end
+
+      def log_response(response)
+        ChefZero::Log.info {
+          [ "",
+            "--- RESPONSE (#{response[0]}) ---",
+            response[2].chomp,
+            "--- END RESPONSE ---",
+          ].join("\n")
+        }
       end
   end
 end

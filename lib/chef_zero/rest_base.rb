@@ -5,6 +5,9 @@ require 'chef_zero/chef_data/acl_path'
 
 module ChefZero
   class RestBase
+    DEFAULT_REQUEST_VERSION = 0
+    DEFAULT_RESPONSE_VERSION = 0
+
     def initialize(server)
       @server = server
     end
@@ -16,21 +19,28 @@ module ChefZero
     end
 
     def check_api_version(request)
-      version = request.api_version
-      return nil if version.nil? # Not present in headers
+      return if request.api_version.nil? # Not present in headers
+      version = request.api_version.to_i
 
-      if version.to_i.to_s != version.to_s # Version is not an Integer
-        return json_response(406, { "username" => request.requestor }, -1, -1)
-      elsif version.to_i > MAX_API_VERSION or version.to_i < MIN_API_VERSION
+      unless version.to_s == request.api_version.to_s # Version is not an Integer
+        return json_response(406,
+          { "username" => request.requestor },
+          request_version: -1, response_version: -1
+        )
+      end
+
+      if version > MAX_API_VERSION || version < MIN_API_VERSION
         response = {
           "error" => "invalid-x-ops-server-api-version",
           "message" => "Specified version #{version} not supported",
           "min_api_version" => MIN_API_VERSION,
           "max_api_version" => MAX_API_VERSION
         }
-        return json_response(406, response, version, -1)
-      else
-        return nil
+
+        return json_response(406,
+          response,
+          request_version: version, response_version: -1
+        )
       end
     end
 
@@ -51,7 +61,7 @@ module ChefZero
       begin
         self.send(method, request)
       rescue RestErrorResponse => e
-        ChefZero::Log.debug("#{e.inspect}\n#{e.backtrace.join("\n")}")
+        ChefZero::Log.info("#{e.inspect}\n#{e.backtrace.join("\n")}")
         error(e.response_code, e.error)
       end
     end
@@ -104,7 +114,7 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
       end
 
@@ -123,7 +133,7 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
       end
 
@@ -142,7 +152,7 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, rest_path)}")
         end
       end
     end
@@ -155,13 +165,13 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, rest_path)}")
         end
       rescue DataStore::DataAlreadyExistsError
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, rest_path + [name])}")
         end
       end
     end
@@ -174,13 +184,13 @@ module ChefZero
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, request.rest_path)}")
+          raise RestErrorResponse.new(404, "Parent not found: #{build_uri(request.base_uri, rest_path)}")
         end
       rescue DataStore::DataAlreadyExistsError
         if options.include?(:data_store_exceptions)
           raise
         else
-          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, request.rest_path + [name])}")
+          raise RestErrorResponse.new(409, "Object already exists: #{build_uri(request.base_uri, rest_path + [name])}")
         end
       end
     end
@@ -196,26 +206,59 @@ module ChefZero
     end
 
     def error(response_code, error, opts={})
-      json_response(response_code, {"error" => [error]}, 0, 0, opts)
+      json_response(response_code, { "error" => [ error ] }, opts)
     end
 
-    def json_response(response_code, json, request_version=0, response_version=0, opts={pretty: true})
-      do_pretty_json = !!opts[:pretty]    # make sure we have a proper Boolean.
-      already_json_response(response_code, FFI_Yajl::Encoder.encode(json, :pretty => do_pretty_json), request_version, response_version)
+    # Serializes `data` to JSON and returns an Array with the
+    # response code, HTTP headers and JSON body.
+    #
+    # @param [Fixnum] response_code HTTP response code
+    # @param [Hash] data The data for the response body as a Hash
+    # @param [Hash] options
+    # @option options [Hash] :headers (see #already_json_response)
+    # @option options [Boolean] :pretty (true) Pretty-format the JSON
+    # @option options [Fixnum] :request_version (see #already_json_response)
+    # @option options [Fixnum] :response_version (see #already_json_response)
+    #
+    # @return (see #already_json_response)
+    #
+    def json_response(response_code, data, options={})
+      options = { pretty: true }.merge(options)
+      do_pretty_json = !!options.delete(:pretty) # make sure we have a proper Boolean.
+      json = FFI_Yajl::Encoder.encode(data, pretty: do_pretty_json)
+      already_json_response(response_code, json, options)
     end
 
     def text_response(response_code, text)
       [response_code, {"Content-Type" => "text/plain"}, text]
     end
 
-    def already_json_response(response_code, json_text, request_version=0, response_version=0)
-      header = { "min_version" => MIN_API_VERSION.to_s, "max_version" => MAX_API_VERSION.to_s,
-                 "request_version" => request_version.to_s,
-                 "response_version" => response_version.to_s }
-      [ response_code,
-        { "Content-Type" => "application/json",
-          "X-Ops-Server-API-Version" => FFI_Yajl::Encoder.encode(header) },
-        json_text ]
+    # Returns an Array with the response code, HTTP headers, and JSON body.
+    #
+    # @param [Fixnum] response_code The HTTP response code
+    # @param [String] json_text The JSON body for the response
+    # @param [Hash] options
+    # @option options [Hash] :headers ({}) HTTP headers (may override default headers)
+    # @option options [Fixnum] :request_version (0) Request API version
+    # @option options [Fixnum] :response_version (0) Response API version
+    #
+    # @return [Array(Fixnum, Hash{String => String}, String)]
+    #
+    def already_json_response(response_code, json_text, options={})
+      version_header = FFI_Yajl::Encoder.encode(
+        "min_version" => MIN_API_VERSION.to_s,
+        "max_version" => MAX_API_VERSION.to_s,
+        "request_version" => options[:request_version] || DEFAULT_REQUEST_VERSION.to_s,
+        "response_version" => options[:response_version] || DEFAULT_RESPONSE_VERSION.to_s
+      )
+
+      headers = {
+        "Content-Type" => "application/json",
+        "X-Ops-Server-API-Version" => version_header
+      }
+      headers.merge!(options[:headers]) if options[:headers]
+
+      [ response_code, headers, json_text ]
     end
 
     # To be called from inside rest endpoints

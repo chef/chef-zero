@@ -17,8 +17,7 @@ module ChefZero
       def self.normalize_client(client, name, orgname = nil)
         client['name'] ||= name
         client['clientname'] ||= name
-        client['admin'] = !!client['admin'] if client.has_key?('admin')
-        client['public_key'] ||= PUBLIC_KEY
+        client['admin'] = !!client['admin'] if client.key?('admin')
         client['orgname'] ||= orgname
         client['validator'] ||= false
         client['validator'] = !!client['validator']
@@ -36,7 +35,6 @@ module ChefZero
 
       def self.normalize_user(user, name, identity_keys, osc_compat, method=nil)
         user[identity_keys.first] ||= name
-        user['public_key'] ||= PUBLIC_KEY
         user['admin'] ||= false
         user['admin'] = !!user['admin']
         user['openid'] ||= nil

@@ -19,13 +19,14 @@
 module ChefZero
   module DataStore
     class DataError < StandardError
+      attr_reader :path, :cause
+
       def initialize(path, cause = nil)
         @path = path
         @cause = cause
+        path_for_msg = path.nil? ? "nil" : "/#{path.join('/')}"
+        super "Data path: #{path_for_msg}"
       end
-
-      attr_reader :path
-      attr_reader :cause
     end
   end
 end
