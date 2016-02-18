@@ -267,12 +267,12 @@ module ChefZero
         # Strip off /organizations/chef if we are in single org mode
         if rest_path[0..1] != [ 'organizations', server.options[:single_org] ]
           raise "Unexpected URL #{rest_path[0..1]} passed to build_uri in single org mode"
-        else
-          "#{base_uri}/#{rest_path[2..-1].join('/')}"
         end
-      else
-        "#{base_uri}/#{rest_path.join('/')}"
+
+        return self.class.build_uri(base_uri, rest_path[2..-1])
       end
+
+      self.class.build_uri(base_uri, rest_path)
     end
 
     def self.build_uri(base_uri, rest_path)

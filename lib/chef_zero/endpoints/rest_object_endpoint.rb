@@ -63,7 +63,7 @@ module ChefZero
 
       # Get the value of the (first existing) identity key from the request body or nil
       def identity_key_value(request)
-        request_json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+        request_json = parse_json(request.body)
         identity_keys.map { |k| request_json[k] }.compact.first
       end
 

@@ -40,8 +40,11 @@ require 'chef_zero/endpoints/rest_list_endpoint'
 require 'chef_zero/endpoints/authenticate_user_endpoint'
 require 'chef_zero/endpoints/acls_endpoint'
 require 'chef_zero/endpoints/acl_endpoint'
-require 'chef_zero/endpoints/actors_endpoint'
 require 'chef_zero/endpoints/actor_endpoint'
+require 'chef_zero/endpoints/actors_endpoint'
+require 'chef_zero/endpoints/actor_key_endpoint'
+require 'chef_zero/endpoints/actor_default_key_endpoint'
+require 'chef_zero/endpoints/actor_keys_endpoint'
 require 'chef_zero/endpoints/cookbooks_endpoint'
 require 'chef_zero/endpoints/cookbook_endpoint'
 require 'chef_zero/endpoints/cookbook_version_endpoint'
@@ -94,8 +97,6 @@ require 'chef_zero/endpoints/system_recovery_endpoint'
 require 'chef_zero/endpoints/user_association_requests_endpoint'
 require 'chef_zero/endpoints/user_association_requests_count_endpoint'
 require 'chef_zero/endpoints/user_association_request_endpoint'
-require 'chef_zero/endpoints/actor_key_endpoint'
-require 'chef_zero/endpoints/actor_keys_endpoint'
 require 'chef_zero/endpoints/user_organizations_endpoint'
 require 'chef_zero/endpoints/file_store_file_endpoint'
 require 'chef_zero/endpoints/not_found_endpoint'
@@ -540,6 +541,7 @@ module ChefZero
           [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
           [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
           [ "/users/*/keys", ActorKeysEndpoint.new(self) ],
+          [ "/users/*/keys/default", ActorDefaultKeyEndpoint.new(self) ],
           [ "/users/*/keys/*", ActorKeyEndpoint.new(self) ],
           [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
           [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
@@ -569,6 +571,7 @@ module ChefZero
         [ "/organizations/*/clients", ActorsEndpoint.new(self) ],
         [ "/organizations/*/clients/*", ActorEndpoint.new(self) ],
         [ "/organizations/*/clients/*/keys", ActorKeysEndpoint.new(self) ],
+        [ "/organizations/*/clients/*/keys/default", ActorDefaultKeyEndpoint.new(self) ],
         [ "/organizations/*/clients/*/keys/*", ActorKeyEndpoint.new(self) ],
         [ "/organizations/*/controls", ControlsEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],

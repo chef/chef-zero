@@ -1,4 +1,3 @@
-require 'ffi_yajl'
 require 'chef_zero/rest_base'
 
 module ChefZero
@@ -13,8 +12,7 @@ module ChefZero
         path = data_path(request)
 
         # Get actor or 404 if it doesn't exist
-        actor_path = request.rest_path[ client?(request) ? 0..3 : 0..1 ]
-        actor_json = get_data(request, actor_path)
+        actor_json = get_data(request, actor_path(request))
 
         key_names = list_data_or_else(request, path, [])
         key_names.unshift(DEFAULT_PUBLIC_KEY_NAME) if actor_has_default_public_key?(actor_json)
@@ -27,11 +25,10 @@ module ChefZero
       end
 
       def post(request)
-        request_body = FFI_Yajl::Parser.parse(request.body, create_additions: false)
+        request_body = parse_json(request.body)
 
         # Try loading the client or user so a 404 is returned if it doesn't exist
-        actor_path = request.rest_path[ client?(request) ? 0..3 : 0..1 ]
-        actor_json = get_data(request, actor_path)
+        actor_json = get_data(request, actor_path(request))
 
         generate_keys = request_body["public_key"].nil?
 
@@ -44,7 +41,7 @@ module ChefZero
         key_name = request_body["name"]
 
         if key_name == DEFAULT_PUBLIC_KEY_NAME
-          store_actor_default_public_key!(request, actor_path, actor_json, public_key)
+          store_actor_default_public_key!(request, actor_json, public_key)
         else
           store_actor_public_key!(request, key_name, public_key, request_body["expiration_date"])
         end
@@ -59,7 +56,7 @@ module ChefZero
       private
 
       def store_actor_public_key!(request, name, public_key, expiration_date)
-        data = FFI_Yajl::Encoder.encode(
+        data = to_json(
           "name" => name,
           "public_key" => public_key,
           "expiration_date" => expiration_date
@@ -68,15 +65,16 @@ module ChefZero
         create_data(request, data_path(request), name, data, :create_dir)
       end
 
-      def store_actor_default_public_key!(request, actor_path, actor_json, public_key)
-        actor_data = FFI_Yajl::Parser.parse(actor_json, create_additions: false)
+      def store_actor_default_public_key!(request, actor_json, public_key)
+        actor_data = parse_json(actor_json)
 
         if actor_data["public_key"]
           raise RestErrorResponse.new(409, "Object already exists: #{key_uri(request, DEFAULT_PUBLIC_KEY_NAME)}")
         end
 
         actor_data["public_key"] = public_key
-        set_data(request, actor_path, FFI_Yajl::Encoder.encode(actor_data, pretty: true))
+        set_data(request, actor_path(request), to_json(actor_data))
+
       end
 
       # Returns the keys data store path, which is the same as
@@ -97,7 +95,7 @@ module ChefZero
           if data_path[-1] == DEFAULT_PUBLIC_KEY_NAME
             [ DEFAULT_PUBLIC_KEY_NAME, "infinity" ]
           else
-            FFI_Yajl::Parser.parse(get_data(request, data_path), create_additions: false)
+            parse_json(get_data(request, data_path))
               .values_at("name", "expiration_date")
           end
 
@@ -117,9 +115,13 @@ module ChefZero
         build_uri(request.base_uri, [ *request.rest_path, key_name ])
       end
 
+      def actor_path(request)
+        return request.rest_path[0..3] if client?(request)
+        request.rest_path[0..1]
+      end
+
       def actor_has_default_public_key?(actor_json)
-        actor_data = FFI_Yajl::Parser.parse(actor_json, create_additions: false)
-        !!actor_data["public_key"]
+        !!parse_json(actor_json)["public_key"]
       end
     end
   end

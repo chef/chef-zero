@@ -140,14 +140,17 @@ begin
   chef_fs_skips << '--skip-cookbook-artifacts'
   chef_fs_skips << '--skip-policies'
 
+  # Multi-keys don't work prior to 12.8
+  unless Gem::Requirement.new(">= 12.8.0").satisfied_by?(Gem::Version.new(Chef::VERSION))
+    chef_fs_skips << '--skip-keys'
+  end
+
   # These things aren't supported by Chef Zero in any mode of operation:
   default_skips = [
     # "the goal is that only authorization, authentication and validation tests
     # are turned off" - @jkeiser
     #
     # ...but we're not there yet
-    '--skip-controls',
-    '--skip-acl',
 
     # Chef Zero does not intend to support validation the way erchef does.
     '--skip-validation',

@@ -87,7 +87,7 @@ module ChefZero
       end
 
       def populate_defaults(request, response_json)
-        response = FFI_Yajl::Parser.parse(response_json, create_additions: false)
+        response = parse_json(response_json)
 
         populated_response =
           if client?(request)
@@ -106,7 +106,7 @@ module ChefZero
             )
           end
 
-        FFI_Yajl::Encoder.encode(populated_response, pretty: true)
+        to_json(populated_response)
       end
 
       private
