@@ -8,6 +8,16 @@ module ChefZero
     # /organizations/ORG/users/NAME
     # /users/NAME
     class ActorEndpoint < RestObjectEndpoint
+
+      def get(request)
+        result = super
+        user_data = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
+
+        user_data.delete("public_key") unless request.api_v0?
+
+        json_response(200, user_data)
+      end
+
       def delete(request)
         result = super
 

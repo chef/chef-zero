@@ -21,6 +21,13 @@ module ChefZero
       def get(request)
         # 404 if actor doesn't exist
         actor_data = get_actor_data(request)
+        key_data = default_public_key_from_actor(actor_data)
+
+        # 404 if the actor doesn't have a default key
+        if key_data["public_key"].nil?
+          raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
+        end
+
         json_response(200, default_public_key_from_actor(actor_data))
       end
 

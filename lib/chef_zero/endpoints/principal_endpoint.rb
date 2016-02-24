@@ -30,13 +30,22 @@ module ChefZero
           end
         end
         if json
-          json_response(200, {
+          principal_data = {
             'name' => name,
             'type' => type,
             'public_key' => FFI_Yajl::Parser.parse(json)['public_key'] || PUBLIC_KEY,
             'authz_id' => '0'*32,
             'org_member' => org_member
-          })
+          }
+
+          response_data =
+            if request.api_v0?
+              principal_data
+            else
+              { "principals" => [ principal_data ] }
+            end
+
+          json_response(200, response_data)
         else
           error(404, 'Principal not found')
         end

@@ -41,9 +41,15 @@ module ChefZero
         # one.
         request_body = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         public_key = request_body['public_key']
-        if !public_key
+
+        skip_key_create = !request.api_v0? && !request_body["create_key"]
+
+        if !public_key && !skip_key_create
           private_key, public_key = server.gen_key_pair
           request_body['public_key'] = public_key
+          request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true)
+        elsif skip_key_create
+          request_body['public_key'] = nil
           request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true)
         end
 
@@ -51,9 +57,29 @@ module ChefZero
 
         if result[0] == 201
           # If we generated a key, stuff it in the response.
-          response = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
-          response['private_key'] = private_key if private_key
-          response['public_key'] = public_key unless request.rest_path[0] == 'users'
+          user_data = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
+
+          key_data = {}
+          key_data['private_key'] = private_key if private_key
+          key_data['public_key'] = public_key unless request.rest_path[0] == 'users'
+
+          response =
+            if request.api_v0?
+              user_data.merge(key_data)
+            elsif skip_key_create && !public_key
+              user_data
+            else
+              actor_name = request_body["name"] || request_body["username"] || request_body["clientname"]
+
+              relpath_to_default_key = [ actor_name, "keys", "default" ]
+              key_data["uri"] = build_uri(request.base_uri, request.rest_path + relpath_to_default_key)
+              key_data["public_key"] = public_key
+              key_data["name"] = "default"
+              key_data["expiration_date"] = "infinity"
+              user_data["chef_key"] = key_data
+              user_data
+            end
+
           json_response(201, response)
         else
           result
