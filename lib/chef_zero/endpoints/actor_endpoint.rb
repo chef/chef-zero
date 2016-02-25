@@ -11,7 +11,7 @@ module ChefZero
 
       def get(request)
         result = super
-        user_data = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
+        user_data = parse_json(result[2])
 
         user_data.delete("public_key") unless request.api_v0?
 
@@ -58,7 +58,7 @@ module ChefZero
         end
 
         # Put modified body back in `request.body`
-        request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true) if body_modified
+        request.body = to_json(request_body) if body_modified
 
         # PUT /clients is patchy
         request.body = patch_request_body(request)
@@ -78,7 +78,7 @@ module ChefZero
               'uri' => build_uri(request.base_uri, [ 'users', client_or_user_name ])
             }
           else
-            response = FFI_Yajl::Parser.parse(result[2], :create_additions => false)
+            response = parse_json(result[2])
           end
 
           if client?(request)
