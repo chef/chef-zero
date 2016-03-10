@@ -80,6 +80,7 @@ module ChefZero
 
     def get_data(request, rest_path=nil, *options)
       rest_path ||= request.rest_path
+      rest_path = rest_path.map { |v| URI.decode(v) }
       begin
         data_store.get(rest_path, request)
       rescue DataStore::DataNotFoundError
@@ -276,7 +277,7 @@ module ChefZero
     end
 
     def self.build_uri(base_uri, rest_path)
-      "#{base_uri}/#{rest_path.join('/')}"
+      "#{base_uri}/#{rest_path.map { |v| URI.escape(v) }.join('/')}"
     end
 
     def populate_defaults(request, response)
