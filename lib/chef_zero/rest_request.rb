@@ -41,6 +41,10 @@ module ChefZero
       @rest_path ||= rest_base_prefix + env['PATH_INFO'].split('/').select { |part| part != "" }
     end
 
+    def rest_path=(rest_path)
+      @rest_path = rest_path
+    end
+
     def body=(body)
       @body = body
     end
