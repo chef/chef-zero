@@ -43,6 +43,9 @@ require 'chef_zero/endpoints/acl_endpoint'
 require 'chef_zero/endpoints/actor_endpoint'
 require 'chef_zero/endpoints/actors_endpoint'
 require 'chef_zero/endpoints/actor_key_endpoint'
+require 'chef_zero/endpoints/organization_user_key_endpoint'
+require 'chef_zero/endpoints/organization_user_default_key_endpoint'
+require 'chef_zero/endpoints/organization_user_keys_endpoint'
 require 'chef_zero/endpoints/actor_default_key_endpoint'
 require 'chef_zero/endpoints/actor_keys_endpoint'
 require 'chef_zero/endpoints/cookbooks_endpoint'
@@ -526,7 +529,7 @@ module ChefZero
         [
           [ "/organizations/*/users", ActorsEndpoint.new(self) ],
           [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
-          [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
+          [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ]
         ]
       else
         # EC-only
@@ -547,7 +550,6 @@ module ChefZero
           [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
           [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
           [ "/license", LicenseEndpoint.new(self) ],
-
           [ "/organizations", OrganizationsEndpoint.new(self) ],
           [ "/organizations/*", OrganizationEndpoint.new(self) ],
           [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
@@ -573,6 +575,9 @@ module ChefZero
         [ "/organizations/*/clients/*/keys", ActorKeysEndpoint.new(self) ],
         [ "/organizations/*/clients/*/keys/default", ActorDefaultKeyEndpoint.new(self) ],
         [ "/organizations/*/clients/*/keys/*", ActorKeyEndpoint.new(self) ],
+        [ "/organizations/*/users/*/keys", OrganizationUserKeysEndpoint.new(self) ],
+        [ "/organizations/*/users/*/keys/default", OrganizationUserDefaultKeyEndpoint.new(self) ],
+        [ "/organizations/*/users/*/keys/*", OrganizationUserKeyEndpoint.new(self) ],
         [ "/organizations/*/controls", ControlsEndpoint.new(self) ],
         [ "/organizations/*/cookbooks", CookbooksEndpoint.new(self) ],
         [ "/organizations/*/cookbooks/*", CookbookEndpoint.new(self) ],

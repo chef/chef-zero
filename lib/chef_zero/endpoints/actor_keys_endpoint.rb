@@ -8,7 +8,7 @@ module ChefZero
       DEFAULT_PUBLIC_KEY_NAME = "default"
       DATE_FORMAT = "%FT%TZ" # e.g. 2015-12-24T21:00:00Z
 
-      def get(request)
+      def get(request, alt_uri_root=nil)
         path = data_path(request)
 
         # Get actor or 404 if it doesn't exist
@@ -18,7 +18,7 @@ module ChefZero
         key_names.unshift(DEFAULT_PUBLIC_KEY_NAME) if actor_has_default_public_key?(actor_json)
 
         result = key_names.map do |key_name|
-          list_key(request, [ *path, key_name ])
+          list_key(request, [ *path, key_name ], alt_uri_root)
         end
 
         json_response(200, result)
@@ -90,7 +90,7 @@ module ChefZero
         end
       end
 
-      def list_key(request, data_path)
+      def list_key(request, data_path, alt_uri_root=nil)
         key_name, expiration_date =
           if data_path[-1] == DEFAULT_PUBLIC_KEY_NAME
             [ DEFAULT_PUBLIC_KEY_NAME, "infinity" ]
@@ -103,7 +103,7 @@ module ChefZero
           DateTime.now > DateTime.strptime(expiration_date, DATE_FORMAT)
 
         { "name" => key_name,
-          "uri" => key_uri(request, key_name),
+          "uri" => key_uri(request, key_name, alt_uri_root),
           "expired" => expired }
       end
 
@@ -111,8 +111,9 @@ module ChefZero
         request.rest_path[2] == "clients"
       end
 
-      def key_uri(request, key_name)
-        build_uri(request.base_uri, [ *request.rest_path, key_name ])
+      def key_uri(request, key_name, alt_uri_root=nil)
+        uri_root = alt_uri_root.nil? ? request.rest_path : alt_uri_root
+        build_uri(request.base_uri, [ *uri_root, key_name ])
       end
 
       def actor_path(request)
