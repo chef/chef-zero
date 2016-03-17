@@ -1,6 +1,0 @@
-source 'https://rubygems.org'
-gemspec :path => '../'
-
-gem 'rest-client', :github => 'chef/rest-client', :branch => 'lcg/1.6.7-version-lying'
-gem 'oc-chef-pedant', :github => 'chef/oc-chef-pedant', :tag => '2.0.0'
-gem 'chef', :github => 'chef/chef'
