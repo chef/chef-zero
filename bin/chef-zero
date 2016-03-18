@@ -31,7 +31,8 @@ OptionParser.new do |opts|
   opts.banner = "Usage: chef-zero [ARGS]"
 
   opts.on("-H", "--host HOST", "Host to bind to (default: 127.0.0.1)") do |value|
-    options[:host] = value
+    options[:host] ||= []
+    options[:host] << value
   end
 
   opts.on("-p", "--port PORT", "Port to listen on (e.g. 8889, or 8500-8600 or 8885,8888)") do |value|

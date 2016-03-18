@@ -111,7 +111,7 @@ module ChefZero
   class Server
 
     DEFAULT_OPTIONS = {
-      :host => '127.0.0.1',
+      :host => ['127.0.0.1'],
       :port => 8889,
       :log_level => :warn,
       :generate_real_keys => true,
@@ -164,10 +164,10 @@ module ChefZero
     #
     def url
       sch = @options[:ssl] ? 'https' : 'http'
-      @url ||= if @options[:host].include?(':')
-                 URI("#{sch}://[#{@options[:host]}]:#{port}").to_s
+      @url ||= if @options[:host].first.include?(':')
+                 URI("#{sch}://[#{@options[:host].first}]:#{port}").to_s
                else
-                 URI("#{sch}://#{@options[:host]}:#{port}").to_s
+                 URI("#{sch}://#{@options[:host].first}:#{port}").to_s
                end
     end
 
@@ -265,6 +265,17 @@ module ChefZero
     # @return [Thread]
     #   the thread the background process is running in
     #
+    def listen(hosts, port)
+      hosts.each do |host|
+        @server.listen(host, port)
+      end
+      true
+    rescue Errno::EADDRINUSE
+      ChefZero::Log.warn("Port #{port} not available")
+      @server.listeners.each { |l| l.close }
+      false
+    end
+
     def start_background(wait = 5)
       @server = WEBrick::HTTPServer.new(
         :DoNotListen => true,
@@ -280,22 +291,15 @@ module ChefZero
       @server.mount('/', Rack::Handler::WEBrick, app)
 
       # Pick a port
-      if options[:port].respond_to?(:each)
-        options[:port].each do |port|
-          begin
-            @server.listen(options[:host], port)
-            @port = port
-            break
-          rescue Errno::EADDRINUSE
-            ChefZero::Log.info("Port #{port} in use: #{$!}")
-          end
+      [options[:port]].flatten.each do |port|
+        if listen(options[:host], port)
+          @port = port
+          break
         end
-        if !@port
-          raise Errno::EADDRINUSE, "No port in :port range #{options[:port]} is available"
-        end
-      else
-        @server.listen(options[:host], options[:port])
-        @port = options[:port]
+      end
+      if !@port
+        raise Errno::EADDRINUSE,
+          "No port in :port range #{options[:port]} is available"
       end
 
       # Start the server in the background
