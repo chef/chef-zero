@@ -39,11 +39,3 @@ matrix:
       script: bundle exec rake spec
       env: TEST=rake_spec
 
-# allow_failures:
-#   - rvm: 2.1
-#     gemfile: gemfiles/latest-chef.gemfile
-#     script: bundle exec rake chef_spec
-#     enc: TEST=chef_spec_latest
-#    - rvm: 2.1.1
-#      gemfile: gemfiles/berkshelf.gemfile
-#      script: bundle exec rake berkshelf_spec
