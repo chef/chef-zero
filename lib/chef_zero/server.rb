@@ -273,6 +273,7 @@ module ChefZero
     rescue Errno::EADDRINUSE
       ChefZero::Log.warn("Port #{port} not available")
       @server.listeners.each { |l| l.close }
+      @server.listeners.clear
       false
     end
 
