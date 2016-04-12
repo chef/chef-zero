@@ -5,6 +5,10 @@ gemspec
 
 gem 'oc-chef-pedant', :github => 'chef/chef-server'
 
+group :changelog do
+  gem "github_changelog_generator"
+end
+
 # bundler resolve failure on "rspec_junit_formatter"
 # gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => "server-cli-option"
 
