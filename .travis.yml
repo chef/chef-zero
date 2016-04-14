@@ -1,4 +1,4 @@
-rvm: 2.0
+rvm: 2.1
 gemfile: Gemfile
 
 # This prevents testing branches that are created just for PRs
@@ -18,8 +18,6 @@ script:
 
 matrix:
   include:
-    - rvm: 2.0
-    - rvm: 2.1
     - rvm: 2.1
       env: PEDANT_KNIFE_TESTS=true PEDANT_ALLOW_RVM=1
     - rvm: 2.1
