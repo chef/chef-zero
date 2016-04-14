@@ -65,7 +65,7 @@ module ChefZero
 
           response =
             if request.api_v0?
-              user_data.merge(key_data)
+              user_data.merge!(key_data)
             elsif skip_key_create && !public_key
               user_data
             else
