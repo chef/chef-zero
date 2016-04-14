@@ -161,22 +161,23 @@ module ChefZero
 
       # Return the data store keys path for the request client or user, e.g.
       #
-      #     [ "organizations", <org>, "client_keys", <client>, "keys" ]
-      #
-      # Or:
-      #
-      #     [ "user_keys", <user>, "keys" ]
+      # /organizations/ORG/clients/CLIENT -> /organizations/ORG/client_keys/CLIENT/keys
+      # /organizations/ORG/users/USER -> /organizations/ORG/user_keys/USER/keys
+      # /users/USER -> /user_keys/USER
       #
       def keys_path_base(request, client_or_user_name=nil)
         rest_path = (rest_path || request.rest_path).dup
-        rest_path[-1] = client_or_user_name if client_or_user_name
-
-        if client?(request, rest_path)
-          [ *rest_path[0..1], "client_keys" ]
+        rest_path = rest_path.dup
+        case rest_path[-2]
+        when "users"
+          rest_path[-2] = "user_keys"
+        when "clients"
+          rest_path[-2] = "client_keys"
         else
-          [ "user_keys" ]
+          raise "Unexpected URL #{rest_path.join("/")}: cannot determine key path"
         end
-        .push(rest_path.last, "keys")
+        rest_path << "keys"
+        rest_path
       end
     end
   end
