@@ -142,6 +142,7 @@ module ChefZero
     def port
       if @port
         @port
+      # If options[:port] is not an Array or an Enumerable, it is just an Integer.
       elsif !options[:port].respond_to?(:each)
         options[:port]
       else
@@ -164,10 +165,11 @@ module ChefZero
     #
     def url
       sch = @options[:ssl] ? 'https' : 'http'
-      @url ||= if @options[:host].first.include?(':')
-                 URI("#{sch}://[#{@options[:host].first}]:#{port}").to_s
+      hosts = Array(@options[:host])
+      @url ||= if hosts.first.include?(':')
+                 URI("#{sch}://[#{hosts.first}]:#{port}").to_s
                else
-                 URI("#{sch}://#{@options[:host].first}:#{port}").to_s
+                 URI("#{sch}://#{hosts.first}:#{port}").to_s
                end
     end
 
@@ -292,8 +294,10 @@ module ChefZero
       @server.mount('/', Rack::Handler::WEBrick, app)
 
       # Pick a port
-      [options[:port]].flatten.each do |port|
-        if listen(options[:host], port)
+      # If options[:port] can be an Enumerator, an Array, or an Integer,
+      # we need something that can respond to .each (Enum and Array can already).
+      Array(options[:port]).each do |port|
+        if listen(Array(options[:host]), port)
           @port = port
           break
         end
