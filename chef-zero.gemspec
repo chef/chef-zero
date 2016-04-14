@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry-stack_explorer'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'github_changelog_generator'
   s.add_development_dependency 'chef'
 
   s.bindir       = 'bin'

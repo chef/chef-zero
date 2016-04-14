@@ -1,11 +1,26 @@
 # Change Log
 
-## [Unreleased](https://github.com/chef/chef-zero/tree/HEAD)
+## [4.6.0](https://github.com/chef/chef-zero/tree/4.6.0) (2016-04-14)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.5.0...4.6.0)
 
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.2...HEAD)
+**Implemented enhancements:**
+
+- Enable listening on more than one address [\#208](https://github.com/chef/chef-zero/pull/208) ([jaymzh](https://github.com/jaymzh))
+- Implemented GET /orgs/ORG/users/USER/keys\(/key\) endpoint recently added to server. [\#205](https://github.com/chef/chef-zero/pull/205) ([tylercloke](https://github.com/tylercloke))
+- Implement APIv1 behaviors [\#201](https://github.com/chef/chef-zero/pull/201) ([danielsdeleo](https://github.com/danielsdeleo))
+- Make user and client keys endpoints pass Pedant specs [\#199](https://github.com/chef/chef-zero/pull/199) ([jrunning](https://github.com/jrunning))
+- fix necessary for metadata gem [\#197](https://github.com/chef/chef-zero/pull/197) ([lamont-granquist](https://github.com/lamont-granquist))
+
+**Fixed bugs:**
+
+- Fix bugs related to Array vs Enumerator vs Port for options\[:port/host\]. [\#212](https://github.com/chef/chef-zero/pull/212) ([tylercloke](https://github.com/tylercloke))
+
+## [v4.5.0](https://github.com/chef/chef-zero/tree/v4.5.0) (2016-01-29)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.2...v4.5.0)
 
 **Merged pull requests:**
 
+- Run chef-zero against master Chef in travis [\#195](https://github.com/chef/chef-zero/pull/195) ([jkeiser](https://github.com/jkeiser))
 - Make ACLs for policies/policy\_groups/cookbook\_artifacts work [\#194](https://github.com/chef/chef-zero/pull/194) ([jkeiser](https://github.com/jkeiser))
 - Return 410 on /controls so we stop skipping that pedant spec. [\#192](https://github.com/chef/chef-zero/pull/192) ([randomcamel](https://github.com/randomcamel))
 - Enable container specs. [\#191](https://github.com/chef/chef-zero/pull/191) ([randomcamel](https://github.com/randomcamel))
