@@ -1,7 +1,15 @@
 # Change Log
 
-## [4.6.0](https://github.com/chef/chef-zero/tree/4.6.0) (2016-04-14)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.5.0...4.6.0)
+## [4.6.1](https://github.com/chef/chef-zero/tree/4.6.1) (2016-04-14)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.0...4.6.1)
+
+**Fixed bugs:**
+
+- Actually merge key data in user PUT response [\#214](https://github.com/chef/chef-zero/pull/214) ([jkeiser](https://github.com/jkeiser))
+- Fix users endpoint in OSC compat mode to use a data store URL [\#213](https://github.com/chef/chef-zero/pull/213) ([jkeiser](https://github.com/jkeiser))
+
+## [v4.6.0](https://github.com/chef/chef-zero/tree/v4.6.0) (2016-04-14)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.5.0...v4.6.0)
 
 **Implemented enhancements:**
 
