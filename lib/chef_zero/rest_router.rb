@@ -60,7 +60,7 @@ module ChefZero
       end
 
       def log_response(response)
-        ChefZero::Log.info {
+        ChefZero::Log.debug {
           [ "",
             "--- RESPONSE (#{response[0]}) ---",
             response[2].chomp,
