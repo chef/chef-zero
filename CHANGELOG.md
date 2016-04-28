@@ -1,5 +1,13 @@
 # Change Log
 
+## [4.6.2](https://github.com/chef/chef-zero/tree/4.6.2) (2016-04-28)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.1...4.6.2)
+
+**Fixed bugs:**
+
+- Log responses only at debug log level [\#216](https://github.com/chef/chef-zero/pull/216) ([stevendanna](https://github.com/stevendanna))
+
+
 ## [4.6.1](https://github.com/chef/chef-zero/tree/4.6.1) (2016-04-14)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.0...4.6.1)
 
