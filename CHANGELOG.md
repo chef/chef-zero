@@ -1,15 +1,25 @@
 # Change Log
 
-## [4.6.2](https://github.com/chef/chef-zero/tree/4.6.2) (2016-04-28)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.1...4.6.2)
+## [4.7.0](https://github.com/chef/chef-zero/tree/4.7.0) (2016-06-30)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.2...4.7.0)
+
+**Implemented enhancements:**
+
+- Add external\_authentication\_uid to actors endpoint for querying [\#217](https://github.com/chef/chef-zero/pull/217) ([kmacgugan](https://github.com/kmacgugan))
+
+**Merged pull requests:**
+
+- Depend on rack \< 2 to restore Ruby 2.1 compat [\#219](https://github.com/chef/chef-zero/pull/219) ([tas50](https://github.com/tas50))
+
+## [v4.6.2](https://github.com/chef/chef-zero/tree/v4.6.2) (2016-04-28)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.1...v4.6.2)
 
 **Fixed bugs:**
 
 - Log responses only at debug log level [\#216](https://github.com/chef/chef-zero/pull/216) ([stevendanna](https://github.com/stevendanna))
 
-
-## [4.6.1](https://github.com/chef/chef-zero/tree/4.6.1) (2016-04-14)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.0...4.6.1)
+## [v4.6.1](https://github.com/chef/chef-zero/tree/v4.6.1) (2016-04-14)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.0...v4.6.1)
 
 **Fixed bugs:**
 
