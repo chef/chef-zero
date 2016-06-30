@@ -8,17 +8,17 @@ Gem::Specification.new do |s|
   s.summary = 'Self-contained, easy-setup, fast-start in-memory Chef server for testing and solo setup purposes'
   s.description = s.summary
   s.author = 'John Keiser'
-  s.email = 'jkeiser@opscode.com'
-  s.homepage = 'http://www.opscode.com'
+  s.email = 'jkeiser@chef.io'
+  s.homepage = 'http://www.chef.io'
   s.license = 'Apache 2.0'
 
   s.required_ruby_version = ">= 2.1.0"
 
-  s.add_dependency 'mixlib-log',    '~> 1.3'
-  s.add_dependency 'hashie',        '>= 2.0', '< 4.0'
+  s.add_dependency 'mixlib-log', '~> 1.3'
+  s.add_dependency 'hashie', '>= 2.0', '< 4.0'
   s.add_dependency 'uuidtools', '~> 2.1'
   s.add_dependency 'ffi-yajl', '~> 2.2'
-  s.add_dependency 'rack'
+  s.add_dependency 'rack', '< 2' # 2.0 requires Ruby 2.2+
 
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-byebug'
