@@ -39,7 +39,7 @@ module ChefZero
       end
 
       def log_request(request)
-        ChefZero::Log.info do
+        ChefZero::Log.debug do
           "#{request.method} /#{request.rest_path.join("/")}".tap do |msg|
             next unless request.method =~ /^(POST|PUT)$/
 
