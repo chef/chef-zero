@@ -1,7 +1,14 @@
 # Change Log
 
-## [4.7.0](https://github.com/chef/chef-zero/tree/4.7.0) (2016-06-30)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.2...4.7.0)
+## [4.7.1](https://github.com/chef/chef-zero/tree/4.7.1) (2016-07-07)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.0...4.7.1)
+
+**Implemented enhancements:**
+
+- Downgrade info log message to debug [\#221](https://github.com/chef/chef-zero/pull/221) ([stanhu](https://github.com/stanhu))
+
+## [v4.7.0](https://github.com/chef/chef-zero/tree/v4.7.0) (2016-06-30)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.2...v4.7.0)
 
 **Implemented enhancements:**
 
