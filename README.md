@@ -132,9 +132,15 @@ Run `chef-zero --help` to see a list of the supported flags and options:
 ```text
 Usage: chef-zero [ARGS]
     -H, --host HOST                  Host to bind to (default: 127.0.0.1)
-    -p, --port PORT                  Port to listen on
+    -p, --port PORT                  Port to listen on (e.g. 8889, or 8500-8600 or 8885,8888)
         --[no-]generate-keys         Whether to generate actual keys or fake it (faster).  Default: false.
+    -d, --daemon                     Run as a daemon process
     -l, --log-level LEVEL            Set the output log level
+        --log-file FILE              Log to a file
+        --enterprise                 Whether to run in enterprise mode
+        --multi-org                  Whether to run in multi-org mode
+        --file-store PATH            Persist data to files at the given path
+        --[no-]ssl                   Use SSL with self-signed certificate(Auto generate before every run).  Default: false.
     -h, --help                       Show this message
         --version                    Show version
 ```
