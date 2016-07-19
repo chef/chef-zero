@@ -27,6 +27,10 @@ describe ChefZero::Server do
       expect { ChefZero::Server.new(:port => 8889.upto(8889)).start_background }.to raise_error Errno::EADDRINUSE
     end
 
+    it 'has a very patient request timeout' do
+      expect(@server.server.config[:RequestTimeout]).to eq 300
+    end
+
     context 'accept headers' do
       def get_nodes(accepts)
         uri = URI(@server.url)

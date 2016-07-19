@@ -284,6 +284,7 @@ module ChefZero
         :DoNotListen => true,
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new(StringIO.new, 7),
+        :RequestTimeout => 300,
         :SSLEnable  => options[:ssl],
         :SSLOptions  => ssl_opts,
         :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
