@@ -16,8 +16,7 @@ module ChefZero
 
         def matches_doc?(doc)
           case @operator
-          when '-'
-          when 'NOT'
+          when '-', 'NOT'
             !operand.matches_doc?(doc)
           when '+'
             # TODO This operator uses relevance to eliminate other, unrelated
@@ -28,8 +27,7 @@ module ChefZero
 
         def matches_values?(values)
           case @operator
-          when '-'
-          when 'NOT'
+          when '-', 'NOT'
             !operand.matches_values?(values)
           when '+'
             # TODO This operator uses relevance to eliminate other, unrelated

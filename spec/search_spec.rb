@@ -24,6 +24,10 @@ describe ChefZero::Solr::SolrParser do
     search_for('foo:[a TO c]').size.should eq(1)
   end
 
+  it "handles -" do
+    search_for('-foo:a').size.should eq(1)
+  end
+
   it "handles wildcard ranges" do
     search_for('foo:[* TO c]').size.should eq(1)
     search_for('foo:[c TO *]').size.should eq(1)
