@@ -14,6 +14,8 @@ module ChefZero
         results = search(request, orgname)
         results['rows'] = results['rows'].map { |name,uri,value,search_value| value }
         json_response(200, results)
+      rescue ChefZero::Solr::ParseError
+        bad_search_request(request)
       end
 
       def post(request)
@@ -43,9 +45,17 @@ module ChefZero
           'start' => full_results['start'],
           'total' => full_results['total']
         })
+      rescue ChefZero::Solr::ParseError
+        bad_search_request(request)
       end
 
       private
+
+      def bad_search_request(request)
+        query_string = request.query_params['q']
+        resp = {"error" => ["invalid search query: '#{query_string}'"]}
+        json_response(400, resp)
+      end
 
       def search_container(request, index, orgname)
         relative_parts, normalize_proc = case index
