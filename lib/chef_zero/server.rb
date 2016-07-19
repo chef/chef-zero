@@ -285,6 +285,7 @@ module ChefZero
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new(StringIO.new, 7),
         :SSLEnable  => options[:ssl],
+        :SSLOptions  => ssl_opts,
         :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
         :StartCallback => proc {
           @running = true
@@ -707,6 +708,17 @@ module ChefZero
         value = value[part]
       end
       value
+    end
+
+    ## Disable unsecure ssl
+    ## Ref: https://www.ruby-lang.org/en/news/2014/10/27/changing-default-settings-of-ext-openssl/
+    def ssl_opts
+      ssl_opts = OpenSSL::SSL::OP_ALL
+      ssl_opts &= ~OpenSSL::SSL::OP_DONT_INSERT_EMPTY_FRAGMENTS if defined?(OpenSSL::SSL::OP_DONT_INSERT_EMPTY_FRAGMENTS)
+      ssl_opts |= OpenSSL::SSL::OP_NO_COMPRESSION if defined?(OpenSSL::SSL::OP_NO_COMPRESSION)
+      ssl_opts |= OpenSSL::SSL::OP_NO_SSLv2 if defined?(OpenSSL::SSL::OP_NO_SSLv2)
+      ssl_opts |= OpenSSL::SSL::OP_NO_SSLv3 if defined?(OpenSSL::SSL::OP_NO_SSLv3)
+      ssl_opts
     end
   end
 end
