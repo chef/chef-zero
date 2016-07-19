@@ -21,8 +21,8 @@ module ChefZero
         end
 
         DEFAULT_FIELD = "text"
-        WORD_CHARACTER = "[A-Za-z0-9@._':]"
-        NON_WORD_CHARACTER = "[^A-Za-z0-9@._':]"
+        WORD_CHARACTER = "[A-Za-z0-9@._':\-]"
+        NON_WORD_CHARACTER = "[^A-Za-z0-9@._':\-]"
       end
     end
   end
