@@ -163,7 +163,7 @@ module ChefZero
         node['chef_type'] ||= 'node'
         node['chef_environment'] ||= '_default'
         node['override'] ||= {}
-        node['normal'] ||= {}
+        node['normal'] ||= {"tags" => []}
         node['default'] ||= {}
         node['automatic'] ||= {}
         node['run_list'] ||= []
