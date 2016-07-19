@@ -14,7 +14,13 @@ module ChefZero
     attr_accessor :rest_base_prefix
 
     def base_uri
-      @base_uri ||= "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}#{env['SCRIPT_NAME']}"
+      # Load balancer awareness
+      if env['HTTP_X_FORWARDED_PROTO']
+        scheme = env['HTTP_X_FORWARDED_PROTO']
+      else
+        scheme = env['rack.url_scheme']
+      end
+      @base_uri ||= "#{scheme}://#{env['HTTP_HOST']}#{env['SCRIPT_NAME']}"
     end
 
     def base_uri=(value)
