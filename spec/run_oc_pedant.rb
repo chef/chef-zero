@@ -191,6 +191,15 @@ begin
   Pedant.setup(pedant_args + pedant_args_from_env)
 
   rspec_args = Pedant.config.rspec_args + rspec_args_from_env
+
+  if defined? Chef::ChefFS::FileSystemCache
+    RSpec.configure do |c|
+      c.before(:each) do
+        Chef::ChefFS::FileSystemCache.instance.reset!
+      end
+    end
+  end
+
   result = RSpec::Core::Runner.run(rspec_args)
 
   server.stop if server.running?
