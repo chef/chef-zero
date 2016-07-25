@@ -1,7 +1,30 @@
 # Change Log
 
-## [4.7.1](https://github.com/chef/chef-zero/tree/4.7.1) (2016-07-07)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.0...4.7.1)
+## [4.8.0](https://github.com/chef/chef-zero/tree/4.8.0) (2016-07-25)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.1...4.8.0)
+
+**Implemented enhancements:**
+
+- Load libraries recursively [\#227](https://github.com/chef/chef-zero/pull/227) ([thommay](https://github.com/thommay))
+- Reset the ChefFS cache after each test [\#226](https://github.com/chef/chef-zero/pull/226) ([thommay](https://github.com/thommay))
+- Format readme, remove waffle badges, add license [\#225](https://github.com/chef/chef-zero/pull/225) ([tas50](https://github.com/tas50))
+- Return HTTP 400 Bad Request on Solr parse error [\#224](https://github.com/chef/chef-zero/pull/224) ([lamont-granquist](https://github.com/lamont-granquist))
+- Set log level to debug in the rescue block. [\#222](https://github.com/chef/chef-zero/pull/222) ([maxlazio](https://github.com/maxlazio))
+- support URI specific character in file name [\#204](https://github.com/chef/chef-zero/pull/204) ([byplayer](https://github.com/byplayer))
+- add patch to support chef\_version [\#171](https://github.com/chef/chef-zero/pull/171) ([lamont-granquist](https://github.com/lamont-granquist))
+- Update error message for daemon on Windows [\#148](https://github.com/chef/chef-zero/pull/148) ([aerii](https://github.com/aerii))
+- Increase WEBrick request timeout to 300 seconds [\#138](https://github.com/chef/chef-zero/pull/138) ([kongslund](https://github.com/kongslund))
+- Make ChefZero aware of load balancers [\#109](https://github.com/chef/chef-zero/pull/109) ([joshk0](https://github.com/joshk0))
+- disable sslv3 and few unsecure options [\#106](https://github.com/chef/chef-zero/pull/106) ([sawanoboly](https://github.com/sawanoboly))
+
+**Fixed bugs:**
+
+- Fix attempted fall-through in case statement. [\#175](https://github.com/chef/chef-zero/pull/175) ([andrewdotn](https://github.com/andrewdotn))
+- Fix scary search behavior on terms containing dash character [\#158](https://github.com/chef/chef-zero/pull/158) ([amazon](https://github.com/amazon))
+- add normal tags with empty array [\#139](https://github.com/chef/chef-zero/pull/139) ([cl-lab-k](https://github.com/cl-lab-k))
+
+## [v4.7.1](https://github.com/chef/chef-zero/tree/v4.7.1) (2016-07-07)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.0...v4.7.1)
 
 **Implemented enhancements:**
 
