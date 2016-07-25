@@ -148,7 +148,7 @@ module ChefZero
           :attributes => load_child_files(directory, 'attributes', false),
           :definitions => load_child_files(directory, 'definitions', false),
           :recipes => load_child_files(directory, 'recipes', false),
-          :libraries => load_child_files(directory, 'libraries', false),
+          :libraries => load_child_files(directory, 'libraries', true),
           :templates => load_child_files(directory, 'templates', true),
           :files => load_child_files(directory, 'files', true),
           :resources => load_child_files(directory, 'resources', true),
