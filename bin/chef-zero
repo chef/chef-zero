@@ -99,8 +99,8 @@ if options[:daemon]
     Process.daemon(true)
     server.start(true)
   else
-    if ENV['OS'] == 'Windows_NT' 
-      abort 'Daemonization is not supported on Windows. Running 'start chef-zero' will fork the process.'
+    if ENV['OS'] == 'Windows_NT'
+      abort 'Daemonization is not supported on Windows. Running "start chef-zero" will fork the process.'
     else
       abort 'Process.daemon requires Ruby >= 1.9'
     end
