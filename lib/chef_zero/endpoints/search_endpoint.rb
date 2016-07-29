@@ -1,9 +1,9 @@
-require 'ffi_yajl'
-require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/chef_data/data_normalizer'
-require 'chef_zero/rest_error_response'
-require 'chef_zero/solr/solr_parser'
-require 'chef_zero/solr/solr_doc'
+require "ffi_yajl"
+require "chef_zero/endpoints/rest_object_endpoint"
+require "chef_zero/chef_data/data_normalizer"
+require "chef_zero/rest_error_response"
+require "chef_zero/solr/solr_parser"
+require "chef_zero/solr/solr_doc"
 
 module ChefZero
   module Endpoints
@@ -12,7 +12,7 @@ module ChefZero
       def get(request)
         orgname = request.rest_path[1]
         results = search(request, orgname)
-        results['rows'] = results['rows'].map { |name,uri,value,search_value| value }
+        results["rows"] = results["rows"].map { |name, uri, value, search_value| value }
         json_response(200, results)
       rescue ChefZero::Solr::ParseError
         bad_search_request(request)
@@ -22,7 +22,7 @@ module ChefZero
         orgname = request.rest_path[1]
         full_results = search(request, orgname)
         keys = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
-        partial_results = full_results['rows'].map do |name, uri, doc, search_value|
+        partial_results = full_results["rows"].map do |name, uri, doc, search_value|
           data = {}
           keys.each_pair do |key, path|
             if path.size > 0
@@ -36,14 +36,14 @@ module ChefZero
             end
           end
           {
-            'url' => uri,
-            'data' => data
+            "url" => uri,
+            "data" => data,
           }
         end
         json_response(200, {
-          'rows' => partial_results,
-          'start' => full_results['start'],
-          'total' => full_results['total']
+          "rows" => partial_results,
+          "start" => full_results["start"],
+          "total" => full_results["total"],
         })
       rescue ChefZero::Solr::ParseError
         bad_search_request(request)
@@ -52,53 +52,55 @@ module ChefZero
       private
 
       def bad_search_request(request)
-        query_string = request.query_params['q']
-        resp = {"error" => ["invalid search query: '#{query_string}'"]}
+        query_string = request.query_params["q"]
+        resp = { "error" => ["invalid search query: '#{query_string}'"] }
         json_response(400, resp)
       end
 
       def search_container(request, index, orgname)
-        relative_parts, normalize_proc = case index
-        when 'client'
-          [ ['clients'], Proc.new { |client, name| ChefData::DataNormalizer.normalize_client(client, name, orgname) } ]
-        when 'node'
-          [ ['nodes'], Proc.new { |node, name| ChefData::DataNormalizer.normalize_node(node, name) } ]
-        when 'environment'
-          [ ['environments'], Proc.new { |environment, name| ChefData::DataNormalizer.normalize_environment(environment, name) } ]
-        when 'role'
-          [ ['roles'], Proc.new { |role, name| ChefData::DataNormalizer.normalize_role(role, name) } ]
-        else
-          [ ['data', index], Proc.new { |data_bag_item, id| ChefData::DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, 'DELETE') } ]
-        end
+        relative_parts, normalize_proc =
+          case index
+          when "client"
+            [ ["clients"], Proc.new { |client, name| ChefData::DataNormalizer.normalize_client(client, name, orgname) } ]
+          when "node"
+            [ ["nodes"], Proc.new { |node, name| ChefData::DataNormalizer.normalize_node(node, name) } ]
+          when "environment"
+            [ ["environments"], Proc.new { |environment, name| ChefData::DataNormalizer.normalize_environment(environment, name) } ]
+          when "role"
+            [ ["roles"], Proc.new { |role, name| ChefData::DataNormalizer.normalize_role(role, name) } ]
+          else
+            [ ["data", index], Proc.new { |data_bag_item, id| ChefData::DataNormalizer.normalize_data_bag_item(data_bag_item, index, id, "DELETE") } ]
+          end
+
         [
           request.rest_path[0..1] + relative_parts,
-          normalize_proc
+          normalize_proc,
         ]
       end
 
       def expand_for_indexing(value, index, id)
-        if index == 'node'
+        if index == "node"
           result = {}
-          deep_merge!(value['default'] || {}, result)
-          deep_merge!(value['normal'] || {}, result)
-          deep_merge!(value['override'] || {}, result)
-          deep_merge!(value['automatic'] || {}, result)
-          result['recipe'] = []
-          result['role'] = []
-          if value['run_list']
-            value['run_list'].each do |run_list_entry|
+          deep_merge!(value["default"] || {}, result)
+          deep_merge!(value["normal"] || {}, result)
+          deep_merge!(value["override"] || {}, result)
+          deep_merge!(value["automatic"] || {}, result)
+          result["recipe"] = []
+          result["role"] = []
+          if value["run_list"]
+            value["run_list"].each do |run_list_entry|
               if run_list_entry =~ /^(recipe|role)\[(.*)\]/
                 result[$1] << $2
               end
             end
           end
           value.each_pair do |key, value|
-            result[key] = value unless %w(default normal override automatic).include?(key)
+            result[key] = value unless %w{default normal override automatic}.include?(key)
           end
           result
 
-        elsif !%w(client environment role).include?(index)
-          ChefData::DataNormalizer.normalize_data_bag_item(value, index, id, 'GET')
+        elsif !%w{client environment role}.include?(index)
+          ChefData::DataNormalizer.normalize_data_bag_item(value, index, id, "GET")
         else
           value
         end
@@ -107,12 +109,12 @@ module ChefZero
       def search(request, orgname = nil)
         # Extract parameters
         index = request.rest_path[3]
-        query_string = request.query_params['q'] || '*:*'
+        query_string = request.query_params["q"] || "*:*"
         solr_query = ChefZero::Solr::SolrParser.new(query_string).parse
-        sort_string = request.query_params['sort']
-        start = request.query_params['start']
+        sort_string = request.query_params["sort"]
+        start = request.query_params["start"]
         start = start.to_i if start
-        rows = request.query_params['rows']
+        rows = request.query_params["rows"]
         rows = rows.to_i if rows
 
         # Get the search container
@@ -133,18 +135,18 @@ module ChefZero
         # Sort
         if sort_string
           sort_key, sort_order = sort_string.split(/\s+/, 2)
-          result = result.sort_by { |name,uri,value,search_value| ChefZero::Solr::SolrDoc.new(search_value, name)[sort_key] }
+          result = result.sort_by { |name, uri, value, search_value| ChefZero::Solr::SolrDoc.new(search_value, name)[sort_key] }
           result = result.reverse if sort_order == "DESC"
         end
 
         # Paginate
         if start
-          result = result[start..start+(rows||-1)]
+          result = result[start..start + (rows || -1)]
         end
         {
-          'rows' => result,
-          'start' => start || 0,
-          'total' => total
+          "rows" => result,
+          "start" => start || 0,
+          "total" => total,
         }
       end
 

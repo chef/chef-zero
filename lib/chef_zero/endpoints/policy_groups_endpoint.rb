@@ -1,6 +1,6 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
-require 'chef_zero/chef_data/data_normalizer'
+require "ffi_yajl"
+require "chef_zero/rest_base"
+require "chef_zero/chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints
@@ -26,7 +26,7 @@ module ChefZero
           end
 
           response_data[group_name] = {
-            uri: build_uri(request.base_uri, group_path)
+            uri: build_uri(request.base_uri, group_path),
           }
           response_data[group_name][:policies] = policies unless policies.empty?
         end

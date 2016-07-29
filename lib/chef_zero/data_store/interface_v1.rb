@@ -24,7 +24,7 @@ module ChefZero
       end
 
       # Get a file.
-      def get(path, request=nil)
+      def get(path, request = nil)
         raise "get not implemented by class #{self.class}"
       end
 

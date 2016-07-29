@@ -1,12 +1,12 @@
-require 'ffi_yajl'
-require 'chef_zero/endpoints/rest_list_endpoint'
+require "ffi_yajl"
+require "chef_zero/endpoints/rest_list_endpoint"
 
 module ChefZero
   module Endpoints
     # /organizations/ORG/containers
     class ContainersEndpoint < RestListEndpoint
       def initialize(server)
-        super(server, %w(id containername))
+        super(server, %w{id containername})
       end
 
       # create a container.

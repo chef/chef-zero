@@ -1,11 +1,11 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
+require "ffi_yajl"
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints
     # Typical REST list endpoint (/roles or /data/BAG)
     class RestListEndpoint < RestBase
-      def initialize(server, identity_keys = [ 'name' ])
+      def initialize(server, identity_keys = [ "name" ])
         super(server)
         identity_keys = [ identity_keys ] if identity_keys.is_a?(String)
         @identity_keys = identity_keys
@@ -29,7 +29,7 @@ module ChefZero
           error(400, "Must specify #{identity_keys.map { |k| k.inspect }.join(' or ')} in JSON")
         else
           create_data(request, request.rest_path, key, contents)
-          json_response(201, {'uri' => "#{build_uri(request.base_uri, request.rest_path + [key])}"})
+          json_response(201, { "uri" => "#{build_uri(request.base_uri, request.rest_path + [key])}" })
         end
       end
 

@@ -1,10 +1,10 @@
-require 'digest/md5'
-require 'hashie/mash'
+require "digest/md5"
+require "hashie/mash"
 
 module ChefZero
   module ChefData
     module CookbookData
-      def self.to_hash(cookbook, name, version=nil)
+      def self.to_hash(cookbook, name, version = nil)
         frozen = false
         if cookbook.has_key?(:frozen)
           frozen = cookbook[:frozen]
@@ -15,14 +15,14 @@ module ChefZero
         result = files_from(cookbook)
         recipe_names = result[:recipes].map do |recipe|
           recipe_name = recipe[:name][0..-2]
-          recipe_name == 'default' ? name : "#{name}::#{recipe_name}"
+          recipe_name == "default" ? name : "#{name}::#{recipe_name}"
         end
         result[:metadata] = metadata_from(cookbook, name, version, recipe_names)
         result[:name] = "#{name}-#{result[:metadata][:version]}"
-        result[:json_class] = 'Chef::CookbookVersion'
+        result[:json_class] = "Chef::CookbookVersion"
         result[:cookbook_name] = name
         result[:version] = result[:metadata][:version]
-        result[:chef_type] = 'cookbook_version'
+        result[:chef_type] = "cookbook_version"
         result[:frozen?] = true if frozen
         result
       end
@@ -32,18 +32,18 @@ module ChefZero
         # If both .rb and .json exist, read .rb
         # TODO if recipes has 3 recipes in it, and the Ruby/JSON has only one, should
         # the resulting recipe list have 1, or 3-4 recipes in it?
-        if has_child(directory, 'metadata.rb')
+        if has_child(directory, "metadata.rb")
           begin
-            file = filename(directory, 'metadata.rb') || "(#{name}/metadata.rb)"
-            metadata.instance_eval(read_file(directory, 'metadata.rb'), file)
+            file = filename(directory, "metadata.rb") || "(#{name}/metadata.rb)"
+            metadata.instance_eval(read_file(directory, "metadata.rb"), file)
           rescue
             ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n  #{$!.backtrace.join("\n  ")}")
           end
-        elsif has_child(directory, 'metadata.json')
-          metadata.from_json(read_file(directory, 'metadata.json'))
+        elsif has_child(directory, "metadata.json")
+          metadata.from_json(read_file(directory, "metadata.json"))
         end
         result = {}
-        metadata.to_hash.each_pair do |key,value|
+        metadata.to_hash.each_pair do |key, value|
           result[key.to_sym] = value
         end
         result[:version] = version if version
@@ -69,7 +69,7 @@ module ChefZero
         def initialize(cookbook)
           self.name(cookbook.name)
           self.recipes(cookbook.fully_qualified_recipe_names)
-          %w(attributes grouping dependencies supports recommendations suggestions conflicting providing replacing recipes).each do |hash_arg|
+          %w{attributes grouping dependencies supports recommendations suggestions conflicting providing replacing recipes}.each do |hash_arg|
             self[hash_arg.to_sym] = Hashie::Mash.new
           end
         end
@@ -145,15 +145,15 @@ module ChefZero
       def self.files_from(directory)
         # TODO some support .rb only
         result = {
-          :attributes => load_child_files(directory, 'attributes', false),
-          :definitions => load_child_files(directory, 'definitions', false),
-          :recipes => load_child_files(directory, 'recipes', false),
-          :libraries => load_child_files(directory, 'libraries', true),
-          :templates => load_child_files(directory, 'templates', true),
-          :files => load_child_files(directory, 'files', true),
-          :resources => load_child_files(directory, 'resources', true),
-          :providers => load_child_files(directory, 'providers', true),
-          :root_files => load_files(directory, false)
+          :attributes => load_child_files(directory, "attributes", false),
+          :definitions => load_child_files(directory, "definitions", false),
+          :recipes => load_child_files(directory, "recipes", false),
+          :libraries => load_child_files(directory, "libraries", true),
+          :templates => load_child_files(directory, "templates", true),
+          :files => load_child_files(directory, "files", true),
+          :resources => load_child_files(directory, "resources", true),
+          :providers => load_child_files(directory, "providers", true),
+          :root_files => load_files(directory, false),
         }
         set_specificity(result[:templates])
         set_specificity(result[:files])
@@ -231,13 +231,13 @@ module ChefZero
           :name => name,
           :path => name,
           :checksum => Digest::MD5.hexdigest(value),
-          :specificity => 'default'
+          :specificity => "default",
         }]
       end
 
       def self.set_specificity(files)
         files.each do |file|
-          parts = file[:path].split('/')
+          parts = file[:path].split("/")
           raise "Only directories are allowed directly under templates or files: #{file[:path]}" if parts.size == 2
           file[:specificity] = parts[1]
         end

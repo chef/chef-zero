@@ -1,4 +1,4 @@
-require 'chef_zero/chef_data/data_normalizer'
+require "chef_zero/chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints
@@ -15,7 +15,7 @@ module ChefZero
 
           response_data[policy_name] = {
             uri: policy_uri,
-            revisions: hashify_list(revisions)
+            revisions: hashify_list(revisions),
           }
         end
 

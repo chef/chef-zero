@@ -36,4 +36,6 @@ matrix:
     - rvm: 2.1
       script: bundle exec rake spec
       env: TEST=rake_spec
-
+    - rvm: 2.1
+      script: bundle exec rake style
+      env: TEST=chefstyle

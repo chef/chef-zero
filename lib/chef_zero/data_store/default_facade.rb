@@ -1,5 +1,5 @@
-require 'chef_zero/data_store/interface_v2'
-require 'chef_zero/chef_data/default_creator'
+require "chef_zero/data_store/interface_v2"
+require "chef_zero/chef_data/default_creator"
 
 module ChefZero
   module DataStore
@@ -65,7 +65,7 @@ module ChefZero
         default_creator.created(path + [ name ], options_hash[:requestor], options.include?(:create_dir))
       end
 
-      def get(path, request=nil)
+      def get(path, request = nil)
         begin
           real_store.get(path, request)
         rescue DataNotFoundError
@@ -83,8 +83,8 @@ module ChefZero
           real_store.set(path, data, *options)
         rescue DataNotFoundError
           if options.include?(:create_dir) ||
-             options.include?(:create) && default_creator.exists?(path[0..-2]) ||
-             default_creator.exists?(path)
+              options.include?(:create) && default_creator.exists?(path[0..-2]) ||
+              default_creator.exists?(path)
             real_store.set(path, data, :create, :create_dir, *options)
           else
             raise

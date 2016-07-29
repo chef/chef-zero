@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require 'thread'
-require 'singleton'
+require "thread"
+require "singleton"
 
 module ChefZero
 
@@ -89,4 +89,3 @@ module ChefZero
 
   end
 end
-

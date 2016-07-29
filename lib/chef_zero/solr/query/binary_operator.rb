@@ -18,13 +18,13 @@ module ChefZero
 
         def matches_doc?(doc)
           case @operator
-          when 'AND'
+          when "AND"
             left.matches_doc?(doc) && right.matches_doc?(doc)
-          when 'OR'
+          when "OR"
             left.matches_doc?(doc) || right.matches_doc?(doc)
-          when '^'
+          when "^"
             left.matches_doc?(doc)
-          when ':'
+          when ":"
             if left.respond_to?(:literal_string) && left.literal_string
               values = doc[left.literal_string]
             else
@@ -36,13 +36,13 @@ module ChefZero
 
         def matches_values?(values)
           case @operator
-          when 'AND'
+          when "AND"
             left.matches_values?(values) && right.matches_values?(values)
-          when 'OR'
+          when "OR"
             left.matches_values?(values) || right.matches_values?(values)
-          when '^'
+          when "^"
             left.matches_values?(values)
-          when ':'
+          when ":"
             raise ": does not work inside a : or term"
           end
         end

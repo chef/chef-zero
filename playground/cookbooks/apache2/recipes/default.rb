@@ -1,5 +1,5 @@
-package 'apache2'
+package "apache2"
 
-template '/etc/apache2/sites-enabled' do
-  source 'site.conf.erb'
+template "/etc/apache2/sites-enabled" do
+  source "site.conf.erb"
 end

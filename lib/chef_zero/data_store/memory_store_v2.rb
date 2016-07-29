@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require 'chef_zero/data_store/data_already_exists_error'
-require 'chef_zero/data_store/data_not_found_error'
-require 'chef_zero/data_store/interface_v2'
+require "chef_zero/data_store/data_already_exists_error"
+require "chef_zero/data_store/data_not_found_error"
+require "chef_zero/data_store/interface_v2"
 
 module ChefZero
   module DataStore
@@ -58,7 +58,7 @@ module ChefZero
         parent[name] = data
       end
 
-      def get(path, request=nil)
+      def get(path, request = nil)
         value = _get(path)
         if value.is_a?(Hash)
           raise "get() called on directory #{path.join('/')}"
@@ -81,7 +81,7 @@ module ChefZero
       end
 
       def delete(path)
-        parent = _get(path[0,path.length-1])
+        parent = _get(path[0, path.length - 1])
         if !parent.has_key?(path[-1])
           raise DataNotFoundError.new(path)
         end
@@ -92,7 +92,7 @@ module ChefZero
       end
 
       def delete_dir(path, *options)
-        parent = _get(path[0,path.length-1])
+        parent = _get(path[0, path.length - 1])
         if !parent.has_key?(path[-1])
           raise DataNotFoundError.new(path)
         end
@@ -136,14 +136,14 @@ module ChefZero
 
       private
 
-      def _get(path, create_dir=false)
+      def _get(path, create_dir = false)
         value = @data
         path.each_with_index do |path_part, index|
           if !value.has_key?(path_part)
             if create_dir
               value[path_part] = {}
             else
-              raise DataNotFoundError.new(path[0,index+1])
+              raise DataNotFoundError.new(path[0, index + 1])
             end
           end
           value = value[path_part]

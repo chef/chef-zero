@@ -1,8 +1,8 @@
-require 'ffi_yajl'
-require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/rest_error_response'
-require 'chef_zero/chef_data/data_normalizer'
-require 'chef_zero/data_store/data_not_found_error'
+require "ffi_yajl"
+require "chef_zero/endpoints/rest_object_endpoint"
+require "chef_zero/rest_error_response"
+require "chef_zero/chef_data/data_normalizer"
+require "chef_zero/data_store/data_not_found_error"
 
 module ChefZero
   module Endpoints
@@ -23,14 +23,14 @@ module ChefZero
         # Honor frozen
         if existing_cookbook
           existing_cookbook_json = FFI_Yajl::Parser.parse(existing_cookbook, :create_additions => false)
-          if existing_cookbook_json['frozen?']
-            if request.query_params['force'] != "true"
+          if existing_cookbook_json["frozen?"]
+            if request.query_params["force"] != "true"
               raise RestErrorResponse.new(409, "The cookbook #{name} at version #{version} is frozen. Use the 'force' option to override.")
             end
             # For some reason, you are forever unable to modify "frozen?" on a frozen cookbook.
             request_body = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
-            if !request_body['frozen?']
-              request_body['frozen?'] = true
+            if !request_body["frozen?"]
+              request_body["frozen?"] = true
               request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true)
             end
           end
@@ -74,8 +74,8 @@ module ChefZero
         FFI_Yajl::Parser.parse(cookbook, :create_additions => false).each_pair do |key, value|
           if value.is_a?(Array)
             value.each do |file|
-              if file.is_a?(Hash) && file.has_key?('checksum')
-                result << file['checksum']
+              if file.is_a?(Hash) && file.has_key?("checksum")
+                result << file["checksum"]
               end
             end
           end
@@ -86,7 +86,7 @@ module ChefZero
       private
 
       def hoover_unused_checksums(deleted_checksums, request)
-        %w(cookbooks cookbook_artifacts).each do |cookbook_type|
+        %w{cookbooks cookbook_artifacts}.each do |cookbook_type|
           begin
             cookbooks = data_store.list(request.rest_path[0..1] + [cookbook_type])
           rescue ChefZero::DataStore::DataNotFoundError
@@ -106,7 +106,7 @@ module ChefZero
           # This deals with an exception on delete, but things can still get deleted
           # that shouldn't be.
           begin
-            delete_data(request, request.rest_path[0..1] + ['file_store', 'checksums', checksum], :data_store_exceptions)
+            delete_data(request, request.rest_path[0..1] + ["file_store", "checksums", checksum], :data_store_exceptions)
           rescue ChefZero::DataStore::DataNotFoundError
           end
         end

@@ -1,7 +1,7 @@
-require 'chef_zero/rest_request'
-require 'chef_zero/rest_error_response'
-require 'chef_zero/data_store/data_not_found_error'
-require 'chef_zero/chef_data/acl_path'
+require "chef_zero/rest_request"
+require "chef_zero/rest_error_response"
+require "chef_zero/data_store/data_not_found_error"
+require "chef_zero/chef_data/acl_path"
 
 module ChefZero
   class RestBase
@@ -34,7 +34,7 @@ module ChefZero
           "error" => "invalid-x-ops-server-api-version",
           "message" => "Specified version #{version} not supported",
           "min_api_version" => MIN_API_VERSION,
-          "max_api_version" => MAX_API_VERSION
+          "max_api_version" => MAX_API_VERSION,
         }
 
         return json_response(406,
@@ -51,11 +51,11 @@ module ChefZero
       method = request.method.downcase.to_sym
       if !self.respond_to?(method)
         accept_methods = [:get, :put, :post, :delete].select { |m| self.respond_to?(m) }
-        accept_methods_str = accept_methods.map { |m| m.to_s.upcase }.join(', ')
-        return [405, {"Content-Type" => "text/plain", "Allow" => accept_methods_str}, "Bad request method for '#{request.env['REQUEST_PATH']}': #{request.env['REQUEST_METHOD']}"]
+        accept_methods_str = accept_methods.map { |m| m.to_s.upcase }.join(", ")
+        return [405, { "Content-Type" => "text/plain", "Allow" => accept_methods_str }, "Bad request method for '#{request.env['REQUEST_PATH']}': #{request.env['REQUEST_METHOD']}"]
       end
-      if json_only && !accepts?(request, 'application', 'json')
-        return [406, {"Content-Type" => "text/plain"}, "Must accept application/json"]
+      if json_only && !accepts?(request, "application", "json")
+        return [406, { "Content-Type" => "text/plain" }, "Must accept application/json"]
       end
       # Dispatch to get()/post()/put()/delete()
       begin
@@ -73,12 +73,12 @@ module ChefZero
     def accepts?(request, category, type)
       # If HTTP_ACCEPT is not sent at all, assume it accepts anything
       # This parses as per http://tools.ietf.org/html/rfc7231#section-5.3
-      return true if !request.env['HTTP_ACCEPT']
-      accepts = request.env['HTTP_ACCEPT'].split(/,\s*/).map { |x| x.split(';',2)[0].strip }
-      return accepts.include?("#{category}/#{type}") || accepts.include?("#{category}/*") || accepts.include?('*/*')
+      return true if !request.env["HTTP_ACCEPT"]
+      accepts = request.env["HTTP_ACCEPT"].split(/,\s*/).map { |x| x.split(";", 2)[0].strip }
+      return accepts.include?("#{category}/#{type}") || accepts.include?("#{category}/*") || accepts.include?("*/*")
     end
 
-    def get_data(request, rest_path=nil, *options)
+    def get_data(request, rest_path = nil, *options)
       rest_path ||= request.rest_path
       rest_path = rest_path.map { |v| URI.decode(v) }
       begin
@@ -94,7 +94,7 @@ module ChefZero
       end
     end
 
-    def list_data(request, rest_path=nil, *options)
+    def list_data(request, rest_path = nil, *options)
       rest_path ||= request.rest_path
       begin
         data_store.list(rest_path)
@@ -107,7 +107,7 @@ module ChefZero
       end
     end
 
-    def delete_data(request, rest_path=nil, *options)
+    def delete_data(request, rest_path = nil, *options)
       rest_path ||= request.rest_path
       begin
         data_store.delete(rest_path, *options)
@@ -196,17 +196,17 @@ module ChefZero
       end
     end
 
-    def exists_data?(request, rest_path=nil)
+    def exists_data?(request, rest_path = nil)
       rest_path ||= request.rest_path
       data_store.exists?(rest_path)
     end
 
-    def exists_data_dir?(request, rest_path=nil)
+    def exists_data_dir?(request, rest_path = nil)
       rest_path ||= request.rest_path
       data_store.exists_dir?(rest_path)
     end
 
-    def error(response_code, error, opts={})
+    def error(response_code, error, opts = {})
       json_response(response_code, { "error" => [ error ] }, opts)
     end
 
@@ -223,7 +223,7 @@ module ChefZero
     #
     # @return (see #already_json_response)
     #
-    def json_response(response_code, data, options={})
+    def json_response(response_code, data, options = {})
       options = { pretty: true }.merge(options)
       do_pretty_json = !!options.delete(:pretty) # make sure we have a proper Boolean.
       json = FFI_Yajl::Encoder.encode(data, pretty: do_pretty_json)
@@ -231,7 +231,7 @@ module ChefZero
     end
 
     def text_response(response_code, text)
-      [response_code, {"Content-Type" => "text/plain"}, text]
+      [response_code, { "Content-Type" => "text/plain" }, text]
     end
 
     # Returns an Array with the response code, HTTP headers, and JSON body.
@@ -245,7 +245,7 @@ module ChefZero
     #
     # @return [Array(Fixnum, Hash{String => String}, String)]
     #
-    def already_json_response(response_code, json_text, options={})
+    def already_json_response(response_code, json_text, options = {})
       version_header = FFI_Yajl::Encoder.encode(
         "min_version" => MIN_API_VERSION.to_s,
         "max_version" => MAX_API_VERSION.to_s,
@@ -255,7 +255,7 @@ module ChefZero
 
       headers = {
         "Content-Type" => "application/json",
-        "X-Ops-Server-API-Version" => version_header
+        "X-Ops-Server-API-Version" => version_header,
       }
       headers.merge!(options[:headers]) if options[:headers]
 
@@ -266,7 +266,7 @@ module ChefZero
     def build_uri(base_uri, rest_path)
       if server.options[:single_org]
         # Strip off /organizations/chef if we are in single org mode
-        if rest_path[0..1] != [ 'organizations', server.options[:single_org] ]
+        if rest_path[0..1] != [ "organizations", server.options[:single_org] ]
           raise "Unexpected URL #{rest_path[0..1]} passed to build_uri in single org mode"
         end
 
@@ -314,8 +314,8 @@ module ChefZero
 
     def policy_name_invalid?(name)
       !name.is_a?(String) ||
-       name.size > 255 ||
-       name =~ /[+ !]/
+        name.size > 255 ||
+        name =~ /[+ !]/
     end
   end
 end

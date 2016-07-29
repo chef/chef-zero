@@ -16,113 +16,113 @@
 # limitations under the License.
 #
 
-require 'openssl'
-require 'open-uri'
-require 'rubygems'
-require 'timeout'
-require 'stringio'
+require "openssl"
+require "open-uri"
+require "rubygems"
+require "timeout"
+require "stringio"
 
-require 'rack'
-require 'webrick'
-require 'webrick/https'
+require "rack"
+require "webrick"
+require "webrick/https"
 
-require 'chef_zero'
-require 'chef_zero/socketless_server_map'
-require 'chef_zero/chef_data/cookbook_data'
-require 'chef_zero/chef_data/acl_path'
-require 'chef_zero/rest_router'
-require 'chef_zero/data_store/memory_store_v2'
-require 'chef_zero/data_store/v1_to_v2_adapter'
-require 'chef_zero/data_store/default_facade'
-require 'chef_zero/version'
+require "chef_zero"
+require "chef_zero/socketless_server_map"
+require "chef_zero/chef_data/cookbook_data"
+require "chef_zero/chef_data/acl_path"
+require "chef_zero/rest_router"
+require "chef_zero/data_store/memory_store_v2"
+require "chef_zero/data_store/v1_to_v2_adapter"
+require "chef_zero/data_store/default_facade"
+require "chef_zero/version"
 
-require 'chef_zero/endpoints/rest_list_endpoint'
-require 'chef_zero/endpoints/authenticate_user_endpoint'
-require 'chef_zero/endpoints/acls_endpoint'
-require 'chef_zero/endpoints/acl_endpoint'
-require 'chef_zero/endpoints/actor_endpoint'
-require 'chef_zero/endpoints/actors_endpoint'
-require 'chef_zero/endpoints/actor_key_endpoint'
-require 'chef_zero/endpoints/organization_user_key_endpoint'
-require 'chef_zero/endpoints/organization_user_default_key_endpoint'
-require 'chef_zero/endpoints/organization_user_keys_endpoint'
-require 'chef_zero/endpoints/actor_default_key_endpoint'
-require 'chef_zero/endpoints/actor_keys_endpoint'
-require 'chef_zero/endpoints/cookbooks_endpoint'
-require 'chef_zero/endpoints/cookbook_endpoint'
-require 'chef_zero/endpoints/cookbook_version_endpoint'
-require 'chef_zero/endpoints/cookbook_artifacts_endpoint'
-require 'chef_zero/endpoints/cookbook_artifact_endpoint'
-require 'chef_zero/endpoints/cookbook_artifact_identifier_endpoint'
-require 'chef_zero/endpoints/containers_endpoint'
-require 'chef_zero/endpoints/container_endpoint'
-require 'chef_zero/endpoints/controls_endpoint'
-require 'chef_zero/endpoints/dummy_endpoint'
-require 'chef_zero/endpoints/data_bags_endpoint'
-require 'chef_zero/endpoints/data_bag_endpoint'
-require 'chef_zero/endpoints/data_bag_item_endpoint'
-require 'chef_zero/endpoints/groups_endpoint'
-require 'chef_zero/endpoints/group_endpoint'
-require 'chef_zero/endpoints/environment_endpoint'
-require 'chef_zero/endpoints/environment_cookbooks_endpoint'
-require 'chef_zero/endpoints/environment_cookbook_endpoint'
-require 'chef_zero/endpoints/environment_cookbook_versions_endpoint'
-require 'chef_zero/endpoints/environment_nodes_endpoint'
-require 'chef_zero/endpoints/environment_recipes_endpoint'
-require 'chef_zero/endpoints/environment_role_endpoint'
-require 'chef_zero/endpoints/license_endpoint'
-require 'chef_zero/endpoints/node_endpoint'
-require 'chef_zero/endpoints/nodes_endpoint'
-require 'chef_zero/endpoints/node_identifiers_endpoint'
-require 'chef_zero/endpoints/organizations_endpoint'
-require 'chef_zero/endpoints/organization_endpoint'
-require 'chef_zero/endpoints/organization_association_requests_endpoint'
-require 'chef_zero/endpoints/organization_association_request_endpoint'
-require 'chef_zero/endpoints/organization_authenticate_user_endpoint'
-require 'chef_zero/endpoints/organization_users_endpoint'
-require 'chef_zero/endpoints/organization_user_endpoint'
-require 'chef_zero/endpoints/organization_validator_key_endpoint'
-require 'chef_zero/endpoints/policies_endpoint'
-require 'chef_zero/endpoints/policy_endpoint'
-require 'chef_zero/endpoints/policy_revisions_endpoint'
-require 'chef_zero/endpoints/policy_revision_endpoint'
-require 'chef_zero/endpoints/policy_groups_endpoint'
-require 'chef_zero/endpoints/policy_group_endpoint'
-require 'chef_zero/endpoints/policy_group_policy_endpoint'
-require 'chef_zero/endpoints/principal_endpoint'
-require 'chef_zero/endpoints/role_endpoint'
-require 'chef_zero/endpoints/role_environments_endpoint'
-require 'chef_zero/endpoints/sandboxes_endpoint'
-require 'chef_zero/endpoints/sandbox_endpoint'
-require 'chef_zero/endpoints/searches_endpoint'
-require 'chef_zero/endpoints/search_endpoint'
-require 'chef_zero/endpoints/system_recovery_endpoint'
-require 'chef_zero/endpoints/user_association_requests_endpoint'
-require 'chef_zero/endpoints/user_association_requests_count_endpoint'
-require 'chef_zero/endpoints/user_association_request_endpoint'
-require 'chef_zero/endpoints/user_organizations_endpoint'
-require 'chef_zero/endpoints/file_store_file_endpoint'
-require 'chef_zero/endpoints/not_found_endpoint'
-require 'chef_zero/endpoints/version_endpoint'
-require 'chef_zero/endpoints/server_api_version_endpoint'
+require "chef_zero/endpoints/rest_list_endpoint"
+require "chef_zero/endpoints/authenticate_user_endpoint"
+require "chef_zero/endpoints/acls_endpoint"
+require "chef_zero/endpoints/acl_endpoint"
+require "chef_zero/endpoints/actor_endpoint"
+require "chef_zero/endpoints/actors_endpoint"
+require "chef_zero/endpoints/actor_key_endpoint"
+require "chef_zero/endpoints/organization_user_key_endpoint"
+require "chef_zero/endpoints/organization_user_default_key_endpoint"
+require "chef_zero/endpoints/organization_user_keys_endpoint"
+require "chef_zero/endpoints/actor_default_key_endpoint"
+require "chef_zero/endpoints/actor_keys_endpoint"
+require "chef_zero/endpoints/cookbooks_endpoint"
+require "chef_zero/endpoints/cookbook_endpoint"
+require "chef_zero/endpoints/cookbook_version_endpoint"
+require "chef_zero/endpoints/cookbook_artifacts_endpoint"
+require "chef_zero/endpoints/cookbook_artifact_endpoint"
+require "chef_zero/endpoints/cookbook_artifact_identifier_endpoint"
+require "chef_zero/endpoints/containers_endpoint"
+require "chef_zero/endpoints/container_endpoint"
+require "chef_zero/endpoints/controls_endpoint"
+require "chef_zero/endpoints/dummy_endpoint"
+require "chef_zero/endpoints/data_bags_endpoint"
+require "chef_zero/endpoints/data_bag_endpoint"
+require "chef_zero/endpoints/data_bag_item_endpoint"
+require "chef_zero/endpoints/groups_endpoint"
+require "chef_zero/endpoints/group_endpoint"
+require "chef_zero/endpoints/environment_endpoint"
+require "chef_zero/endpoints/environment_cookbooks_endpoint"
+require "chef_zero/endpoints/environment_cookbook_endpoint"
+require "chef_zero/endpoints/environment_cookbook_versions_endpoint"
+require "chef_zero/endpoints/environment_nodes_endpoint"
+require "chef_zero/endpoints/environment_recipes_endpoint"
+require "chef_zero/endpoints/environment_role_endpoint"
+require "chef_zero/endpoints/license_endpoint"
+require "chef_zero/endpoints/node_endpoint"
+require "chef_zero/endpoints/nodes_endpoint"
+require "chef_zero/endpoints/node_identifiers_endpoint"
+require "chef_zero/endpoints/organizations_endpoint"
+require "chef_zero/endpoints/organization_endpoint"
+require "chef_zero/endpoints/organization_association_requests_endpoint"
+require "chef_zero/endpoints/organization_association_request_endpoint"
+require "chef_zero/endpoints/organization_authenticate_user_endpoint"
+require "chef_zero/endpoints/organization_users_endpoint"
+require "chef_zero/endpoints/organization_user_endpoint"
+require "chef_zero/endpoints/organization_validator_key_endpoint"
+require "chef_zero/endpoints/policies_endpoint"
+require "chef_zero/endpoints/policy_endpoint"
+require "chef_zero/endpoints/policy_revisions_endpoint"
+require "chef_zero/endpoints/policy_revision_endpoint"
+require "chef_zero/endpoints/policy_groups_endpoint"
+require "chef_zero/endpoints/policy_group_endpoint"
+require "chef_zero/endpoints/policy_group_policy_endpoint"
+require "chef_zero/endpoints/principal_endpoint"
+require "chef_zero/endpoints/role_endpoint"
+require "chef_zero/endpoints/role_environments_endpoint"
+require "chef_zero/endpoints/sandboxes_endpoint"
+require "chef_zero/endpoints/sandbox_endpoint"
+require "chef_zero/endpoints/searches_endpoint"
+require "chef_zero/endpoints/search_endpoint"
+require "chef_zero/endpoints/system_recovery_endpoint"
+require "chef_zero/endpoints/user_association_requests_endpoint"
+require "chef_zero/endpoints/user_association_requests_count_endpoint"
+require "chef_zero/endpoints/user_association_request_endpoint"
+require "chef_zero/endpoints/user_organizations_endpoint"
+require "chef_zero/endpoints/file_store_file_endpoint"
+require "chef_zero/endpoints/not_found_endpoint"
+require "chef_zero/endpoints/version_endpoint"
+require "chef_zero/endpoints/server_api_version_endpoint"
 
 module ChefZero
 
   class Server
 
     DEFAULT_OPTIONS = {
-      :host => ['127.0.0.1'],
+      :host => ["127.0.0.1"],
       :port => 8889,
       :log_level => :warn,
       :generate_real_keys => true,
-      :single_org => 'chef',
-      :ssl => false
+      :single_org => "chef",
+      :ssl => false,
     }.freeze
 
     GLOBAL_ENDPOINTS = [
-      '/license',
-      '/version',
-      '/server_api_version'
+      "/license",
+      "/version",
+      "/server_api_version",
     ]
 
     def initialize(options = {})
@@ -164,9 +164,9 @@ module ChefZero
     # @return [String]
     #
     def url
-      sch = @options[:ssl] ? 'https' : 'http'
+      sch = @options[:ssl] ? "https" : "http"
       hosts = Array(@options[:host])
-      @url ||= if hosts.first.include?(':')
+      @url ||= if hosts.first.include?(":")
                  URI("#{sch}://[#{hosts.first}]:#{port}").to_s
                else
                  URI("#{sch}://#{hosts.first}:#{port}").to_s
@@ -177,7 +177,6 @@ module ChefZero
       raise "Port not yet set, cannot generate URL" unless port.kind_of?(Integer)
       "chefzero://localhost:#{port}"
     end
-
 
     #
     # The data store for this server (default is in-memory).
@@ -230,7 +229,7 @@ module ChefZero
 
       if publish
         output = publish.respond_to?(:puts) ? publish : STDOUT
-        output.puts <<-EOH.gsub(/^ {10}/, '')
+        output.puts <<-EOH.gsub(/^ {10}/, "")
           >> Starting Chef Zero (v#{ChefZero::VERSION})...
         EOH
       end
@@ -239,14 +238,14 @@ module ChefZero
 
       if publish
         output = publish.respond_to?(:puts) ? publish : STDOUT
-        output.puts <<-EOH.gsub(/^ {10}/, '')
+        output.puts <<-EOH.gsub(/^ {10}/, "")
           >> WEBrick (v#{WEBrick::VERSION}) on Rack (v#{Rack.release}) is listening at #{url}
           >> Press CTRL+C to stop
 
         EOH
       end
 
-      %w[INT TERM].each do |signal|
+      %w{INT TERM}.each do |signal|
         Signal.trap(signal) do
           puts "\n>> Stopping Chef Zero..."
           @server.shutdown
@@ -285,15 +284,15 @@ module ChefZero
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new(StringIO.new, 7),
         :RequestTimeout => 300,
-        :SSLEnable  => options[:ssl],
-        :SSLOptions  => ssl_opts,
-        :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ],
+        :SSLEnable => options[:ssl],
+        :SSLOptions => ssl_opts,
+        :SSLCertName => [ [ "CN", WEBrick::Utils.getservername ] ],
         :StartCallback => proc {
           @running = true
         }
       )
-      ENV['HTTPS'] = 'on' if options[:ssl]
-      @server.mount('/', Rack::Handler::WEBrick, app)
+      ENV["HTTPS"] = "on" if options[:ssl]
+      @server.mount("/", Rack::Handler::WEBrick, app)
 
       # Pick a port
       # If options[:port] can be an Enumerator, an Array, or an Integer,
@@ -377,7 +376,7 @@ module ChefZero
       if generate_real_keys?
         private_key = OpenSSL::PKey::RSA.new(2048)
         public_key = private_key.public_key.to_s
-        public_key.sub!(/^-----BEGIN RSA PUBLIC KEY-----/, '-----BEGIN PUBLIC KEY-----')
+        public_key.sub!(/^-----BEGIN RSA PUBLIC KEY-----/, "-----BEGIN PUBLIC KEY-----")
         public_key.sub!(/-----END RSA PUBLIC KEY-----(\s+)$/, '-----END PUBLIC KEY-----\1')
         [private_key.to_s, public_key]
       else
@@ -418,84 +417,84 @@ module ChefZero
     # }
     def load_data(contents, org_name = nil)
       org_name ||= options[:single_org]
-      if org_name.nil? && contents.keys != [ 'users' ]
+      if org_name.nil? && contents.keys != [ "users" ]
         raise "Must pass an org name to load_data or run in single_org mode"
       end
 
-      %w(clients containers environments groups nodes roles sandboxes).each do |data_type|
+      %w{clients containers environments groups nodes roles sandboxes}.each do |data_type|
         if contents[data_type]
           dejsonize_children(contents[data_type]).each_pair do |name, data|
-            data_store.set(['organizations', org_name, data_type, name], data, :create)
+            data_store.set(["organizations", org_name, data_type, name], data, :create)
           end
         end
       end
 
-      if contents['users']
-        dejsonize_children(contents['users']).each_pair do |name, data|
+      if contents["users"]
+        dejsonize_children(contents["users"]).each_pair do |name, data|
           if options[:osc_compat]
-            data_store.set(['organizations', org_name, 'users', name], data, :create)
+            data_store.set(["organizations", org_name, "users", name], data, :create)
           else
             # Create the user and put them in the org
-            data_store.set(['users', name], data, :create)
+            data_store.set(["users", name], data, :create)
             if org_name
-              data_store.set(['organizations', org_name, 'users', name], '{}', :create)
+              data_store.set(["organizations", org_name, "users", name], "{}", :create)
             end
           end
         end
       end
 
-      if contents['members']
-        contents['members'].each do |name|
-          data_store.set(['organizations', org_name, 'users', name], '{}', :create)
+      if contents["members"]
+        contents["members"].each do |name|
+          data_store.set(["organizations", org_name, "users", name], "{}", :create)
         end
       end
 
-      if contents['invites']
-        contents['invites'].each do |name|
-          data_store.set(['organizations', org_name, 'association_requests', name], '{}', :create)
+      if contents["invites"]
+        contents["invites"].each do |name|
+          data_store.set(["organizations", org_name, "association_requests", name], "{}", :create)
         end
       end
 
-      if contents['acls']
-        dejsonize_children(contents['acls']).each do |path, acl|
-          path = [ 'organizations', org_name ] + path.split('/')
+      if contents["acls"]
+        dejsonize_children(contents["acls"]).each do |path, acl|
+          path = [ "organizations", org_name ] + path.split("/")
           path = ChefData::AclPath.get_acl_data_path(path)
           ChefZero::RSpec.server.data_store.set(path, acl)
         end
       end
 
-      if contents['data']
-        contents['data'].each_pair do |key, data_bag|
-          data_store.create_dir(['organizations', org_name, 'data'], key, :recursive)
+      if contents["data"]
+        contents["data"].each_pair do |key, data_bag|
+          data_store.create_dir(["organizations", org_name, "data"], key, :recursive)
           dejsonize_children(data_bag).each do |item_name, item|
-            data_store.set(['organizations', org_name, 'data', key, item_name], item, :create)
+            data_store.set(["organizations", org_name, "data", key, item_name], item, :create)
           end
         end
       end
 
-      if contents['policies']
-        contents['policies'].each_pair do |policy_name, policy_struct|
+      if contents["policies"]
+        contents["policies"].each_pair do |policy_name, policy_struct|
           # data_store.create_dir(['organizations', org_name, 'policies', policy_name], "revisions", :recursive)
           dejsonize_children(policy_struct).each do |revision, policy_data|
-            data_store.set(['organizations', org_name, 'policies', policy_name,
+            data_store.set(["organizations", org_name, "policies", policy_name,
                             "revisions", revision], policy_data, :create, :create_dir)
           end
         end
       end
 
-      if contents['policy_groups']
-        contents['policy_groups'].each_pair do |group_name, group|
-          group['policies'].each do |policy_name, policy_revision|
-            data_store.set(['organizations', org_name, 'policy_groups', group_name, 'policies', policy_name], FFI_Yajl::Encoder.encode(policy_revision['revision_id'], :pretty => true), :create, :create_dir)
+      if contents["policy_groups"]
+        contents["policy_groups"].each_pair do |group_name, group|
+          group["policies"].each do |policy_name, policy_revision|
+            data_store.set(["organizations", org_name, "policy_groups", group_name, "policies", policy_name], FFI_Yajl::Encoder.encode(policy_revision["revision_id"], :pretty => true), :create, :create_dir)
           end
         end
       end
 
-      %w(cookbooks cookbook_artifacts).each do |cookbook_type|
+      %w{cookbooks cookbook_artifacts}.each do |cookbook_type|
         if contents[cookbook_type]
           contents[cookbook_type].each_pair do |name_version, cookbook|
-            if cookbook_type == 'cookbook_artifacts'
-              name, dash, identifier = name_version.rpartition('-')
+            if cookbook_type == "cookbook_artifacts"
+              name, dash, identifier = name_version.rpartition("-")
               cookbook_data = ChefData::CookbookData.to_hash(cookbook, name, identifier)
             elsif name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
               cookbook_data = ChefData::CookbookData.to_hash(cookbook, $1, $2)
@@ -503,12 +502,12 @@ module ChefZero
               cookbook_data = ChefData::CookbookData.to_hash(cookbook, name_version)
             end
             raise "No version specified" if !cookbook_data[:version]
-            data_store.create_dir(['organizations', org_name, cookbook_type], cookbook_data[:cookbook_name], :recursive)
-            data_store.set(['organizations', org_name, cookbook_type, cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, :pretty => true), :create)
+            data_store.create_dir(["organizations", org_name, cookbook_type], cookbook_data[:cookbook_name], :recursive)
+            data_store.set(["organizations", org_name, cookbook_type, cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, :pretty => true), :create)
             cookbook_data.values.each do |files|
               next unless files.is_a? Array
               files.each do |file|
-                data_store.set(['organizations', org_name, 'file_store', 'checksums', file[:checksum]], get_file(cookbook, file[:path]), :create)
+                data_store.set(["organizations", org_name, "file_store", "checksums", file[:checksum]], get_file(cookbook, file[:path]), :create)
               end
             end
           end
@@ -536,48 +535,48 @@ module ChefZero
 
     def endpoints
       result = if options[:osc_compat]
-        # OSC-only
-        [
-          [ "/organizations/*/users", ActorsEndpoint.new(self) ],
-          [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
-          [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ]
-        ]
-      else
-        # EC-only
-        [
-          [ "/organizations/*/users", OrganizationUsersEndpoint.new(self) ],
-          [ "/organizations/*/users/*", OrganizationUserEndpoint.new(self) ],
-          [ "/users", ActorsEndpoint.new(self, 'username') ],
-          [ "/users/*", ActorEndpoint.new(self, 'username') ],
-          [ "/users/*/_acl", AclsEndpoint.new(self) ],
-          [ "/users/*/_acl/*", AclEndpoint.new(self) ],
-          [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
-          [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
-          [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
-          [ "/users/*/keys", ActorKeysEndpoint.new(self) ],
-          [ "/users/*/keys/default", ActorDefaultKeyEndpoint.new(self) ],
-          [ "/users/*/keys/*", ActorKeyEndpoint.new(self) ],
-          [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
-          [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
-          [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
-          [ "/license", LicenseEndpoint.new(self) ],
-          [ "/organizations", OrganizationsEndpoint.new(self) ],
-          [ "/organizations/*", OrganizationEndpoint.new(self) ],
-          [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
-          [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
-          [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
-          [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
-          [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
-          [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
-          [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
-          [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
-          [ "/organizations/*/organizations/_acl", AclsEndpoint.new(self) ],
-          [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
-          [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
-          [ "/organizations/*/organizations/_acl/*", AclEndpoint.new(self) ],
-          [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ]
-        ]
-      end
+                 # OSC-only
+                 [
+                   [ "/organizations/*/users", ActorsEndpoint.new(self) ],
+                   [ "/organizations/*/users/*", ActorEndpoint.new(self) ],
+                   [ "/organizations/*/authenticate_user", OrganizationAuthenticateUserEndpoint.new(self) ],
+                 ]
+               else
+                 # EC-only
+                 [
+                   [ "/organizations/*/users", OrganizationUsersEndpoint.new(self) ],
+                   [ "/organizations/*/users/*", OrganizationUserEndpoint.new(self) ],
+                   [ "/users", ActorsEndpoint.new(self, "username") ],
+                   [ "/users/*", ActorEndpoint.new(self, "username") ],
+                   [ "/users/*/_acl", AclsEndpoint.new(self) ],
+                   [ "/users/*/_acl/*", AclEndpoint.new(self) ],
+                   [ "/users/*/association_requests", UserAssociationRequestsEndpoint.new(self) ],
+                   [ "/users/*/association_requests/count", UserAssociationRequestsCountEndpoint.new(self) ],
+                   [ "/users/*/association_requests/*", UserAssociationRequestEndpoint.new(self) ],
+                   [ "/users/*/keys", ActorKeysEndpoint.new(self) ],
+                   [ "/users/*/keys/default", ActorDefaultKeyEndpoint.new(self) ],
+                   [ "/users/*/keys/*", ActorKeyEndpoint.new(self) ],
+                   [ "/users/*/organizations", UserOrganizationsEndpoint.new(self) ],
+                   [ "/authenticate_user", AuthenticateUserEndpoint.new(self) ],
+                   [ "/system_recovery", SystemRecoveryEndpoint.new(self) ],
+                   [ "/license", LicenseEndpoint.new(self) ],
+                   [ "/organizations", OrganizationsEndpoint.new(self) ],
+                   [ "/organizations/*", OrganizationEndpoint.new(self) ],
+                   [ "/organizations/*/_validator_key", OrganizationValidatorKeyEndpoint.new(self) ],
+                   [ "/organizations/*/association_requests", OrganizationAssociationRequestsEndpoint.new(self) ],
+                   [ "/organizations/*/association_requests/*", OrganizationAssociationRequestEndpoint.new(self) ],
+                   [ "/organizations/*/containers", ContainersEndpoint.new(self) ],
+                   [ "/organizations/*/containers/*", ContainerEndpoint.new(self) ],
+                   [ "/organizations/*/groups", GroupsEndpoint.new(self) ],
+                   [ "/organizations/*/groups/*", GroupEndpoint.new(self) ],
+                   [ "/organizations/*/organization/_acl", AclsEndpoint.new(self) ],
+                   [ "/organizations/*/organizations/_acl", AclsEndpoint.new(self) ],
+                   [ "/organizations/*/*/*/_acl", AclsEndpoint.new(self) ],
+                   [ "/organizations/*/organization/_acl/*", AclEndpoint.new(self) ],
+                   [ "/organizations/*/organizations/_acl/*", AclEndpoint.new(self) ],
+                   [ "/organizations/*/*/*/_acl/*", AclEndpoint.new(self) ],
+                 ]
+               end
       result + [
         # Both
         [ "/dummy", DummyEndpoint.new(self) ],
@@ -630,7 +629,7 @@ module ChefZero
         [ "/server_api_version", ServerAPIVersionEndpoint.new(self) ],
 
         # Internal
-        [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ]
+        [ "/organizations/*/file_store/**", FileStoreFileEndpoint.new(self) ],
       ]
     end
 
@@ -646,13 +645,13 @@ module ChefZero
       router.not_found = NotFoundEndpoint.new
 
       if options[:single_org]
-        rest_base_prefix = [ 'organizations', options[:single_org] ]
+        rest_base_prefix = [ "organizations", options[:single_org] ]
       else
         rest_base_prefix = []
       end
       @app = proc do |env|
         begin
-          prefix = global_endpoint?(env['PATH_INFO']) ? [] : rest_base_prefix
+          prefix = global_endpoint?(env["PATH_INFO"]) ? [] : rest_base_prefix
 
           request = RestRequest.new(env, prefix)
           if @on_request_proc
@@ -670,10 +669,10 @@ module ChefZero
           end
 
           # Insert Server header
-          response[1]['Server'] = 'chef-zero'
+          response[1]["Server"] = "chef-zero"
 
           # Add CORS header
-          response[1]['Access-Control-Allow-Origin'] = '*'
+          response[1]["Access-Control-Allow-Origin"] = "*"
 
           # Puma expects the response to be an array (chunked responses). Since
           # we are statically generating data, we won't ever have said chunked
@@ -705,7 +704,7 @@ module ChefZero
 
     def get_file(directory, path)
       value = directory
-      path.split('/').each do |part|
+      path.split("/").each do |part|
         value = value[part]
       end
       value

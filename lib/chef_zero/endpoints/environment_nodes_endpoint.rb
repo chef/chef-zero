@@ -1,5 +1,5 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
+require "ffi_yajl"
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints
@@ -10,10 +10,10 @@ module ChefZero
         get_data(request, request.rest_path[0..3])
 
         result = {}
-        list_data(request, request.rest_path[0..1] + ['nodes']).each do |name|
-          node = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ['nodes', name]), :create_additions => false)
-          if node['chef_environment'] == request.rest_path[3]
-            result[name] = build_uri(request.base_uri, request.rest_path[0..1] + ['nodes', name])
+        list_data(request, request.rest_path[0..1] + ["nodes"]).each do |name|
+          node = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["nodes", name]), :create_additions => false)
+          if node["chef_environment"] == request.rest_path[3]
+            result[name] = build_uri(request.base_uri, request.rest_path[0..1] + ["nodes", name])
           end
         end
         json_response(200, result)

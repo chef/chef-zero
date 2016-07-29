@@ -16,9 +16,9 @@ module ChefZero
 
         def matches_doc?(doc)
           case @operator
-          when '-', 'NOT'
+          when "-", "NOT"
             !operand.matches_doc?(doc)
-          when '+'
+          when "+"
             # TODO This operator uses relevance to eliminate other, unrelated
             # expressions.  +a OR b means "if it has b but not a, don't return it"
             raise "+ not supported yet, because it is hard."
@@ -27,9 +27,9 @@ module ChefZero
 
         def matches_values?(values)
           case @operator
-          when '-', 'NOT'
+          when "-", "NOT"
             !operand.matches_values?(values)
-          when '+'
+          when "+"
             # TODO This operator uses relevance to eliminate other, unrelated
             # expressions.  +a OR b means "if it has b but not a, don't return it"
             raise "+ not supported yet, because it is hard."

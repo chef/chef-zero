@@ -13,9 +13,9 @@ module ChefZero
     #   specified on X, they are not inherited from X's parent
     # - stop adding pivotal to acls (he already has access to what he needs)
     module AclPath
-      ORG_DATA_TYPES = %w(clients cookbook_artifacts cookbooks containers data environments groups
-                          nodes policies policy_groups roles sandboxes)
-      TOP_DATA_TYPES = %w(containers organizations users)
+      ORG_DATA_TYPES = %w{clients cookbook_artifacts cookbooks containers data environments groups
+                          nodes policies policy_groups roles sandboxes}
+      TOP_DATA_TYPES = %w{containers organizations users}
 
       # ACL data paths for a partition are:
       # /          -> /acls/root
@@ -42,7 +42,7 @@ module ChefZero
       # return nil, because it is the parent path (data/bag) that has an ACL.
       def self.get_acl_data_path(path)
         # Things under organizations have their own acls hierarchy
-        if path[0] == 'organizations' && path.size >= 2
+        if path[0] == "organizations" && path.size >= 2
           under_org = partition_acl_data_path(path[2..-1], ORG_DATA_TYPES)
           if under_org
             path[0..1] + under_org
@@ -63,14 +63,14 @@ module ChefZero
       # /containers/nodes, not /nodes.
       #
       def self.get_object_path(acl_data_path)
-        if acl_data_path[0] == 'acls'
-          if acl_data_path[1] == 'root'
+        if acl_data_path[0] == "acls"
+          if acl_data_path[1] == "root"
             []
           else
             acl_data_path[1..-1]
           end
-        elsif acl_data_path[0] == 'organizations' && acl_data_path[2] == 'acls'
-          if acl_data_path[3] == 'root'
+        elsif acl_data_path[0] == "organizations" && acl_data_path[2] == "acls"
+          if acl_data_path[3] == "root"
             acl_data_path[0..1]
           else
             acl_data_path[0..1] + acl_data_path[3..-1]
@@ -91,13 +91,13 @@ module ChefZero
       # /acls/root ->
       # nil
       def self.parent_acl_data_path(acl_data_path)
-        if acl_data_path[0] == 'organizations'
+        if acl_data_path[0] == "organizations"
           under_org = partition_parent_acl_data_path(acl_data_path[2..-1])
           if under_org
             acl_data_path[0..1] + under_org
           else
             # ACL data path is /organizations/X/acls/root; therefore parent is "/organizations"
-            [ 'acls', 'containers', 'organizations' ]
+            %w{acls containers organizations}
           end
         else
           partition_parent_acl_data_path(acl_data_path)
@@ -114,10 +114,10 @@ module ChefZero
       # Returns nil if the path is /acls/root
       def self.partition_parent_acl_data_path(acl_data_path)
         if acl_data_path.size == 3
-          if acl_data_path == %w(acls containers containers)
-            [ 'acls', 'root' ]
+          if acl_data_path == %w{acls containers containers}
+            %w{acls root}
           else
-            [ 'acls', 'containers', acl_data_path[1]]
+            [ "acls", "containers", acl_data_path[1]]
           end
         else
           nil
@@ -126,12 +126,12 @@ module ChefZero
 
       def self.partition_acl_data_path(path, data_types)
         if path.size == 0
-          [ 'acls', 'root']
+          %w{acls root}
         elsif data_types.include?(path[0])
           if path.size == 0
-            [ 'acls', 'containers', path[0] ]
+            [ "acls", "containers", path[0] ]
           elsif path.size == 2
-            [ 'acls', path[0], path[1] ]
+            [ "acls", path[0], path[1] ]
           end
         end
       end

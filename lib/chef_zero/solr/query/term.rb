@@ -1,4 +1,4 @@
-require 'chef_zero/solr/query/regexpable_query'
+require "chef_zero/solr/query/regexpable_query"
 
 module ChefZero
   module Solr
@@ -11,19 +11,19 @@ module ChefZero
           regexp_string = ""
           index = 0
           while index < term.length
-            if term[index] == '*'
+            if term[index] == "*"
               regexp_string << "#{WORD_CHARACTER}*"
               literal_string = nil
               index += 1
-            elsif term[index] == '?'
+            elsif term[index] == "?"
               regexp_string << WORD_CHARACTER
               literal_string = nil
               index += 1
-            elsif term[index] == '~'
+            elsif term[index] == "~"
               raise "~ unsupported"
             else
               if term[index] == '\\'
-                index = index+1
+                index = index + 1
                 if index >= term.length
                   raise "Backslash at end of string '#{term}'"
                 end

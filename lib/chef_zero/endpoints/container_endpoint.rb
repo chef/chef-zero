@@ -1,13 +1,13 @@
-require 'ffi_yajl'
-require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/chef_data/data_normalizer'
+require "ffi_yajl"
+require "chef_zero/endpoints/rest_object_endpoint"
+require "chef_zero/chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints
     # /organizations/ORG/containers/NAME
     class ContainerEndpoint < RestObjectEndpoint
       def initialize(server)
-        super(server, %w(id containername))
+        super(server, %w{id containername})
       end
 
       undef_method(:put)

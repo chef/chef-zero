@@ -7,7 +7,6 @@ module ChefZero
       # called by #direct_solr_query, once each for roles, nodes, and data bag items. each RSpec example makes
       # 3 calls, with the expected sequence of return values [0, 1, 0].
       def get(request)
-
         # this could be made less brittle, but if things change to have more than 3 cycles, we should really
         # be notified by a spec failure.
         @mock_values ||= ([0, 1, 0] * 3).map { |val| make_response(val) }
@@ -28,4 +27,3 @@ module ChefZero
     end
   end
 end
-

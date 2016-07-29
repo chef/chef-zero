@@ -15,7 +15,7 @@ module ChefZero
 
         def matches_values?(values)
           values.any? do |value|
-            unless @from == '*'
+            unless @from == "*"
               case @from <=> value
               when -1
                 return false
@@ -23,7 +23,7 @@ module ChefZero
                 return false if !@from_inclusive
               end
             end
-            unless @to == '*'
+            unless @to == "*"
               case value <=> @to
               when 1
                 return false

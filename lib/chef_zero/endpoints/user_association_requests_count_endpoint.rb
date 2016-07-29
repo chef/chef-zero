@@ -1,5 +1,5 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
+require "ffi_yajl"
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints
@@ -9,8 +9,8 @@ module ChefZero
         get_data(request, request.rest_path[0..-3])
 
         username = request.rest_path[1]
-        result = list_data(request, [ 'organizations' ]).select do |org|
-          exists_data?(request, [ 'organizations', org, 'association_requests', username ])
+        result = list_data(request, [ "organizations" ]).select do |org|
+          exists_data?(request, [ "organizations", org, "association_requests", username ])
         end
         json_response(200, { "value" => result.size })
       end

@@ -1,11 +1,11 @@
-require 'bundler'
-require 'bundler/gem_tasks'
+require "bundler"
+require "bundler/gem_tasks"
 
-require 'chef_zero/version'
+require "chef_zero/version"
 
-def run_oc_pedant(env={})
+def run_oc_pedant(env = {})
   ENV.update(env)
-  require File.expand_path('spec/run_oc_pedant')
+  require File.expand_path("spec/run_oc_pedant")
 end
 
 ENV_DOCS = <<END
@@ -22,7 +22,7 @@ task :default => :pedant
 
 desc "Run specs"
 task :spec do
-  system('rspec spec/*_spec.rb')
+  system("rspec spec/*_spec.rb")
 end
 
 desc "Run oc-chef-pedant\n\n#{ENV_DOCS}"
@@ -30,12 +30,12 @@ task :pedant => :oc_pedant
 
 desc "Run oc-chef-pedant with CHEF_FS set\n\n#{ENV_DOCS}"
 task :cheffs do
-  run_oc_pedant('CHEF_FS' => 'yes')
+  run_oc_pedant("CHEF_FS" => "yes")
 end
 
 desc "Run oc-chef-pedant with FILE_STORE set\n\n#{ENV_DOCS}"
 task :filestore do
-  run_oc_pedant('FILE_STORE' => 'yes')
+  run_oc_pedant("FILE_STORE" => "yes")
 end
 
 task :oc_pedant do
@@ -43,13 +43,23 @@ task :oc_pedant do
 end
 
 task :chef_spec do
-  gem_path = Bundler.environment.specs['chef'].first.full_gem_path
+  gem_path = Bundler.environment.specs["chef"].first.full_gem_path
   system("cd #{gem_path} && rspec spec/integration")
 end
 
 task :berkshelf_spec do
-  gem_path = Bundler.environment.specs['berkshelf'].first.full_gem_path
+  gem_path = Bundler.environment.specs["berkshelf"].first.full_gem_path
   system("cd #{gem_path} && thor spec:ci")
+end
+
+begin
+  require "chefstyle"
+  require "rubocop/rake_task"
+  RuboCop::RakeTask.new(:style) do |task|
+    task.options += ["--display-cop-names", "--no-color"]
+  end
+rescue LoadError
+  puts "chefstyle/rubocop is not available.  gem install chefstyle to do style checking."
 end
 
 begin

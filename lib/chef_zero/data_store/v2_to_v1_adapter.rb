@@ -16,13 +16,13 @@
 # limitations under the License.
 #
 
-require 'chef_zero/data_store/interface_v1'
+require "chef_zero/data_store/interface_v1"
 
 module ChefZero
   module DataStore
     class V2ToV1Adapter < ChefZero::DataStore::InterfaceV1
       def initialize
-        @single_org = 'chef'
+        @single_org = "chef"
       end
 
       attr_reader :real_store
@@ -30,7 +30,7 @@ module ChefZero
 
       def clear
         real_store.clear
-        real_store.create_dir([ 'organizations' ], single_org, :recursive)
+        real_store.create_dir([ "organizations" ], single_org, :recursive)
       end
 
       def create_dir(path, name, *options)
@@ -45,7 +45,7 @@ module ChefZero
         end
       end
 
-      def get(path, request=nil)
+      def get(path, request = nil)
         fix_exceptions do
           real_store.get(fix_path(path), request)
         end
@@ -100,7 +100,7 @@ module ChefZero
       end
 
       def fix_path(path)
-        [ 'organizations', single_org ] + path
+        [ "organizations", single_org ] + path
       end
     end
   end
