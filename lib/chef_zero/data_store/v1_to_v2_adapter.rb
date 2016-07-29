@@ -1,4 +1,4 @@
-require 'chef_zero/data_store/interface_v2'
+require "chef_zero/data_store/interface_v2"
 
 module ChefZero
   module DataStore
@@ -35,13 +35,13 @@ module ChefZero
         end
       end
 
-      def get(path, request=nil)
+      def get(path, request = nil)
         raise DataNotFoundError.new(path) if skip_organizations?(path)
         fix_exceptions do
           # Make it so build_uri will include /organizations/ORG inside the V1 data store
           if request && request.rest_base_prefix.size == 0
             old_base_uri = request.base_uri
-            request.base_uri = File.join(request.base_uri, 'organizations', single_org)
+            request.base_uri = File.join(request.base_uri, "organizations", single_org)
           end
           begin
             real_store.get(path[2..-1], request)
@@ -75,8 +75,8 @@ module ChefZero
       def list(path)
         raise DataNotFoundError.new(path) if skip_organizations?(path)
         if path == []
-          [ 'organizations' ]
-        elsif path == [ 'organizations' ]
+          [ "organizations" ]
+        elsif path == [ "organizations" ]
           [ single_org ]
         else
           fix_exceptions do
@@ -96,7 +96,7 @@ module ChefZero
         return false if skip_organizations?(path)
         if path == []
           true
-        elsif path == [ 'organizations' ] || path == [ 'users' ]
+        elsif path == [ "organizations" ] || path == [ "users" ]
           true
         else
           return false if skip_organizations?(path)
@@ -112,11 +112,11 @@ module ChefZero
         begin
           yield
         rescue DataAlreadyExistsError => e
-          err = DataAlreadyExistsError.new([ 'organizations', single_org ] + e.path, e)
+          err = DataAlreadyExistsError.new([ "organizations", single_org ] + e.path, e)
           err.set_backtrace(e.backtrace)
           raise err
         rescue DataNotFoundError => e
-          err = DataNotFoundError.new([ 'organizations', single_org ] + e.path, e)
+          err = DataNotFoundError.new([ "organizations", single_org ] + e.path, e)
           err.set_backtrace(e.backtrace)
           raise e
         end
@@ -125,7 +125,7 @@ module ChefZero
       def skip_organizations?(path, name = nil)
         if path == []
           false
-        elsif path[0] == 'organizations'
+        elsif path[0] == "organizations"
           if path.size == 1
             false
           elsif path.size >= 2 && path[1] != single_org

@@ -1,9 +1,9 @@
-require 'chef_zero/solr/query/binary_operator'
-require 'chef_zero/solr/query/unary_operator'
-require 'chef_zero/solr/query/term'
-require 'chef_zero/solr/query/phrase'
-require 'chef_zero/solr/query/range_query'
-require 'chef_zero/solr/query/subquery'
+require "chef_zero/solr/query/binary_operator"
+require "chef_zero/solr/query/unary_operator"
+require "chef_zero/solr/query/term"
+require "chef_zero/solr/query/phrase"
+require "chef_zero/solr/query/range_query"
+require "chef_zero/solr/query/subquery"
 
 module ChefZero
   module Solr
@@ -40,19 +40,20 @@ module ChefZero
         # Operators
         operator = peek_operator_token
         if operator
-          @index+=operator.length
+          @index += operator.length
           operator
         else
           # Everything that isn't whitespace or an operator, is part of a term
           # (characters plus backslashed escaped characters)
           start_index = @index
-          begin
+          loop do
             if @query_string[@index] == '\\'
-              @index+=1
+              @index += 1
             end
-            @index+=1 if !eof?
-          end while !eof? && peek_term_token
-          @query_string[start_index..@index-1]
+            @index += 1 if !eof?
+            break if eof? || !peek_term_token
+          end
+          @query_string[start_index..@index - 1]
         end
       end
 
@@ -66,15 +67,15 @@ module ChefZero
       def peek_term_token
         return nil if @query_string[@index] =~ /\s/
         op = peek_operator_token
-        return !op || op == '-'
+        return !op || op == "-"
       end
 
       def peek_operator_token
-        if ['"', '+', '-', '!', '(', ')', '{', '}', '[', ']', '^', ':'].include?(@query_string[@index])
+        if ['"', "+", "-", "!", "(", ")", "{", "}", "[", "]", "^", ":"].include?(@query_string[@index])
           return @query_string[@index]
         else
-          result = @query_string[@index..@index+1]
-          if ['&&', '||'].include?(result)
+          result = @query_string[@index..@index + 1]
+          if ["&&", "||"].include?(result)
             return result
           end
         end
@@ -91,19 +92,19 @@ module ChefZero
         # Expression is over when we hit a close paren or eof
         # (peek_token has the side effect of skipping whitespace for us, so we
         # really know if we're at eof or not)
-        until peek_token == ')' || eof?
+        until peek_token == ")" || eof?
           operator = peek_token
           if binary_operator?(operator)
             next_token
           else
             # If 2 terms are next to each other, the default operator is OR
-            operator = 'OR'
+            operator = "OR"
           end
           next_expression = read_single_expression
 
           # Build the operator, taking precedence into account
           if result.is_a?(Query::BinaryOperator) &&
-             binary_operator_precedence(operator) > binary_operator_precedence(result.operator)
+              binary_operator_precedence(operator) > binary_operator_precedence(result.operator)
             # a+b*c -> a+(b*c)
             new_right = Query::BinaryOperator.new(result.right, operator, next_expression)
             result = Query::BinaryOperator.new(result.left, result.operator, new_right)
@@ -142,7 +143,7 @@ module ChefZero
           Query::Phrase.new(phrase_terms)
 
         # If it's the start of a range query, build that
-        elsif token == '{' || token == '['
+        elsif token == "{" || token == "["
           left = next_token
           parse_error(left, "Expected left term in range query") if !left
           to = next_token
@@ -150,17 +151,17 @@ module ChefZero
           right = next_token
           parse_error(right, "Expected left term in range query") if !right
           end_range = next_token
-          parse_error(right, "Expected end range '#{end_range}") if !['}', ']'].include?(end_range)
-          Query::RangeQuery.new(left, right, token == '[', end_range == ']')
+          parse_error(right, "Expected end range '#{end_range}") if !["}", "]"].include?(end_range)
+          Query::RangeQuery.new(left, right, token == "[", end_range == "]")
 
-        elsif token == '('
+        elsif token == "("
           subquery = read_expression
           close_paren = next_token
-          parse_error(close_paren, "Expected ')'") if close_paren != ')'
+          parse_error(close_paren, "Expected ')'") if close_paren != ")"
           Query::Subquery.new(subquery)
 
         # If it's the end of a closure, raise an exception
-        elsif ['}',']',')'].include?(token)
+        elsif ["}", "]", ")"].include?(token)
           parse_error(token, "Unexpected end paren")
 
         # If it's a binary operator, raise an exception
@@ -170,7 +171,7 @@ module ChefZero
         # Otherwise it's a term.
         else
           term = Query::Term.new(token)
-          if peek_token == ':'
+          if peek_token == ":"
             Query::BinaryOperator.new(term, next_token, read_single_expression)
           else
             term
@@ -179,27 +180,27 @@ module ChefZero
       end
 
       def unary_operator?(token)
-        [ 'NOT', '+', '-' ].include?(token)
+        [ "NOT", "+", "-" ].include?(token)
       end
 
       def binary_operator?(token)
-        [ 'AND', 'OR', '^', ':'].include?(token)
+        [ "AND", "OR", "^", ":"].include?(token)
       end
 
       def binary_operator_precedence(token)
         case token
-        when '^'
+        when "^"
           4
-        when ':'
+        when ":"
           3
-        when 'AND'
+        when "AND"
           2
-        when 'OR'
+        when "OR"
           1
         end
       end
 
-      DEFAULT_FIELD = 'text'
+      DEFAULT_FIELD = "text"
     end
   end
 end

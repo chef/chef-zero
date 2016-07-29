@@ -1,13 +1,13 @@
-require 'ffi_yajl'
-require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/chef_data/data_normalizer'
+require "ffi_yajl"
+require "chef_zero/endpoints/rest_object_endpoint"
+require "chef_zero/chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints
     # /organizations/ORG/groups/NAME
     class GroupEndpoint < RestObjectEndpoint
       def initialize(server)
-        super(server, %w(id groupname))
+        super(server, %w{id groupname})
       end
 
       def populate_defaults(request, response_json)

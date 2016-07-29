@@ -1,6 +1,6 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
-require 'chef_zero/chef_data/data_normalizer'
+require "ffi_yajl"
+require "chef_zero/rest_base"
+require "chef_zero/chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints
@@ -73,7 +73,6 @@ module ChefZero
         policy_name = request.rest_path[5]
         policy_path = request.rest_path[0..1] + ["policies", policy_name,
                                                  "revisions", current_revision_id]
-
 
         full_policy_doc = parse_json(get_data(request, policy_path))
         full_policy_doc = ChefData::DataNormalizer.normalize_policy(full_policy_doc, policy_name, current_revision_id)

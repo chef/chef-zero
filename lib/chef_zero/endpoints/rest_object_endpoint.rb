@@ -1,12 +1,12 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
-require 'chef_zero/rest_error_response'
+require "ffi_yajl"
+require "chef_zero/rest_base"
+require "chef_zero/rest_error_response"
 
 module ChefZero
   module Endpoints
     # Typical REST leaf endpoint (/roles/NAME or /data/BAG/NAME)
     class RestObjectEndpoint < RestBase
-      def initialize(server, identity_keys = [ 'name' ])
+      def initialize(server, identity_keys = [ "name" ])
         super(server)
         identity_keys = [ identity_keys ] if identity_keys.is_a?(String)
         @identity_keys = identity_keys

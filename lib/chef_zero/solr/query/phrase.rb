@@ -1,4 +1,4 @@
-require 'chef_zero/solr/query/regexpable_query'
+require "chef_zero/solr/query/regexpable_query"
 
 module ChefZero
   module Solr

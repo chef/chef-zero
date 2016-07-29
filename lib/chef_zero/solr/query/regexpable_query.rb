@@ -16,6 +16,7 @@ module ChefZero
         def matches_doc?(doc)
           matches_values?(doc[DEFAULT_FIELD])
         end
+
         def matches_values?(values)
           values.any? { |value| !@regexp.match(value).nil? }
         end

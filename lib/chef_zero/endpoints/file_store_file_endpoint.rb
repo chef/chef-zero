@@ -1,4 +1,4 @@
-require 'chef_zero/rest_base'
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints
@@ -10,7 +10,7 @@ module ChefZero
       end
 
       def get(request)
-        [200, {"Content-Type" => 'application/x-binary'}, get_data(request) ]
+        [200, { "Content-Type" => "application/x-binary" }, get_data(request) ]
       end
 
       def put(request)

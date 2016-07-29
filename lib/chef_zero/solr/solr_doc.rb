@@ -15,12 +15,12 @@ module ChefZero
       def matching_values(&block)
         result = []
         key_values(nil, @json) do |key, value|
-          if block.call(key)
+          if yield(key)
             result << value.to_s
           end
         end
         # Handle manufactured value(s)
-        if block.call('X_CHEF_id_CHEF_X')
+        if yield("X_CHEF_id_CHEF_X")
           result << @id.to_s
         end
 
@@ -32,7 +32,7 @@ module ChefZero
       def key_values(key_so_far, value, &block)
         if value.is_a?(Hash)
           value.each_pair do |child_key, child_value|
-            block.call(child_key, child_value.to_s)
+            yield(child_key, child_value.to_s)
             if key_so_far
               new_key = "#{key_so_far}_#{child_key}"
               key_values(new_key, child_value, &block)
@@ -45,7 +45,7 @@ module ChefZero
             key_values(key_so_far, child_value, &block)
           end
         else
-          block.call(key_so_far || 'text', value.to_s)
+          yield(key_so_far || "text", value.to_s)
         end
       end
     end

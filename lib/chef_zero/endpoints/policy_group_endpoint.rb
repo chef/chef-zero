@@ -1,6 +1,6 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
-require 'chef_zero/chef_data/data_normalizer'
+require "ffi_yajl"
+require "chef_zero/rest_base"
+require "chef_zero/chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints
@@ -11,7 +11,7 @@ module ChefZero
       def get(request)
         data = {
           uri: build_uri(request.base_uri, request.rest_path),
-          policies: get_policy_group_policies(request)
+          policies: get_policy_group_policies(request),
         }
         json_response(200, data)
       end
@@ -24,7 +24,7 @@ module ChefZero
         policy_names = list_data(request, policies_path)
         policy_names.each do |policy_name|
           revision = parse_json(get_data(request, policies_path + [policy_name]))
-          policies_revisions[policy_name] = { revision_id: revision}
+          policies_revisions[policy_name] = { revision_id: revision }
         end
 
         policies_revisions
@@ -37,7 +37,7 @@ module ChefZero
 
         data = {
           uri: build_uri(request.base_uri, request.rest_path),
-          policies: policy_group_policies
+          policies: policy_group_policies,
         }
         json_response(200, data)
       end

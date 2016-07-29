@@ -1,4 +1,4 @@
-require 'chef_zero/chef_data/acl_path'
+require "chef_zero/chef_data/acl_path"
 
 module ChefZero
   module ChefData
@@ -24,8 +24,8 @@ module ChefZero
       attr_reader :creators
       attr_reader :deleted
 
-      PERMISSIONS = %w(create read update delete grant)
-      DEFAULT_SUPERUSERS = %w(pivotal)
+      PERMISSIONS = %w{create read update delete grant}
+      DEFAULT_SUPERUSERS = %w{pivotal}
 
       def clear
         @creators = { [] => @superusers }
@@ -35,7 +35,7 @@ module ChefZero
       def deleted(path)
         # acl deletes mean nothing, they are entirely subservient to their
         # parent object
-        if path[0] == 'acls' || (path[0] == 'organizations' && path[2] == 'acls')
+        if path[0] == "acls" || (path[0] == "organizations" && path[2] == "acls")
           return false
         end
 
@@ -54,7 +54,7 @@ module ChefZero
       def created(path, creator, create_parents)
         # If a parent has been deleted, we will need to clear that.
         deleted_index = nil
-        0.upto(path.size-1) do |index|
+        0.upto(path.size - 1) do |index|
           deleted_index = index if @deleted[path[0..index]]
         end
 
@@ -78,32 +78,32 @@ module ChefZero
         return nil if deleted?(path)
 
         result = case path[0]
-        when 'acls'
-          # /acls/*
-          object_path = AclPath.get_object_path(path)
-          if data_exists?(object_path)
-            default_acl(path)
-          end
+                 when "acls"
+                   # /acls/*
+                   object_path = AclPath.get_object_path(path)
+                   if data_exists?(object_path)
+                     default_acl(path)
+                   end
 
-        when 'containers'
-          if path.size == 2 && exists?(path)
-            {}
-          end
+                 when "containers"
+                   if path.size == 2 && exists?(path)
+                     {}
+                   end
 
-        when 'users'
-          if path.size == 2 && data.exists?(path)
-            # User is empty user
-            {}
-          end
+                 when "users"
+                   if path.size == 2 && data.exists?(path)
+                     # User is empty user
+                     {}
+                   end
 
-        when 'organizations'
-          if path.size >= 2
-            # /organizations/*/**
-            if data.exists_dir?(path[0..1])
-              get_org_default(path)
-            end
-          end
-        end
+                 when "organizations"
+                   if path.size >= 2
+                     # /organizations/*/**
+                     if data.exists_dir?(path[0..1])
+                       get_org_default(path)
+                     end
+                   end
+                 end
 
         result
       end
@@ -112,24 +112,24 @@ module ChefZero
         return nil if deleted?(path)
 
         if path.size == 0
-          return %w(containers users organizations acls)
+          return %w{containers users organizations acls}
         end
 
         case path[0]
-        when 'acls'
+        when "acls"
           if path.size == 1
-            [ 'root' ] + (data.list(path + [ 'containers' ]) - [ 'organizations' ])
+            [ "root" ] + (data.list(path + [ "containers" ]) - [ "organizations" ])
           else
             data.list(AclPath.get_object_path(path))
           end
 
-        when 'containers'
-          [ 'containers', 'users', 'organizations' ]
+        when "containers"
+          %w{containers users organizations}
 
-        when 'users'
+        when "users"
           superusers
 
-        when 'organizations'
+        when "organizations"
           if path.size == 1
             single_org ? [ single_org ] : []
           elsif path.size >= 2 && data.exists_dir?(path[0..1])
@@ -147,32 +147,32 @@ module ChefZero
       protected
 
       DEFAULT_ORG_SPINE = {
-        'clients' => {},
-        'cookbook_artifacts' => {},
-        'cookbooks' => {},
-        'data' => {},
-        'environments' => %w(_default),
-        'file_store' => {
-          'checksums' => {}
+        "clients" => {},
+        "cookbook_artifacts" => {},
+        "cookbooks" => {},
+        "data" => {},
+        "environments" => %w{_default},
+        "file_store" => {
+          "checksums" => {},
         },
-        'nodes' => {},
-        'policies' => {},
-        'policy_groups' => {},
-        'roles' => {},
-        'sandboxes' => {},
-        'users' => {},
+        "nodes" => {},
+        "policies" => {},
+        "policy_groups" => {},
+        "roles" => {},
+        "sandboxes" => {},
+        "users" => {},
 
-        'org' => {},
-        'containers' => %w(clients containers cookbook_artifacts cookbooks data environments groups nodes policies policy_groups roles sandboxes),
-        'groups' => %w(admins billing-admins clients users),
-        'association_requests' => {}
+        "org" => {},
+        "containers" => %w{clients containers cookbook_artifacts cookbooks data environments groups nodes policies policy_groups roles sandboxes},
+        "groups" => %w{admins billing-admins clients users},
+        "association_requests" => {},
       }
 
       def list_org_default(path)
-        if path.size >= 3 && path[2] == 'acls'
+        if path.size >= 3 && path[2] == "acls"
           if path.size == 3
             # /organizations/ORG/acls
-            return [ 'root' ] + data.list(path[0..1] + [ 'containers' ])
+            return [ "root" ] + data.list(path[0..1] + [ "containers" ])
           elsif path.size == 4
             # /organizations/ORG/acls/TYPE
             return data.list(path[0..1] + [ path[3] ])
@@ -182,27 +182,27 @@ module ChefZero
         end
 
         value = DEFAULT_ORG_SPINE
-        2.upto(path.size-1) do |index|
+        2.upto(path.size - 1) do |index|
           value = nil if @deleted[path[0..index]]
           break if !value
           value = value[path[index]]
         end
 
         result = if value.is_a?(Hash)
-          value.keys
-        elsif value
-          value
-        end
+                   value.keys
+                 elsif value
+                   value
+                 end
 
         if path.size == 3
-          if path[2] == 'clients'
+          if path[2] == "clients"
             result << "#{path[1]}-validator"
             if osc_compat
               result << "#{path[1]}-webui"
             end
-          elsif path[2] == 'users'
+          elsif path[2] == "users"
             if osc_compat
-              result << 'admin'
+              result << "admin"
             end
           end
         end
@@ -211,11 +211,11 @@ module ChefZero
       end
 
       def get_org_default(path)
-        if path[2] == 'acls'
+        if path[2] == "acls"
           get_org_acl_default(path)
 
         elsif path.size >= 4
-          if path[2] == 'containers' && path.size == 4
+          if path[2] == "containers" && path.size == 4
             if exists?(path)
               return {}
             else
@@ -226,40 +226,40 @@ module ChefZero
           # /organizations/(*)/clients/\1-validator
           # /organizations/*/environments/_default
           # /organizations/*/groups/{admins,billing-admins,clients,users}
-          case path[2..-1].join('/')
+          case path[2..-1].join("/")
           when "clients/#{path[1]}-validator"
-            { 'validator' => 'true' }
+            { "validator" => "true" }
 
           when "clients/#{path[1]}-webui", "users/admin"
             if osc_compat
-              { 'admin' => 'true' }
+              { "admin" => "true" }
             end
 
           when "environments/_default"
             { "description" => "The default Chef environment" }
 
           when "groups/admins"
-            admins = data.list(path[0..1] + [ 'users' ]).select do |name|
-              user = FFI_Yajl::Parser.parse(data.get(path[0..1] + [ 'users', name ]), :create_additions => false)
-              user['admin']
+            admins = data.list(path[0..1] + [ "users" ]).select do |name|
+              user = FFI_Yajl::Parser.parse(data.get(path[0..1] + [ "users", name ]), :create_additions => false)
+              user["admin"]
             end
-            admins += data.list(path[0..1] + [ 'clients' ]).select do |name|
-              client = FFI_Yajl::Parser.parse(data.get(path[0..1] + [ 'clients', name ]), :create_additions => false)
-              client['admin']
+            admins += data.list(path[0..1] + [ "clients" ]).select do |name|
+              client = FFI_Yajl::Parser.parse(data.get(path[0..1] + [ "clients", name ]), :create_additions => false)
+              client["admin"]
             end
             admins += @creators[path[0..1]] if @creators[path[0..1]]
-            { 'actors' => admins.uniq }
+            { "actors" => admins.uniq }
 
           when "groups/billing-admins"
             {}
 
           when "groups/clients"
-            { 'clients' => data.list(path[0..1] + [ 'clients' ]) }
+            { "clients" => data.list(path[0..1] + [ "clients" ]) }
 
           when "groups/users"
-            users = data.list(path[0..1] + [ 'users' ])
+            users = data.list(path[0..1] + [ "users" ])
             users |= @creators[path[0..1]] if @creators[path[0..1]]
-            { 'users' => users }
+            { "users" => users }
 
           when "org"
             {}
@@ -273,70 +273,70 @@ module ChefZero
         # The actual things containers correspond to don't have to exist, as long as the container does
         return nil if !data_exists?(object_path)
         basic_acl =
-          case path[3..-1].join('/')
-          when 'root', 'containers/containers', 'containers/groups'
+          case path[3..-1].join("/")
+          when "root", "containers/containers", "containers/groups"
             {
-              'create' => { 'groups' => %w(admins) },
-              'read'   => { 'groups' => %w(admins users) },
-              'update' => { 'groups' => %w(admins) },
-              'delete' => { 'groups' => %w(admins) },
-              'grant'  => { 'groups' => %w(admins) },
+              "create" => { "groups" => %w{admins} },
+              "read"   => { "groups" => %w{admins users} },
+              "update" => { "groups" => %w{admins} },
+              "delete" => { "groups" => %w{admins} },
+              "grant"  => { "groups" => %w{admins} },
             }
-          when 'containers/environments', 'containers/roles', 'containers/policy_groups', 'containers/policies'
+          when "containers/environments", "containers/roles", "containers/policy_groups", "containers/policies"
             {
-              'create' => { 'groups' => %w(admins users) },
-              'read'   => { 'groups' => %w(admins users clients) },
-              'update' => { 'groups' => %w(admins users) },
-              'delete' => { 'groups' => %w(admins users) },
-              'grant'  => { 'groups' => %w(admins) },
+              "create" => { "groups" => %w{admins users} },
+              "read"   => { "groups" => %w{admins users clients} },
+              "update" => { "groups" => %w{admins users} },
+              "delete" => { "groups" => %w{admins users} },
+              "grant"  => { "groups" => %w{admins} },
             }
-          when 'containers/cookbooks', 'containers/cookbook_artifacts', 'containers/data'
+          when "containers/cookbooks", "containers/cookbook_artifacts", "containers/data"
             {
-              'create' => { 'groups' => %w(admins users clients) },
-              'read'   => { 'groups' => %w(admins users clients) },
-              'update' => { 'groups' => %w(admins users clients) },
-              'delete' => { 'groups' => %w(admins users clients) },
-              'grant'  => { 'groups' => %w(admins) },
+              "create" => { "groups" => %w{admins users clients} },
+              "read"   => { "groups" => %w{admins users clients} },
+              "update" => { "groups" => %w{admins users clients} },
+              "delete" => { "groups" => %w{admins users clients} },
+              "grant"  => { "groups" => %w{admins} },
             }
-          when 'containers/nodes'
+          when "containers/nodes"
             {
-              'create' => { 'groups' => %w(admins users clients) },
-              'read'   => { 'groups' => %w(admins users clients) },
-              'update' => { 'groups' => %w(admins users) },
-              'delete' => { 'groups' => %w(admins users) },
-              'grant'  => { 'groups' => %w(admins) },
+              "create" => { "groups" => %w{admins users clients} },
+              "read"   => { "groups" => %w{admins users clients} },
+              "update" => { "groups" => %w{admins users} },
+              "delete" => { "groups" => %w{admins users} },
+              "grant"  => { "groups" => %w{admins} },
             }
-          when 'containers/clients'
+          when "containers/clients"
             {
-              'create' => { 'groups' => %w(admins) },
-              'read'   => { 'groups' => %w(admins users) },
-              'update' => { 'groups' => %w(admins) },
-              'delete' => { 'groups' => %w(admins users) },
-              'grant'  => { 'groups' => %w(admins) },
+              "create" => { "groups" => %w{admins} },
+              "read"   => { "groups" => %w{admins users} },
+              "update" => { "groups" => %w{admins} },
+              "delete" => { "groups" => %w{admins users} },
+              "grant"  => { "groups" => %w{admins} },
             }
-          when 'containers/sandboxes'
+          when "containers/sandboxes"
             {
-              'create' => { 'groups' => %w(admins users) },
-              'read'   => { 'groups' => %w(admins) },
-              'update' => { 'groups' => %w(admins) },
-              'delete' => { 'groups' => %w(admins) },
-              'grant'  => { 'groups' => %w(admins) },
+              "create" => { "groups" => %w{admins users} },
+              "read"   => { "groups" => %w{admins} },
+              "update" => { "groups" => %w{admins} },
+              "delete" => { "groups" => %w{admins} },
+              "grant"  => { "groups" => %w{admins} },
             }
-          when 'groups/admins', 'groups/clients', 'groups/users'
+          when "groups/admins", "groups/clients", "groups/users"
             {
-              'create' => { 'groups' => %w(admins) },
-              'read'   => { 'groups' => %w(admins) },
-              'update' => { 'groups' => %w(admins) },
-              'delete' => { 'groups' => %w(admins) },
-              'grant'  => { 'groups' => %w(admins) },
+              "create" => { "groups" => %w{admins} },
+              "read"   => { "groups" => %w{admins} },
+              "update" => { "groups" => %w{admins} },
+              "delete" => { "groups" => %w{admins} },
+              "grant"  => { "groups" => %w{admins} },
             }
-          when 'groups/billing-admins'
+          when "groups/billing-admins"
             {
-              'create' => { 'groups' => %w() },
-              'read'   => { 'groups' => %w(billing-admins) },
-              'update' => { 'groups' => %w(billing-admins) },
-              'delete' => { 'groups' => %w() },
-              'grant'  => { 'groups' => %w() },
+              "create" => { "groups" => %w{} },
+              "read"   => { "groups" => %w{billing-admins} },
+              "update" => { "groups" => %w{billing-admins} },
+              "delete" => { "groups" => %w{} },
+              "grant"  => { "groups" => %w{} },
             }
           else
             {}
@@ -352,10 +352,10 @@ module ChefZero
         if path
 
           # Non-validator clients own themselves.
-          if path.size == 4 && path[0] == 'organizations' && path[2] == 'clients'
+          if path.size == 4 && path[0] == "organizations" && path[2] == "clients"
             begin
               client = FFI_Yajl::Parser.parse(data.get(path), :create_additions => false)
-              if !client['validator']
+              if !client["validator"]
                 owners |= [ path[3] ]
               end
             rescue
@@ -367,7 +367,7 @@ module ChefZero
               @creators[path].each do |creator|
                 begin
                   client = FFI_Yajl::Parser.parse(data.get(path[0..2] + [ creator ]), :create_additions => false)
-                  next if client['validator']
+                  next if client["validator"]
                 rescue
                 end
                 owners |= [ creator ]
@@ -380,7 +380,7 @@ module ChefZero
           #ANGRY
           # Non-default containers do not get superusers added to them,
           # because reasons.
-          unless path.size == 4 && path[0] == 'organizations' && path[2] == 'containers' && !exists?(path)
+          unless path.size == 4 && path[0] == "organizations" && path[2] == "containers" && !exists?(path)
             owners += superusers
           end
         end
@@ -389,21 +389,21 @@ module ChefZero
         owners
       end
 
-      def default_acl(acl_path, acl={})
+      def default_acl(acl_path, acl = {})
         owners = nil
         container_acl = nil
         PERMISSIONS.each do |perm|
           acl[perm] ||= {}
-          acl[perm]['actors'] ||= begin
+          acl[perm]["actors"] ||= begin
             owners ||= get_owners(acl_path)
           end
-          acl[perm]['groups'] ||= begin
+          acl[perm]["groups"] ||= begin
             # When we create containers, we don't merge groups (not sure why).
-            if acl_path[0] == 'organizations' && acl_path[3] == 'containers'
+            if acl_path[0] == "organizations" && acl_path[3] == "containers"
               []
             else
               container_acl ||= get_container_acl(acl_path) || {}
-              (container_acl[perm] ? container_acl[perm]['groups'] : []) || []
+              (container_acl[perm] ? container_acl[perm]["groups"] : []) || []
             end
           end
         end
@@ -432,15 +432,15 @@ module ChefZero
         when 0, 1
           return true
         when 2
-          return path[0] == 'organizations' || (path[0] == 'acls' && path[1] != 'root')
+          return path[0] == "organizations" || (path[0] == "acls" && path[1] != "root")
         when 3
           # If it has a container, it is a directory.
-          return path[0] == 'organizations' &&
-            (path[2] == 'acls' || data.exists?(path[0..1] + [ 'containers', path[2] ]))
+          return path[0] == "organizations" &&
+              (path[2] == "acls" || data.exists?(path[0..1] + [ "containers", path[2] ]))
         when 4
-          return path[0] == 'organizations' && (
-            (path[2] == 'acls' && path[1] != 'root') ||
-            %w(cookbooks cookbook_artifacts data policies policy_groups).include?(path[2]))
+          return path[0] == "organizations" && (
+            (path[2] == "acls" && path[1] != "root") ||
+            %w{cookbooks cookbook_artifacts data policies policy_groups}.include?(path[2]))
         else
           return false
         end

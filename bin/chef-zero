@@ -1,21 +1,21 @@
 #!/usr/bin/env ruby
 
 # Trap interrupts to quit cleanly.
-Signal.trap('INT') { exit 1 }
+Signal.trap("INT") { exit 1 }
 
-require 'rubygems'
+require "rubygems"
 $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
-require 'chef_zero/log'
-require 'chef_zero/version'
-require 'chef_zero/server'
-require 'chef_zero/data_store/raw_file_store'
-require 'optparse'
+require "chef_zero/log"
+require "chef_zero/version"
+require "chef_zero/server"
+require "chef_zero/data_store/raw_file_store"
+require "optparse"
 
 def parse_port(port)
   array = []
-  port.split(',').each do |part|
-    a,b = part.split('-',2)
+  port.split(",").each do |part|
+    a, b = part.split("-", 2)
     if b
       array = array.concat(a.to_i.upto(b.to_i).to_a)
     else
@@ -99,10 +99,10 @@ if options[:daemon]
     Process.daemon(true)
     server.start(true)
   else
-    if ENV['OS'] == 'Windows_NT'
-      abort 'Daemonization is not supported on Windows. Running "start chef-zero" will fork the process.'
+    if ENV["OS"] == "Windows_NT"
+      abort "Daemonization is not supported on Windows. Running 'start chef-zero' will fork the process."
     else
-      abort 'Process.daemon requires Ruby >= 1.9'
+      abort "Process.daemon requires Ruby >= 1.9"
     end
   end
 else

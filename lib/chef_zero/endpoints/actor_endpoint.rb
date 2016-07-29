@@ -1,6 +1,6 @@
-require 'ffi_yajl'
-require 'chef_zero/endpoints/rest_object_endpoint'
-require 'chef_zero/chef_data/data_normalizer'
+require "ffi_yajl"
+require "chef_zero/endpoints/rest_object_endpoint"
+require "chef_zero/chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints
@@ -21,10 +21,10 @@ module ChefZero
       def delete(request)
         result = super
 
-        if request.rest_path[0] == 'users'
-          list_data(request, [ 'organizations' ]).each do |org|
+        if request.rest_path[0] == "users"
+          list_data(request, [ "organizations" ]).each do |org|
             begin
-              delete_data(request, [ 'organizations', org, 'users', request.rest_path[1] ], :data_store_exceptions)
+              delete_data(request, [ "organizations", org, "users", request.rest_path[1] ], :data_store_exceptions)
             rescue DataStore::DataNotFoundError
             end
           end
@@ -38,22 +38,22 @@ module ChefZero
         # Find out if we're updating the public key.
         request_body = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
 
-        if request_body['public_key'].nil?
+        if request_body["public_key"].nil?
           # If public_key is null, then don't overwrite it.  Weird patchiness.
           body_modified = true
-          request_body.delete('public_key')
+          request_body.delete("public_key")
         else
           updating_public_key = true
         end
 
         # Generate private_key if requested.
-        if request_body.key?('private_key')
+        if request_body.key?("private_key")
           body_modified = true
 
-          if request_body.delete('private_key')
+          if request_body.delete("private_key")
             private_key, public_key = server.gen_key_pair
             updating_public_key = true
-            request_body['public_key'] = public_key
+            request_body["public_key"] = public_key
           end
         end
 
@@ -73,22 +73,22 @@ module ChefZero
             rename_keys!(request, client_or_user_name)
           end
 
-          if request.rest_path[0] == 'users'
+          if request.rest_path[0] == "users"
             response = {
-              'uri' => build_uri(request.base_uri, [ 'users', client_or_user_name ])
+              "uri" => build_uri(request.base_uri, [ "users", client_or_user_name ]),
             }
           else
             response = parse_json(result[2])
           end
 
           if client?(request)
-            response['private_key'] = private_key ? private_key : false
+            response["private_key"] = private_key ? private_key : false
           else
-            response['private_key'] = private_key if private_key
-            response.delete('public_key') unless updating_public_key
+            response["private_key"] = private_key if private_key
+            response.delete("public_key") unless updating_public_key
           end
 
-          response.delete('password')
+          response.delete("password")
 
           json_response(result[0], response)
         else
@@ -125,7 +125,7 @@ module ChefZero
       def rename_keys!(request, new_client_or_user_name)
         orig_keys_path = keys_path_base(request)
         new_keys_path = orig_keys_path.dup
-                          .tap {|path| path[-2] = new_client_or_user_name }
+                          .tap { |path| path[-2] = new_client_or_user_name }
 
         key_names = list_data_or_else(request, orig_keys_path, nil)
         return unless key_names # No keys to move
@@ -154,7 +154,7 @@ module ChefZero
       rescue DataStore::DataNotFoundError
       end
 
-      def client?(request, rest_path=nil)
+      def client?(request, rest_path = nil)
         rest_path ||= request.rest_path
         request.rest_path[2] == "clients"
       end
@@ -165,7 +165,7 @@ module ChefZero
       # /organizations/ORG/users/USER -> /organizations/ORG/user_keys/USER/keys
       # /users/USER -> /user_keys/USER
       #
-      def keys_path_base(request, client_or_user_name=nil)
+      def keys_path_base(request, client_or_user_name = nil)
         rest_path = (rest_path || request.rest_path).dup
         rest_path = rest_path.dup
         case rest_path[-2]

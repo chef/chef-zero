@@ -1,6 +1,6 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
-require 'uuidtools'
+require "ffi_yajl"
+require "chef_zero/rest_base"
+require "uuidtools"
 
 module ChefZero
   module Endpoints
@@ -16,8 +16,8 @@ module ChefZero
 
       def post(request)
         contents = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
-        name = contents['name']
-        full_name = contents['full_name']
+        name = contents["name"]
+        full_name = contents["full_name"]
         if name.nil?
           error(400, "Must specify 'name' in JSON")
         elsif full_name.nil?
@@ -28,24 +28,23 @@ module ChefZero
           create_data_dir(request, request.rest_path, name, :requestor => request.requestor)
 
           org = {
-            "guid" => UUIDTools::UUID.random_create.to_s.gsub('-', ''),
-            "assigned_at" => Time.now.to_s
+            "guid" => UUIDTools::UUID.random_create.to_s.delete("-"),
+            "assigned_at" => Time.now.to_s,
           }.merge(contents)
           org_path = request.rest_path + [ name ]
-          set_data(request, org_path + [ 'org' ], FFI_Yajl::Encoder.encode(org, :pretty => true))
+          set_data(request, org_path + [ "org" ], FFI_Yajl::Encoder.encode(org, :pretty => true))
 
           if server.generate_real_keys?
             # Create the validator client
             validator_name = "#{name}-validator"
-            validator_path = org_path + [ 'clients', validator_name ]
+            validator_path = org_path + [ "clients", validator_name ]
             private_key, public_key = server.gen_key_pair
             validator = FFI_Yajl::Encoder.encode({
-              'validator' => true,
-              'public_key' => public_key
+              "validator" => true,
+              "public_key" => public_key,
             }, :pretty => true)
             set_data(request, validator_path, validator)
           end
-
 
           json_response(201, {
             "uri" => "#{build_uri(request.base_uri, org_path)}",
@@ -53,7 +52,7 @@ module ChefZero
             "org_type" => org["org_type"],
             "full_name" => full_name,
             "clientname" => validator_name,
-            "private_key" => private_key
+            "private_key" => private_key,
           })
         end
       end

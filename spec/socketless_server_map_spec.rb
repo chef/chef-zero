@@ -1,5 +1,4 @@
-require 'chef_zero/socketless_server_map'
-
+require "chef_zero/socketless_server_map"
 
 describe "Socketless Mode" do
 
@@ -71,6 +70,5 @@ describe "Socketless Mode" do
       end
     end
   end
-
 
 end

@@ -1,4 +1,4 @@
-require 'chef_zero/rest_base'
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints

@@ -1,4 +1,4 @@
-require 'rack/request'
+require "rack/request"
 
 module ChefZero
   class RestRequest
@@ -15,10 +15,10 @@ module ChefZero
 
     def base_uri
       # Load balancer awareness
-      if env['HTTP_X_FORWARDED_PROTO']
-        scheme = env['HTTP_X_FORWARDED_PROTO']
+      if env["HTTP_X_FORWARDED_PROTO"]
+        scheme = env["HTTP_X_FORWARDED_PROTO"]
       else
-        scheme = env['rack.url_scheme']
+        scheme = env["rack.url_scheme"]
       end
       @base_uri ||= "#{scheme}://#{env['HTTP_HOST']}#{env['SCRIPT_NAME']}"
     end
@@ -28,7 +28,7 @@ module ChefZero
     end
 
     def api_version
-      @env['HTTP_X_OPS_SERVER_API_VERSION'] || ZERO
+      @env["HTTP_X_OPS_SERVER_API_VERSION"] || ZERO
     end
 
     def api_v0?
@@ -36,15 +36,15 @@ module ChefZero
     end
 
     def requestor
-      @env['HTTP_X_OPS_USERID']
+      @env["HTTP_X_OPS_USERID"]
     end
 
     def method
-      @env['REQUEST_METHOD']
+      @env["REQUEST_METHOD"]
     end
 
     def rest_path
-      @rest_path ||= rest_base_prefix + env['PATH_INFO'].split('/').select { |part| part != "" }
+      @rest_path ||= rest_base_prefix + env["PATH_INFO"].split("/").select { |part| part != "" }
     end
 
     def rest_path=(rest_path)
@@ -56,7 +56,7 @@ module ChefZero
     end
 
     def body
-      @body ||= env['rack.input'].read
+      @body ||= env["rack.input"].read
     end
 
     def query_params
@@ -72,9 +72,9 @@ module ChefZero
     def to_s
       result = "#{method} #{rest_path.join('/')}"
       if query_params.size > 0
-        result << "?#{query_params.map { |k,v| "#{k}=#{v}" }.join('&') }"
+        result << "?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&') }"
       end
-      if body.chomp != ''
+      if body.chomp != ""
         result << "\n--- #{method} BODY ---\n"
         result << body
         result << "\n" if !body.end_with?("\n")

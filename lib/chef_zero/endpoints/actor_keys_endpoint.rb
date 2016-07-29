@@ -1,4 +1,4 @@
-require 'chef_zero/rest_base'
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints
@@ -8,7 +8,7 @@ module ChefZero
       DEFAULT_PUBLIC_KEY_NAME = "default"
       DATE_FORMAT = "%FT%TZ" # e.g. 2015-12-24T21:00:00Z
 
-      def get(request, alt_uri_root=nil)
+      def get(request, alt_uri_root = nil)
         path = data_path(request)
 
         # Get actor or 404 if it doesn't exist
@@ -35,7 +35,7 @@ module ChefZero
         if generate_keys
           private_key, public_key = server.gen_key_pair
         else
-          public_key = request_body['public_key']
+          public_key = request_body["public_key"]
         end
 
         key_name = request_body["name"]
@@ -74,7 +74,6 @@ module ChefZero
 
         actor_data["public_key"] = public_key
         set_data(request, actor_path(request), to_json(actor_data))
-
       end
 
       # Returns the keys data store path, which is the same as
@@ -90,7 +89,7 @@ module ChefZero
         end
       end
 
-      def list_key(request, data_path, alt_uri_root=nil)
+      def list_key(request, data_path, alt_uri_root = nil)
         key_name, expiration_date =
           if data_path[-1] == DEFAULT_PUBLIC_KEY_NAME
             [ DEFAULT_PUBLIC_KEY_NAME, "infinity" ]
@@ -111,7 +110,7 @@ module ChefZero
         request.rest_path[2] == "clients"
       end
 
-      def key_uri(request, key_name, alt_uri_root=nil)
+      def key_uri(request, key_name, alt_uri_root = nil)
         uri_root = alt_uri_root.nil? ? request.rest_path : alt_uri_root
         build_uri(request.base_uri, [ *uri_root, key_name ])
       end

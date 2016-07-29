@@ -21,7 +21,7 @@
 ################################################################################
 # You MUST specify the address of the server the API requests will be
 # sent to.  Only specify protocol, hostname, and port.
-chef_server 'http://127.0.0.1:8889'
+chef_server "http://127.0.0.1:8889"
 
 # If you are doing development testing, you can specify the address of
 # the Solr server.  The presence of this parameter will enable tests
@@ -54,7 +54,6 @@ search_server   chef_server
 search_commit_url "/dummy"
 search_url_fmt    "/dummy?fq=+X_CHEF_type_CHEF_X:%{type}&q=%{query}&wt=json"
 
-
 # We're starting to break tests up into groups based on different
 # criteria.  The proper API tests (the results of which are viewable
 # to OPC customers) should be the only ones run by Pedant embedded in
@@ -69,10 +68,10 @@ search_url_fmt    "/dummy?fq=+X_CHEF_type_CHEF_X:%{type}&q=%{query}&wt=json"
 # value.
 include_internal false
 
-key = 'spec/support/stickywicket.pem'
+key = "spec/support/stickywicket.pem"
 
 org(name: "pedant-testorg",
-    create_me: !ENV['CHEF_FS'],
+    create_me: !ENV["CHEF_FS"],
     validator_key: key)
 
 internal_account_url chef_server
@@ -85,15 +84,15 @@ delete_org true
 # are using pre-existing users, you must supply a ':key_file' key,
 # which should be the fully-qualified path /on the machine Pedant is
 # running on/ to a private key for that user.
-superuser_name 'pivotal'
+superuser_name "pivotal"
 superuser_key key
 webui_key key
 
 def cheffs_or_else_user(value)
-  ENV['CHEF_FS'] ? "pivotal" : value
+  ENV["CHEF_FS"] ? "pivotal" : value
 end
 
-keyfile_maybe = ENV['CHEF_FS'] ? { key_file: key } : { key_file: nil }
+keyfile_maybe = ENV["CHEF_FS"] ? { key_file: key } : { key_file: nil }
 
 requestors({
              :clients => {
@@ -102,45 +101,45 @@ requestors({
                  :name => "pedant_admin_client",
                  :create_me => true,
                  :create_knife => true,
-                 :admin => true
+                 :admin => true,
                },
                :non_admin => {
-                 :name => 'pedant_client',
+                 :name => "pedant_client",
                  :create_me => true,
                  :create_knife => true,
                },
                :bad => {
-                 :name => 'bad_client',
+                 :name => "bad_client",
                  :create_me => true,
                  :create_knife => true,
-                 :bogus => true
-               }
+                 :bogus => true,
+               },
              },
 
              :users => {
                # An administrator in the testing organization
                :admin => {
                  :name => cheffs_or_else_user("pedant_admin_user"),
-                 :create_me => !ENV['CHEF_FS'],
-                 :associate => !ENV['CHEF_FS'],
-                 :create_knife => true
+                 :create_me => !ENV["CHEF_FS"],
+                 :associate => !ENV["CHEF_FS"],
+                 :create_knife => true,
                }.merge(keyfile_maybe),
 
                :non_admin => {
                  :name => cheffs_or_else_user("pedant_user"),
-                 :create_me => !ENV['CHEF_FS'],
-                 :associate => !ENV['CHEF_FS'],
-                 :create_knife => true
+                 :create_me => !ENV["CHEF_FS"],
+                 :associate => !ENV["CHEF_FS"],
+                 :create_knife => true,
                }.merge(keyfile_maybe),
 
                # A user that is not a member of the testing organization
                :bad => {
                  :name => cheffs_or_else_user("pedant-nobody"),
-                 :create_me => !ENV['CHEF_FS'],
+                 :create_me => !ENV["CHEF_FS"],
                  :create_knife => true,
-                 :associate => false
+                 :associate => false,
                }.merge(keyfile_maybe),
-             }
+             },
            })
 
 self[:tags] = [:validation, :authentication, :authorization]

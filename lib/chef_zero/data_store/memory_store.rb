@@ -16,16 +16,16 @@
 # limitations under the License.
 #
 
-require 'chef_zero/data_store/v2_to_v1_adapter'
-require 'chef_zero/data_store/memory_store_v2'
-require 'chef_zero/data_store/default_facade'
+require "chef_zero/data_store/v2_to_v1_adapter"
+require "chef_zero/data_store/memory_store_v2"
+require "chef_zero/data_store/default_facade"
 
 module ChefZero
   module DataStore
     class MemoryStore < ChefZero::DataStore::V2ToV1Adapter
       def initialize
         super
-        @real_store = ChefZero::DataStore::DefaultFacade.new(ChefZero::DataStore::MemoryStoreV2.new, 'chef', true)
+        @real_store = ChefZero::DataStore::DefaultFacade.new(ChefZero::DataStore::MemoryStoreV2.new, "chef", true)
         clear
       end
     end

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-require 'chef_zero/data_store/data_already_exists_error'
-require 'chef_zero/data_store/data_not_found_error'
-require 'chef_zero/data_store/interface_v2'
-require 'fileutils'
+require "chef_zero/data_store/data_already_exists_error"
+require "chef_zero/data_store/data_not_found_error"
+require "chef_zero/data_store/interface_v2"
+require "fileutils"
 
 module ChefZero
   module DataStore
@@ -32,7 +32,7 @@ module ChefZero
       attr_reader :root
       attr_reader :destructible
 
-      def path_to(path, name=nil)
+      def path_to(path, name = nil)
         if name
           File.join(root, *path, name)
         else
@@ -43,7 +43,7 @@ module ChefZero
       def clear
         if destructible
           Dir.entries(root).each do |entry|
-            next if entry == '.' || entry == '..'
+            next if entry == "." || entry == ".."
             FileUtils.rm_rf(Path.join(root, entry))
           end
         end
@@ -69,7 +69,7 @@ module ChefZero
           FileUtils.mkdir_p(path_to(path))
         end
         begin
-          File.open(path_to(path, name), File::WRONLY|File::CREAT|File::EXCL|File::BINARY, :internal_encoding => nil) do |file|
+          File.open(path_to(path, name), File::WRONLY | File::CREAT | File::EXCL | File::BINARY, :internal_encoding => nil) do |file|
             file.write data
           end
         rescue Errno::ENOENT
@@ -79,7 +79,7 @@ module ChefZero
         end
       end
 
-      def get(path, request=nil)
+      def get(path, request = nil)
         begin
           return IO.read(path_to(path))
         rescue Errno::ENOENT
@@ -92,7 +92,7 @@ module ChefZero
           FileUtils.mkdir_p(path_to(path[0..-2]))
         end
         begin
-          mode = File::WRONLY|File::TRUNC|File::BINARY
+          mode = File::WRONLY | File::TRUNC | File::BINARY
           if options.include?(:create)
             mode |= File::CREAT
           end
@@ -129,7 +129,7 @@ module ChefZero
 
       def list(path)
         begin
-          Dir.entries(path_to(path)).select { |entry| entry != '.' && entry != '..' }.to_a
+          Dir.entries(path_to(path)).select { |entry| entry != "." && entry != ".." }.to_a
         rescue Errno::ENOENT
           raise DataNotFoundError.new(path)
         end

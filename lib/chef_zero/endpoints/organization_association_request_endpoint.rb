@@ -1,5 +1,5 @@
-require 'ffi_yajl'
-require 'chef_zero/rest_base'
+require "ffi_yajl"
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints

@@ -1,5 +1,5 @@
-require 'ffi_yajl'
-require 'chef_zero/endpoints/rest_list_endpoint'
+require "ffi_yajl"
+require "chef_zero/endpoints/rest_list_endpoint"
 
 module ChefZero
   module Endpoints
@@ -10,13 +10,13 @@ module ChefZero
 
         # apply query filters: if one applies, stop processing rest
         # (precendence matches chef-server: https://github.com/chef/chef-server/blob/268a0c9/src/oc_erchef/apps/chef_objects/src/chef_user.erl#L554-L559)
-        if value = request.query_params['external_authentication_uid']
-          response[2] = filter('external_authentication_uid', value, request, response[2])
-        elsif value = request.query_params['email']
-          response[2] = filter('email', value, request, response[2])
+        if value = request.query_params["external_authentication_uid"]
+          response[2] = filter("external_authentication_uid", value, request, response[2])
+        elsif value = request.query_params["email"]
+          response[2] = filter("email", value, request, response[2])
         end
 
-        if request.query_params['verbose']
+        if request.query_params["verbose"]
           results = parse_json(response[2])
           results.each do |name, url|
             record = get_data(request, request.rest_path + [ name ], :nil)
@@ -35,16 +35,16 @@ module ChefZero
         # First, find out if the user actually posted a public key.  If not, make
         # one.
         request_body = parse_json(request.body)
-        public_key = request_body['public_key']
+        public_key = request_body["public_key"]
 
         skip_key_create = !request.api_v0? && !request_body["create_key"]
 
         if !public_key && !skip_key_create
           private_key, public_key = server.gen_key_pair
-          request_body['public_key'] = public_key
+          request_body["public_key"] = public_key
           request.body = to_json(request_body)
         elsif skip_key_create
-          request_body['public_key'] = nil
+          request_body["public_key"] = nil
           request.body = to_json(request_body)
         end
 
@@ -55,8 +55,8 @@ module ChefZero
           user_data = parse_json(result[2])
 
           key_data = {}
-          key_data['private_key'] = private_key if private_key
-          key_data['public_key'] = public_key unless request.rest_path[0] == 'users'
+          key_data["private_key"] = private_key if private_key
+          key_data["public_key"] = public_key unless request.rest_path[0] == "users"
 
           response =
             if request.api_v0?

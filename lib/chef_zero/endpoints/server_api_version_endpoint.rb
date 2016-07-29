@@ -1,4 +1,4 @@
-require 'chef_zero/rest_base'
+require "chef_zero/rest_base"
 
 module ChefZero
   module Endpoints
@@ -6,7 +6,7 @@ module ChefZero
     class ServerAPIVersionEndpoint < RestBase
       API_VERSION = 1
       def get(request)
-        json_response(200, {"min_api_version"=>MIN_API_VERSION, "max_api_version"=>MAX_API_VERSION},
+        json_response(200, { "min_api_version" => MIN_API_VERSION, "max_api_version" => MAX_API_VERSION },
           request_version: request.api_version, response_version: API_VERSION)
       end
     end

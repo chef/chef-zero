@@ -1,4 +1,4 @@
-require 'mixlib/log'
+require "mixlib/log"
 
 module ChefZero
   class Log
