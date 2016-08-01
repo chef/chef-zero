@@ -95,9 +95,13 @@ module ChefZero
             cookbooks = []
           end
           cookbooks.each do |cookbook_name|
-            data_store.list(request.rest_path[0..1] + [cookbook_type, cookbook_name]).each do |version|
-              cookbook = data_store.get(request.rest_path[0..1] + [cookbook_type, cookbook_name, version], request)
-              deleted_checksums = deleted_checksums - get_checksums(cookbook)
+            # as below, this can be racy.
+            begin
+              data_store.list(request.rest_path[0..1] + [cookbook_type, cookbook_name]).each do |version|
+                cookbook = data_store.get(request.rest_path[0..1] + [cookbook_type, cookbook_name, version], request)
+                deleted_checksums = deleted_checksums - get_checksums(cookbook)
+              end
+            rescue ChefZero::DataStore::DataNotFoundError
             end
           end
         end
