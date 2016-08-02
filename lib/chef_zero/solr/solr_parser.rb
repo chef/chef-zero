@@ -180,7 +180,7 @@ module ChefZero
       end
 
       def unary_operator?(token)
-        [ "NOT", "+", "-" ].include?(token)
+        [ "NOT", "+", "-", "!" ].include?(token)
       end
 
       def binary_operator?(token)
