@@ -1,6 +1,3 @@
-rvm: 2.1
-gemfile: Gemfile
-
 # This prevents testing branches that are created just for PRs
 branches:
   only:
@@ -12,30 +9,47 @@ before_install:
   - gem install bundler
 
 sudo: false
+language: ruby
+cache: bundler
+
 script:
   - bundle update
   - bundle exec rake pedant
 
 matrix:
   include:
-    - rvm: 2.1
+    - rvm: 2.1.10
       env: PEDANT_KNIFE_TESTS=true PEDANT_ALLOW_RVM=1
-    - rvm: 2.1
+    - rvm: 2.1.10
       env: SINGLE_ORG=true
-    - rvm: 2.1
+    - rvm: 2.1.10
       env: CHEF_FS=true
-    - rvm: 2.1
+    - rvm: 2.1.10
       env:
         - CHEF_FS=true
         - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
-    - rvm: 2.1
+    - rvm: 2.2.5
+      env:
+        - CHEF_FS=true
+        - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
+    - rvm: 2.3.1
+      env:
+        - CHEF_FS=true
+        - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
+    - rvm: 2.1.10
       env: FILE_STORE=true
-    - rvm: 2.1
+    - rvm: 2.1.10
       script: bundle exec rake chef_spec
       env: TEST=chef_spec
-    - rvm: 2.1
+    - rvm: 2.1.10
       script: bundle exec rake spec
       env: TEST=rake_spec
-    - rvm: 2.1
+    - rvm: 2.2.5
+      script: bundle exec rake spec
+      env: TEST=rake_spec
+    - rvm: 2.3.1
+      script: bundle exec rake spec
+      env: TEST=rake_spec
+    - rvm: 2.1.10
       script: bundle exec rake style
       env: TEST=chefstyle
