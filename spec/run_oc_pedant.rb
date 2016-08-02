@@ -135,14 +135,15 @@ begin
                   else
                     []
                   end
-  # The latest released Chef doesn't do ACLs, Cookbook Artifacts or Policies yet
-  chef_fs_skips << "--skip-acl"
-  chef_fs_skips << "--skip-cookbook-artifacts"
-  chef_fs_skips << "--skip-policies"
 
-  # Multi-keys don't work prior to 12.8
   unless Gem::Requirement.new(">= 12.8.0").satisfied_by?(Gem::Version.new(Chef::VERSION))
     chef_fs_skips << "--skip-keys"
+  end
+
+  unless Gem::Requirement.new(">= 12.13.19").satisfied_by?(Gem::Version.new(Chef::VERSION))
+    chef_fs_skips << "--skip-acl"
+    chef_fs_skips << "--skip-cookbook-artifacts"
+    chef_fs_skips << "--skip-policies"
   end
 
   # These things aren't supported by Chef Zero in any mode of operation:
