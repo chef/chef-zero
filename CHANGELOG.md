@@ -1,7 +1,15 @@
 # Change Log
 
-## [4.8.0](https://github.com/chef/chef-zero/tree/4.8.0) (2016-07-25)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.1...4.8.0)
+## [4.9.0](https://github.com/chef/chef-zero/tree/4.9.0) (2016-08-11)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.8.0...4.9.0)
+
+**Fixed bugs:**
+
+- Connect to chef zero default port in the playground [\#229](https://github.com/chef/chef-zero/pull/229) ([thommay](https://github.com/thommay))
+- Correct ruby syntax error to make script usable [\#228](https://github.com/chef/chef-zero/pull/228) ([AntonOfTheWoods](https://github.com/AntonOfTheWoods))
+
+## [v4.8.0](https://github.com/chef/chef-zero/tree/v4.8.0) (2016-07-25)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.1...v4.8.0)
 
 **Implemented enhancements:**
 
