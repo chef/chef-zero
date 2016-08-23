@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://www.chef.io"
   s.license = "Apache 2.0"
 
-  s.required_ruby_version = ">= 2.2.0"
+  s.required_ruby_version = ">= 2.2.2"
 
   s.add_dependency "mixlib-log", "~> 1.3"
   s.add_dependency "hashie", ">= 2.0", "< 4.0"
@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "pry-stack_explorer"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
-  s.add_development_dependency "chef"
 
   s.bindir       = "bin"
   s.executables  = ["chef-zero"]

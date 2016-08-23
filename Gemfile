@@ -16,7 +16,7 @@ end
 # bundler resolve failure on "rspec_junit_formatter"
 # gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => "server-cli-option"
 
-# gem 'chef', :github => 'chef/chef', :branch => 'jk/policies-acls'
+gem "chef", github: "chef/chef" # until chef 12.15 is released
 
 if ENV["GEMFILE_MOD"]
   puts "GEMFILE_MOD: #{ENV['GEMFILE_MOD']}"
