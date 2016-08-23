@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency "hashie", ">= 2.0", "< 4.0"
   s.add_dependency "uuidtools", "~> 2.1"
   s.add_dependency "ffi-yajl", "~> 2.2"
-  s.add_dependency "rack", "< 2" # 2.0 requires Ruby 2.2+
+  s.add_dependency "rack", "~> 2.0"
 
   s.add_development_dependency "pry"
   s.add_development_dependency "pry-byebug"
