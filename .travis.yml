@@ -24,14 +24,15 @@ matrix:
       env: SINGLE_ORG=true
     - rvm: 2.3.1
       env: CHEF_FS=true
-    - rvm: 2.2.5
-      env:
-        - CHEF_FS=true
-        - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
-    - rvm: 2.3.1
-      env:
-        - CHEF_FS=true
-        - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
+# Commented out until we work with a released version again
+#    - rvm: 2.2.5
+#      env:
+#        - CHEF_FS=true
+#        - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
+#    - rvm: 2.3.1
+#      env:
+#        - CHEF_FS=true
+#        - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
     - rvm: 2.3.1
       env: FILE_STORE=true
     - rvm: 2.3.1
