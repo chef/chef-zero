@@ -8,8 +8,18 @@ module ChefZero
       def self.normalize_acls(acls)
         ChefData::DefaultCreator::PERMISSIONS.each do |perm|
           acls[perm] ||= {}
-          (acls[perm]["actors"] ||= []).uniq! # this gets doubled sometimes, for reasons.
           acls[perm]["groups"] ||= []
+          if acls[perm].has_key? "users"
+            # When clients and users are split, their combined list
+            # is the final list of actors that a subsequent GET will
+            # provide. Each list is guaranteed to be unique, but the
+            # combined list is not.
+            acls[perm]["actors"] = acls[perm].delete("users").uniq +
+              acls[perm].delete("clients").uniq
+          else
+            # this gets doubled sometimes, for reasons.
+            (acls[perm]["actors"] ||= []).uniq!
+          end
         end
         acls
       end
