@@ -1,7 +1,15 @@
 # Change Log
 
-## [4.9.0](https://github.com/chef/chef-zero/tree/4.9.0) (2016-08-11)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.8.0...4.9.0)
+## [5.0.0](https://github.com/chef/chef-zero/tree/5.0.0) (2016-08-24)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.9.0...5.0.0)
+
+**Implemented enhancements:**
+
+- Support clients and users fields in ACL PUT requests [\#239](https://github.com/chef/chef-zero/pull/239) ([marcparadise](https://github.com/marcparadise))
+- Remove support for Ruby 2.1 [\#237](https://github.com/chef/chef-zero/pull/237) ([jkeiser](https://github.com/jkeiser))
+
+## [v4.9.0](https://github.com/chef/chef-zero/tree/v4.9.0) (2016-08-11)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.8.0...v4.9.0)
 
 **Fixed bugs:**
 
