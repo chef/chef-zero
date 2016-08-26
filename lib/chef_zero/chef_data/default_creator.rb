@@ -346,8 +346,7 @@ module ChefZero
       end
 
       def get_owners(acl_path)
-        owners = []
-
+        unknown_owners = []
         path = AclPath.get_object_path(acl_path)
         if path
 
@@ -356,10 +355,10 @@ module ChefZero
             begin
               client = FFI_Yajl::Parser.parse(data.get(path), :create_additions => false)
               if !client["validator"]
-                owners |= [ path[3] ]
+                unknown_owners |= [ path[3] ]
               end
             rescue
-              owners |= [ path[3] ]
+              unknown_owners |= [ path[3] ]
             end
 
             # Add creators as owners (except any validator clients).
@@ -370,33 +369,60 @@ module ChefZero
                   next if client["validator"]
                 rescue
                 end
-                owners |= [ creator ]
+                unknown_owners |= [ creator ]
               end
             end
           else
-            owners |= @creators[path] if @creators[path]
+            unknown_owners |= @creators[path] if @creators[path]
           end
+          owners = filter_owners(path, unknown_owners)
 
           #ANGRY
           # Non-default containers do not get superusers added to them,
           # because reasons.
           unless path.size == 4 && path[0] == "organizations" && path[2] == "containers" && !exists?(path)
-            owners += superusers
+            owners[:users] += superusers
           end
+        else
+          owners = { clients: [], users: [] }
         end
 
-        # we don't de-dup this list, because pedant expects to see ["pivotal", "pivotal"] in some cases.
+        owners[:users].uniq!
+        owners[:clients].uniq!
+        owners
+      end
+
+      # Figures out if an  object was created by a user or client.
+      # If the object does not exist in the context
+      # of an organization, it can only be a user
+      #
+      # This isn't perfect, because we are never explicitly told
+      # if a requestor creating an object is a user or client -
+      # but it gets us reasonably close
+      def filter_owners(path, unknown_owners)
+        owners = { clients: [], users: [] }
+        unknown_owners.each do |entity|
+          if path[0] == "organizations" && path.length > 2
+            begin
+              data.get(["organizations", path[1], "clients", entity])
+              owners[:clients] |= [ entity ]
+            rescue
+              owners[:users] |= [ entity ]
+            end
+          else
+            owners[:users] |= [ entity ]
+          end
+        end
         owners
       end
 
       def default_acl(acl_path, acl = {})
-        owners = nil
+        owners = get_owners(acl_path)
         container_acl = nil
         PERMISSIONS.each do |perm|
           acl[perm] ||= {}
-          acl[perm]["actors"] ||= begin
-            owners ||= get_owners(acl_path)
-          end
+          acl[perm]["users"] = owners[:users]
+          acl[perm]["clients"] = owners[:clients]
           acl[perm]["groups"] ||= begin
             # When we create containers, we don't merge groups (not sure why).
             if acl_path[0] == "organizations" && acl_path[3] == "containers"
@@ -406,6 +432,7 @@ module ChefZero
               (container_acl[perm] ? container_acl[perm]["groups"] : []) || []
             end
           end
+          acl[perm]["actors"] = acl[perm]["clients"] + acl[perm]["users"]
         end
         acl
       end
