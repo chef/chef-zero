@@ -14,8 +14,8 @@ module ChefZero
             # is the final list of actors that a subsequent GET will
             # provide. Each list is guaranteed to be unique, but the
             # combined list is not.
-            acls[perm]["actors"] = acls[perm].delete("users").uniq +
-              acls[perm].delete("clients").uniq
+            acls[perm]["actors"] = acls[perm]["clients"].uniq +
+              acls[perm]["users"].uniq
           else
             # this gets doubled sometimes, for reasons.
             (acls[perm]["actors"] ||= []).uniq!

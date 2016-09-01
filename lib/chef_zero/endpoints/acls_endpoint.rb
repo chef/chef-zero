@@ -22,6 +22,17 @@ module ChefZero
         end
         acls = FFI_Yajl::Parser.parse(get_data(request, acl_path), :create_additions => false)
         acls = ChefData::DataNormalizer.normalize_acls(acls)
+        if request.query_params["detail"] == "granular"
+          acls.each do |perm, ace|
+            acls[perm]["actors"] = []
+          end
+        else
+          acls.each do |perm, ace|
+            acls[perm].delete("clients")
+            acls[perm].delete("users")
+          end
+        end
+
         json_response(200, acls)
       end
     end
