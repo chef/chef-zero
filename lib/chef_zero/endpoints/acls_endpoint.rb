@@ -20,7 +20,7 @@ module ChefZero
         if !acl_path
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
-        acls = FFI_Yajl::Parser.parse(get_data(request, acl_path), :create_additions => false)
+        acls = FFI_Yajl::Parser.parse(get_data(request, acl_path))
         acls = ChefData::DataNormalizer.normalize_acls(acls)
         if request.query_params["detail"] == "granular"
           acls.each do |perm, ace|
