@@ -6,7 +6,7 @@ module ChefZero
     # /organizations/ORG/association_requests
     class OrganizationAssociationRequestsEndpoint < RestBase
       def post(request)
-        json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+        json = FFI_Yajl::Parser.parse(request.body)
         username = json["user"]
         orgname = request.rest_path[1]
         id = "#{username}-#{orgname}"

@@ -36,7 +36,7 @@ module ChefZero
 
       def put(request)
         # Find out if we're updating the public key.
-        request_body = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+        request_body = FFI_Yajl::Parser.parse(request.body)
 
         if request_body["public_key"].nil?
           # If public_key is null, then don't overwrite it.  Weird patchiness.

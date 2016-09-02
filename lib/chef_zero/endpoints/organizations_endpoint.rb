@@ -15,7 +15,7 @@ module ChefZero
       end
 
       def post(request)
-        contents = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+        contents = FFI_Yajl::Parser.parse(request.body)
         name = contents["name"]
         full_name = contents["full_name"]
         if name.nil?
