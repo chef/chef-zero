@@ -18,7 +18,7 @@ module ChefZero
         # Verify that the environment exists
         get_data(request, environment_path)
 
-        role = FFI_Yajl::Parser.parse(get_data(request, role_path))
+        role = FFI_Yajl::Parser.parse(get_data(request, role_path), :create_additions => false)
         environment_name = environment_path[3]
         if environment_name == "_default"
           run_list = role["run_list"]

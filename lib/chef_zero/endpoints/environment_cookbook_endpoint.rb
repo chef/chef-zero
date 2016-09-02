@@ -7,7 +7,7 @@ module ChefZero
     class EnvironmentCookbookEndpoint < CookbooksBase
       def get(request)
         cookbook_name = request.rest_path[5]
-        environment = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..3]))
+        environment = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..3]), :create_additions => false)
         constraints = environment["cookbook_versions"] || {}
         cookbook_versions = list_data(request, request.rest_path[0..1] + request.rest_path[4..5])
         if request.query_params["num_versions"] == "all"

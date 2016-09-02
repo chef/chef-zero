@@ -13,7 +13,7 @@ module ChefZero
       def post(request)
         sandbox_checksums = []
 
-        needed_checksums = FFI_Yajl::Parser.parse(request.body)["checksums"]
+        needed_checksums = FFI_Yajl::Parser.parse(request.body, :create_additions => false)["checksums"]
         result_checksums = {}
         needed_checksums.keys.each do |needed_checksum|
           if list_data(request, request.rest_path[0..1] + %w{file_store checksums}).include?(needed_checksum)

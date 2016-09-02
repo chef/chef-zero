@@ -13,11 +13,11 @@ module ChefZero
         end
         orgname = $1
 
-        json = FFI_Yajl::Parser.parse(request.body)
+        json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         association_request_path = [ "organizations", orgname, "association_requests", username ]
         if json["response"] == "accept"
           users = get_data(request, [ "organizations", orgname, "groups", "users" ])
-          users = FFI_Yajl::Parser.parse(users)
+          users = FFI_Yajl::Parser.parse(users, :create_additions => false)
 
           delete_data(request, association_request_path)
           create_data(request, [ "organizations", orgname, "users" ], username, "{}")

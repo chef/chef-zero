@@ -11,7 +11,7 @@ module ChefZero
 
         result = {}
         list_data(request, request.rest_path[0..1] + ["nodes"]).each do |name|
-          node = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["nodes", name]))
+          node = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["nodes", name]), :create_additions => false)
           if node["chef_environment"] == request.rest_path[3]
             result[name] = build_uri(request.base_uri, request.rest_path[0..1] + ["nodes", name])
           end

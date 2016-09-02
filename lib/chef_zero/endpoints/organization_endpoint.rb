@@ -11,8 +11,8 @@ module ChefZero
       end
 
       def put(request)
-        org = FFI_Yajl::Parser.parse(get_data(request, request.rest_path + [ "org" ]))
-        new_org = FFI_Yajl::Parser.parse(request.body)
+        org = FFI_Yajl::Parser.parse(get_data(request, request.rest_path + [ "org" ]), :create_additions => false)
+        new_org = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         new_org.each do |key, value|
           org[key] = value
         end
@@ -37,7 +37,7 @@ module ChefZero
       end
 
       def populate_defaults(request, response_json)
-        org = FFI_Yajl::Parser.parse(response_json)
+        org = FFI_Yajl::Parser.parse(response_json, :create_additions => false)
         org = ChefData::DataNormalizer.normalize_organization(org, request.rest_path[1])
         FFI_Yajl::Encoder.encode(org, :pretty => true)
       end

@@ -48,8 +48,8 @@ module ChefZero
       def patch_request_body(request)
         existing_value = get_data(request, nil, :nil)
         if existing_value
-          request_json = FFI_Yajl::Parser.parse(request.body)
-          existing_json = FFI_Yajl::Parser.parse(existing_value)
+          request_json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
+          existing_json = FFI_Yajl::Parser.parse(existing_value, :create_additions => false)
           merged_json = existing_json.merge(request_json)
           if merged_json.size > request_json.size
             return FFI_Yajl::Encoder.encode(merged_json, :pretty => true)

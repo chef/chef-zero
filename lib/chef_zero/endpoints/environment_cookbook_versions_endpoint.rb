@@ -12,7 +12,7 @@ module ChefZero
 
         # Get the list of cookbooks and versions desired by the runlist
         desired_versions = {}
-        run_list = FFI_Yajl::Parser.parse(request.body)["run_list"]
+        run_list = FFI_Yajl::Parser.parse(request.body, :create_additions => false)["run_list"]
         run_list.each do |run_list_entry|
           if run_list_entry =~ /(.+)::.+\@(.+)/ || run_list_entry =~ /(.+)\@(.+)/
             raise RestErrorResponse.new(412, "No such cookbook: #{$1}") if !cookbook_names.include?($1)
@@ -26,7 +26,7 @@ module ChefZero
         end
 
         # Filter by environment constraints
-        environment = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..3]))
+        environment = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..3]), :create_additions => false)
         environment_constraints = environment["cookbook_versions"] || {}
 
         desired_versions.each_key do |name|
@@ -48,7 +48,7 @@ module ChefZero
 
         result = {}
         solved.each_pair do |name, versions|
-          cookbook = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", name, versions[0]]))
+          cookbook = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", name, versions[0]]), :create_additions => false)
           result[name] = ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, name, versions[0], request.base_uri, "MIN")
         end
         json_response(200, result)
@@ -74,7 +74,7 @@ module ChefZero
           new_unsolved = unsolved[1..-1]
 
           # Pick this cookbook, and add dependencies
-          cookbook_obj = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", solve_for, desired_version]))
+          cookbook_obj = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", solve_for, desired_version]), :create_additions => false)
           cookbook_metadata = cookbook_obj["metadata"] || {}
           cookbook_dependencies = cookbook_metadata["dependencies"] || {}
           dep_not_found = false

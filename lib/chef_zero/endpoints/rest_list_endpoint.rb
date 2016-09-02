@@ -34,7 +34,7 @@ module ChefZero
       end
 
       def get_key(contents)
-        json = FFI_Yajl::Parser.parse(contents)
+        json = FFI_Yajl::Parser.parse(contents, :create_additions => false)
         identity_keys.map { |k| json[k] }.select { |v| v }.first
       end
     end

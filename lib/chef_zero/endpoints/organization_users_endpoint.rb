@@ -8,7 +8,7 @@ module ChefZero
     class OrganizationUsersEndpoint < RestBase
       def post(request)
         orgname = request.rest_path[1]
-        json = FFI_Yajl::Parser.parse(request.body)
+        json = FFI_Yajl::Parser.parse(request.body, :create_additions => false)
         username = json["username"]
 
         if exists_data?(request, [ "organizations", orgname, "users", username ])
@@ -16,7 +16,7 @@ module ChefZero
         end
 
         users = get_data(request, [ "organizations", orgname, "groups", "users" ])
-        users = FFI_Yajl::Parser.parse(users)
+        users = FFI_Yajl::Parser.parse(users, :create_additions => false)
 
         create_data(request, request.rest_path, username, "{}")
 

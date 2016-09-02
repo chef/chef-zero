@@ -19,7 +19,7 @@ module ChefZero
           result = []
           filter_cookbooks(all_cookbooks_list(request), {}, 1) do |name, versions|
             if versions.size > 0
-              cookbook = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", name, versions[0]]))
+              cookbook = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", name, versions[0]]), :create_additions => false)
               result += recipe_names(name, cookbook)
             end
           end
