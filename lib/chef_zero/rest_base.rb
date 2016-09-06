@@ -285,7 +285,7 @@ module ChefZero
     end
 
     def parse_json(json)
-      FFI_Yajl::Parser.parse(json, create_additions: false)
+      FFI_Yajl::Parser.parse(json)
     end
 
     def to_json(data)
