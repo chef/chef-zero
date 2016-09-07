@@ -1,7 +1,14 @@
 # Change Log
 
-## [5.0.0](https://github.com/chef/chef-zero/tree/5.0.0) (2016-08-24)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v4.9.0...5.0.0)
+## [5.1.0](https://github.com/chef/chef-zero/tree/5.1.0) (2016-09-07)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v5.0.0...5.1.0)
+
+**Implemented enhancements:**
+
+- store ACEs by client/user [\#240](https://github.com/chef/chef-zero/pull/240) ([marcparadise](https://github.com/marcparadise))
+
+## [v5.0.0](https://github.com/chef/chef-zero/tree/v5.0.0) (2016-08-24)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v4.9.0...v5.0.0)
 
 **Implemented enhancements:**
 
