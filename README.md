@@ -145,6 +145,10 @@ Usage: chef-zero [ARGS]
         --version                    Show version
 ```
 
+## Contributing
+
+For information on contributing to this project see <https://github.com/chef/chef/blob/master/CONTRIBUTING.md>
+
 ## License
 
 Copyright 2012-2016, Chef Software, Inc.
