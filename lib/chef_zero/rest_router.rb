@@ -60,13 +60,13 @@ module ChefZero
     end
 
     def log_response(response)
-      ChefZero::Log.debug {
+      ChefZero::Log.debug do
         [ "",
           "--- RESPONSE (#{response[0]}) ---",
           response[2].chomp,
           "--- END RESPONSE ---",
         ].join("\n")
-      }
+      end
     end
   end
 end
