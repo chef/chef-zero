@@ -287,9 +287,9 @@ module ChefZero
         :SSLEnable => options[:ssl],
         :SSLOptions => ssl_opts,
         :SSLCertName => [ [ "CN", WEBrick::Utils.getservername ] ],
-        :StartCallback => proc {
+        :StartCallback => proc do
           @running = true
-        }
+        end
       )
       ENV["HTTPS"] = "on" if options[:ssl]
       @server.mount("/", Rack::Handler::WEBrick, app)
@@ -320,9 +320,7 @@ module ChefZero
       end
 
       # Do not return until the web server is genuinely started.
-      while !@running && @thread.alive?
-        sleep(0.01)
-      end
+      sleep(0.01) while !@running && @thread.alive?
 
       SocketlessServerMap.instance.register_port(@port, self)
 

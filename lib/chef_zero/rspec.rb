@@ -48,13 +48,13 @@ module ChefZero
 
         # Take the passed-in options
 
-        define_singleton_method(:chef_server_options) {
+        define_singleton_method(:chef_server_options) do
           @chef_server_options ||= begin
             _chef_server_options = { port: 8900, signals: false, log_requests: true }
             _chef_server_options = _chef_server_options.merge(tags.last) if tags.last.is_a?(Hash)
             _chef_server_options = _chef_server_options.freeze
           end
-        }
+        end
 
         # Merge in chef_server_options from let(:chef_server_options)
         def chef_server_options

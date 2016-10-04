@@ -221,7 +221,7 @@ module ChefZero
       end
 
       def self.normalize_run_list(run_list)
-        run_list.map {|item|
+        run_list.map do |item|
           case item
           when /^recipe\[.*\]$/
             item # explicit recipe
@@ -230,7 +230,7 @@ module ChefZero
           else
             "recipe[#{item}]"
           end
-        }.uniq
+        end.uniq
       end
     end
   end
