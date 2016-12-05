@@ -15,16 +15,6 @@ module ChefZero
 
         results["rows"] = results["rows"].map { |name, uri, value, search_value| value }
 
-        # Slice the array based on the value of the "rows" query parameter. If
-        # this is a positive integer, we'll get the number of rows asked for.
-        # If it's nil, we'll get -1, which gives us all of the elements.
-        #
-        # Do the same for "start", which will start at 0 if that value is not
-        # given.
-        results["rows"] =
-          results["rows"][request.query_params["start"].to_i..
-                          (request.query_params["rows"].to_i - 1)]
-
         json_response(200, results)
       rescue ChefZero::Solr::ParseError
         bad_search_request(request)
@@ -124,10 +114,8 @@ module ChefZero
         query_string = request.query_params["q"] || "*:*"
         solr_query = ChefZero::Solr::SolrParser.new(query_string).parse
         sort_string = request.query_params["sort"]
-        start = request.query_params["start"]
-        start = start.to_i if start
-        rows = request.query_params["rows"]
-        rows = rows.to_i if rows
+        start = request.query_params["start"].to_i
+        rows = request.query_params["rows"].to_i
 
         # Get the search container
         container, expander = search_container(request, index, orgname)
@@ -151,13 +139,18 @@ module ChefZero
           result = result.reverse if sort_order == "DESC"
         end
 
-        # Paginate
-        if start
-          result = result[start..start + (rows || -1)]
-        end
         {
-          "rows" => result,
-          "start" => start || 0,
+          # Paginate
+          #
+          # Slice the array based on the value of the "rows" query parameter. If
+          # this is a positive integer, we'll get the number of rows asked for.
+          # If it's nil, we'll get -1, which gives us all of the elements.
+          #
+          # Do the same for "start", which will start at 0 if that value is not
+          # given.
+          "rows" => result[start..(rows - 1)],
+          # Also return start and total in the object
+          "start" => start,
           "total" => total,
         }
       end
@@ -212,7 +205,6 @@ module ChefZero
         end
         dest
       end # deep_merge!
-
     end
   end
 end
