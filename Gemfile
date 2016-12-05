@@ -1,9 +1,9 @@
 source "https://rubygems.org"
 gemspec
 
-# gem 'rest-client', :github => 'chef/rest-client'
+# gem 'rest-client', :git => 'https://github.com/chef/rest-client.git'
 
-gem "oc-chef-pedant", :github => "chef/chef-server"
+gem "oc-chef-pedant", :git => "https://github.com/chef/chef-server.git"
 
 group :changelog do
   gem "github_changelog_generator"
@@ -13,10 +13,7 @@ group :development, :test do
   gem "chefstyle", "= 0.3.1"
 end
 
-# bundler resolve failure on "rspec_junit_formatter"
-# gem 'chef-pedant', :github => 'opscode/chef-pedant', :ref => "server-cli-option"
-
-gem "chef", github: "chef/chef" # until chef 12.15 is released
+gem "chef"
 
 if ENV["GEMFILE_MOD"]
   puts "GEMFILE_MOD: #{ENV['GEMFILE_MOD']}"

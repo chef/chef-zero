@@ -12,7 +12,19 @@ module ChefZero
       def get(request)
         orgname = request.rest_path[1]
         results = search(request, orgname)
+
         results["rows"] = results["rows"].map { |name, uri, value, search_value| value }
+
+        # Slice the array based on the value of the "rows" query parameter. If
+        # this is a positive integer, we'll get the number of rows asked for.
+        # If it's nil, we'll get -1, which gives us all of the elements.
+        #
+        # Do the same for "start", which will start at 0 if that value is not
+        # given.
+        results["rows"] =
+          results["rows"][request.query_params["start"].to_i..
+                          (request.query_params["rows"].to_i - 1)]
+
         json_response(200, results)
       rescue ChefZero::Solr::ParseError
         bad_search_request(request)
