@@ -1,7 +1,17 @@
 # Change Log
 
-## [5.1.0](https://github.com/chef/chef-zero/tree/5.1.0) (2016-09-07)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v5.0.0...5.1.0)
+## [v5.1.1](https://github.com/chef/chef-zero/tree/v5.1.1) (2016-12-13)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v5.1.0...v5.1.1)
+
+**Implemented enhancements:**
+- Add link to contributing docs and fix chefstyle warnings [\#245](https://github.com/chef/chef-zero/pull/245) ([tas50](https://github.com/tas50))
+
+**Fixed bugs:**
+- Fix pagination with start parameters [\#248](https://github.com/chef/chef-zero/pull/248) ([smith](https://github.com/smith))
+- Handle the start and rows parameters correctly [\#247](https://github.com/chef/chef-zero/pull/247) ([smith](https://github.com/smith))
+
+## [v5.1.0](https://github.com/chef/chef-zero/tree/v5.1.0) (2016-09-07)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v5.0.0...v5.1.0)
 
 **Implemented enhancements:**
 
