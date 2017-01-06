@@ -5,6 +5,9 @@ require "chef_zero/chef_data/default_creator"
 module ChefZero
   module ChefData
     class DataNormalizer
+
+      COOKBOOK_SEGMENTS = %w{ resources providers recipes definitions libraries attributes files templates root_files }
+
       def self.normalize_acls(acls)
         ChefData::DefaultCreator::PERMISSIONS.each do |perm|
           acls[perm] ||= {}
@@ -90,18 +93,51 @@ module ChefZero
       end
 
       def self.normalize_cookbook(endpoint, org_prefix, cookbook, name, version, base_uri, method,
-                                  is_cookbook_artifact = false)
+                                  is_cookbook_artifact = false, api_version: 2)
         # TODO I feel dirty
-        if method != "PUT"
-          cookbook.each_pair do |key, value|
-            if value.is_a?(Array)
-              value.each do |file|
-                if file.is_a?(Hash) && file.has_key?("checksum")
-                  file["url"] ||= endpoint.build_uri(base_uri, org_prefix + ["file_store", "checksums", file["checksum"]])
-                end
+        if method == "PUT" && api_version < 2
+          cookbook["all_files"] = cookbook.delete(["root_files"]) { [] }
+          COOKBOOK_SEGMENTS.each do |segment|
+            next unless cookbook.has_key? segment
+            cookbook[segment].each do |file|
+              file["name"] = "#{segment}/#{file['name']}"
+              cookbook["all_files"] << file
+            end
+            cookbook.delete(segment)
+          end
+        elsif method != "PUT"
+          if cookbook.key? "all_files"
+            cookbook["all_files"].each do |file|
+              if file.is_a?(Hash) && file.has_key?("checksum")
+                file["url"] ||= endpoint.build_uri(base_uri, org_prefix + ["file_store", "checksums", file["checksum"]])
               end
             end
+
+            # down convert to old style manifest, ensuring we don't send all_files on the wire and that we correctly divine segments
+            # any file that's not in an old segment is just dropped on the floor.
+            if api_version < 2
+
+              # the spec appears to think we should send empty arrays for each segment, so let's do that
+              COOKBOOK_SEGMENTS.each { |seg| cookbook[seg] ||= [] }
+
+              cookbook["all_files"].each do |file|
+                segment, name = file["name"].split("/")
+
+                # root_files have no segment prepended
+                if name.nil?
+                  name = segment
+                  segment = "root_files"
+                end
+
+                file.delete("full_path")
+                next unless COOKBOOK_SEGMENTS.include? segment
+                file["name"] = name
+                cookbook[segment] << file
+              end
+              cookbook.delete("all_files")
+            end
           end
+
           cookbook["name"] ||= "#{name}-#{version}"
           # TODO it feels wrong, but the real chef server doesn't expand 'version', so we don't either.
 

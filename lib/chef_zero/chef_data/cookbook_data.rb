@@ -13,7 +13,9 @@ module ChefZero
         end
 
         result = files_from(cookbook)
-        recipe_names = result[:recipes].map do |recipe|
+        recipe_names = result[:all_files].select do |file|
+          file[:name].start_with?("recipes/")
+        end.map do |recipe|
           recipe_name = recipe[:name][0..-2]
           recipe_name == "default" ? name : "#{name}::#{recipe_name}"
         end
@@ -86,24 +88,8 @@ module ChefZero
           cookbook_arg(:supports, cookbook, version_constraints)
         end
 
-        def recommends(cookbook, *version_constraints)
-          cookbook_arg(:recommendations, cookbook, version_constraints)
-        end
-
-        def suggests(cookbook, *version_constraints)
-          cookbook_arg(:suggestions, cookbook, version_constraints)
-        end
-
-        def conflicts(cookbook, *version_constraints)
-          cookbook_arg(:conflicting, cookbook, version_constraints)
-        end
-
         def provides(cookbook, *version_constraints)
           cookbook_arg(:providing, cookbook, version_constraints)
-        end
-
-        def replaces(cookbook, *version_constraints)
-          cookbook_arg(:replacing, cookbook, version_constraints)
         end
 
         def gem(*opts)
@@ -117,10 +103,6 @@ module ChefZero
 
         def attribute(name, options)
           self[:attributes][name] = options
-        end
-
-        def grouping(name, options)
-          self[:grouping][name] = options
         end
 
         def cookbook_arg(key, cookbook, version_constraints)
@@ -142,19 +124,14 @@ module ChefZero
 
       def self.files_from(directory)
         # TODO some support .rb only
+        result = load_files(directory)
+
+        set_specificity(result, :templates)
+        set_specificity(result, :files)
+
         result = {
-          :attributes => load_child_files(directory, "attributes", false),
-          :definitions => load_child_files(directory, "definitions", false),
-          :recipes => load_child_files(directory, "recipes", false),
-          :libraries => load_child_files(directory, "libraries", true),
-          :templates => load_child_files(directory, "templates", true),
-          :files => load_child_files(directory, "files", true),
-          :resources => load_child_files(directory, "resources", true),
-          :providers => load_child_files(directory, "providers", true),
-          :root_files => load_files(directory, false),
+          all_files: result,
         }
-        set_specificity(result[:templates])
-        set_specificity(result[:files])
         result
       end
 
@@ -199,45 +176,52 @@ module ChefZero
         end
       end
 
-      def self.load_child_files(parent, key, recursive)
-        result = load_files(get_directory(parent, key), recursive)
+      def self.load_child_files(parent, key, recursive, part)
+        result = load_files(get_directory(parent, key), recursive, part)
         result.each do |file|
           file[:path] = "#{key}/#{file[:path]}"
         end
         result
       end
 
-      def self.load_files(directory, recursive)
+      def self.load_files(directory, recursive = true, part = nil)
         result = []
         if directory
           list(directory).each do |child_name|
             dir = get_directory(directory, child_name)
             if dir
+              child_part = child_name if part.nil?
               if recursive
-                result += load_child_files(directory, child_name, recursive)
+                result += load_child_files(directory, child_name, recursive, child_part)
               end
             else
-              result += load_file(read_file(directory, child_name), child_name)
+              result += load_file(read_file(directory, child_name), child_name, part)
             end
           end
         end
         result
       end
 
-      def self.load_file(value, name)
+      def self.load_file(value, name, part = nil)
+        specific_name = part ? "#{part}/#{name}" : name
         [{
-          :name => name,
+          :name => specific_name,
           :path => name,
           :checksum => Digest::MD5.hexdigest(value),
           :specificity => "default",
         }]
       end
 
-      def self.set_specificity(files)
+      def self.set_specificity(files, type)
         files.each do |file|
+          next unless file[:name].split("/")[0] == type.to_s
+
           parts = file[:path].split("/")
-          raise "Only directories are allowed directly under templates or files: #{file[:path]}" if parts.size == 2
-          file[:specificity] = parts[1]
+          file[:specificity] = if parts.size == 2
+                                 "default"
+                               else
+                                 parts[1]
+                               end
         end
       end
     end
