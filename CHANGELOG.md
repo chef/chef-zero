@@ -1,26 +1,34 @@
 # Change Log
 
-## [v5.1.1](https://github.com/chef/chef-zero/tree/v5.1.1) (2016-12-13)
+## [v5.2.0](https://github.com/chef/chef-zero/tree/v5.2.0) (2017-01-23)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v5.1.1...v5.2.0)
+
+**Merged pull requests:**
+
+- favor metadata.json over metadata.rb [\#251](https://github.com/chef/chef-zero/pull/251) ([lamont-granquist](https://github.com/lamont-granquist))
+- support ! in searches [\#233](https://github.com/chef/chef-zero/pull/233) ([thommay](https://github.com/thommay))
+
+## [v5.1.1](https://github.com/chef/chef-zero/tree/v5.1.1) (2016-12-14)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v5.1.0...v5.1.1)
 
-**Implemented enhancements:**
-- Add link to contributing docs and fix chefstyle warnings [\#245](https://github.com/chef/chef-zero/pull/245) ([tas50](https://github.com/tas50))
+**Merged pull requests:**
 
-**Fixed bugs:**
 - Fix pagination with start parameters [\#248](https://github.com/chef/chef-zero/pull/248) ([smith](https://github.com/smith))
 - Handle the start and rows parameters correctly [\#247](https://github.com/chef/chef-zero/pull/247) ([smith](https://github.com/smith))
+- Add link to contributing docs and fix chefstyle warnings [\#245](https://github.com/chef/chef-zero/pull/245) ([tas50](https://github.com/tas50))
 
 ## [v5.1.0](https://github.com/chef/chef-zero/tree/v5.1.0) (2016-09-07)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v5.0.0...v5.1.0)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
+- Bump version to 5.1.0 [\#243](https://github.com/chef/chef-zero/pull/243) ([jkeiser](https://github.com/jkeiser))
 - store ACEs by client/user [\#240](https://github.com/chef/chef-zero/pull/240) ([marcparadise](https://github.com/marcparadise))
 
 ## [v5.0.0](https://github.com/chef/chef-zero/tree/v5.0.0) (2016-08-24)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.9.0...v5.0.0)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Support clients and users fields in ACL PUT requests [\#239](https://github.com/chef/chef-zero/pull/239) ([marcparadise](https://github.com/marcparadise))
 - Remove support for Ruby 2.1 [\#237](https://github.com/chef/chef-zero/pull/237) ([jkeiser](https://github.com/jkeiser))
@@ -28,7 +36,7 @@
 ## [v4.9.0](https://github.com/chef/chef-zero/tree/v4.9.0) (2016-08-11)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.8.0...v4.9.0)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
 - Connect to chef zero default port in the playground [\#229](https://github.com/chef/chef-zero/pull/229) ([thommay](https://github.com/thommay))
 - Correct ruby syntax error to make script usable [\#228](https://github.com/chef/chef-zero/pull/228) ([AntonOfTheWoods](https://github.com/AntonOfTheWoods))
@@ -36,7 +44,7 @@
 ## [v4.8.0](https://github.com/chef/chef-zero/tree/v4.8.0) (2016-07-25)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.1...v4.8.0)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Load libraries recursively [\#227](https://github.com/chef/chef-zero/pull/227) ([thommay](https://github.com/thommay))
 - Reset the ChefFS cache after each test [\#226](https://github.com/chef/chef-zero/pull/226) ([thommay](https://github.com/thommay))
@@ -44,47 +52,41 @@
 - Return HTTP 400 Bad Request on Solr parse error [\#224](https://github.com/chef/chef-zero/pull/224) ([lamont-granquist](https://github.com/lamont-granquist))
 - Set log level to debug in the rescue block. [\#222](https://github.com/chef/chef-zero/pull/222) ([maxlazio](https://github.com/maxlazio))
 - support URI specific character in file name [\#204](https://github.com/chef/chef-zero/pull/204) ([byplayer](https://github.com/byplayer))
+- Fix attempted fall-through in case statement. [\#175](https://github.com/chef/chef-zero/pull/175) ([andrewdotn](https://github.com/andrewdotn))
 - add patch to support chef\_version [\#171](https://github.com/chef/chef-zero/pull/171) ([lamont-granquist](https://github.com/lamont-granquist))
+- Fix scary search behavior on terms containing dash character [\#158](https://github.com/chef/chef-zero/pull/158) ([amazon](https://github.com/amazon))
 - Update error message for daemon on Windows [\#148](https://github.com/chef/chef-zero/pull/148) ([aerii](https://github.com/aerii))
+- add normal tags with empty array [\#139](https://github.com/chef/chef-zero/pull/139) ([cl-lab-k](https://github.com/cl-lab-k))
 - Increase WEBrick request timeout to 300 seconds [\#138](https://github.com/chef/chef-zero/pull/138) ([kongslund](https://github.com/kongslund))
 - Make ChefZero aware of load balancers [\#109](https://github.com/chef/chef-zero/pull/109) ([joshk0](https://github.com/joshk0))
 - disable sslv3 and few unsecure options [\#106](https://github.com/chef/chef-zero/pull/106) ([sawanoboly](https://github.com/sawanoboly))
 
-**Fixed bugs:**
-
-- Fix attempted fall-through in case statement. [\#175](https://github.com/chef/chef-zero/pull/175) ([andrewdotn](https://github.com/andrewdotn))
-- Fix scary search behavior on terms containing dash character [\#158](https://github.com/chef/chef-zero/pull/158) ([amazon](https://github.com/amazon))
-- add normal tags with empty array [\#139](https://github.com/chef/chef-zero/pull/139) ([cl-lab-k](https://github.com/cl-lab-k))
-
 ## [v4.7.1](https://github.com/chef/chef-zero/tree/v4.7.1) (2016-07-07)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.0...v4.7.1)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Downgrade info log message to debug [\#221](https://github.com/chef/chef-zero/pull/221) ([stanhu](https://github.com/stanhu))
 
 ## [v4.7.0](https://github.com/chef/chef-zero/tree/v4.7.0) (2016-06-30)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.2...v4.7.0)
 
-**Implemented enhancements:**
-
-- Add external\_authentication\_uid to actors endpoint for querying [\#217](https://github.com/chef/chef-zero/pull/217) ([kmacgugan](https://github.com/kmacgugan))
-
 **Merged pull requests:**
 
 - Depend on rack \< 2 to restore Ruby 2.1 compat [\#219](https://github.com/chef/chef-zero/pull/219) ([tas50](https://github.com/tas50))
+- Add external\_authentication\_uid to actors endpoint for querying [\#217](https://github.com/chef/chef-zero/pull/217) ([kmacgugan](https://github.com/kmacgugan))
 
 ## [v4.6.2](https://github.com/chef/chef-zero/tree/v4.6.2) (2016-04-28)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.1...v4.6.2)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
 - Log responses only at debug log level [\#216](https://github.com/chef/chef-zero/pull/216) ([stevendanna](https://github.com/stevendanna))
 
 ## [v4.6.1](https://github.com/chef/chef-zero/tree/v4.6.1) (2016-04-14)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.6.0...v4.6.1)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
 - Actually merge key data in user PUT response [\#214](https://github.com/chef/chef-zero/pull/214) ([jkeiser](https://github.com/jkeiser))
 - Fix users endpoint in OSC compat mode to use a data store URL [\#213](https://github.com/chef/chef-zero/pull/213) ([jkeiser](https://github.com/jkeiser))
@@ -92,17 +94,14 @@
 ## [v4.6.0](https://github.com/chef/chef-zero/tree/v4.6.0) (2016-04-14)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.5.0...v4.6.0)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
+- Fix bugs related to Array vs Enumerator vs Port for options\[:port/host\]. [\#212](https://github.com/chef/chef-zero/pull/212) ([tylercloke](https://github.com/tylercloke))
 - Enable listening on more than one address [\#208](https://github.com/chef/chef-zero/pull/208) ([jaymzh](https://github.com/jaymzh))
 - Implemented GET /orgs/ORG/users/USER/keys\(/key\) endpoint recently added to server. [\#205](https://github.com/chef/chef-zero/pull/205) ([tylercloke](https://github.com/tylercloke))
 - Implement APIv1 behaviors [\#201](https://github.com/chef/chef-zero/pull/201) ([danielsdeleo](https://github.com/danielsdeleo))
 - Make user and client keys endpoints pass Pedant specs [\#199](https://github.com/chef/chef-zero/pull/199) ([jrunning](https://github.com/jrunning))
 - fix necessary for metadata gem [\#197](https://github.com/chef/chef-zero/pull/197) ([lamont-granquist](https://github.com/lamont-granquist))
-
-**Fixed bugs:**
-
-- Fix bugs related to Array vs Enumerator vs Port for options\[:port/host\]. [\#212](https://github.com/chef/chef-zero/pull/212) ([tylercloke](https://github.com/tylercloke))
 
 ## [v4.5.0](https://github.com/chef/chef-zero/tree/v4.5.0) (2016-01-29)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.4.2...v4.5.0)
@@ -139,10 +138,6 @@
 ## [v4.4.0](https://github.com/chef/chef-zero/tree/v4.4.0) (2015-12-11)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.3.2...v4.4.0)
 
-**Closed issues:**
-
-- Please bump hashie version if possible [\#97](https://github.com/chef/chef-zero/issues/97)
-
 **Merged pull requests:**
 
 - ChefZero::RSpec support for cookbook\_artifacts. [\#179](https://github.com/chef/chef-zero/pull/179) ([randomcamel](https://github.com/randomcamel))
@@ -159,31 +154,24 @@
 ## [v4.3.1](https://github.com/chef/chef-zero/tree/v4.3.1) (2015-09-30)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.3.0...v4.3.1)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
-- chefspec client creation test broken by \#117 [\#165](https://github.com/chef/chef-zero/issues/165)
 - Translate admin="true" to admin=true [\#166](https://github.com/chef/chef-zero/pull/166) ([jkeiser](https://github.com/jkeiser))
 
 ## [v4.3.0](https://github.com/chef/chef-zero/tree/v4.3.0) (2015-09-02)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.2.3...v4.3.0)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Allow Hashie to float to 3.x \(no need to be so specific\) [\#164](https://github.com/chef/chef-zero/pull/164) ([jkeiser](https://github.com/jkeiser))
+- Autogenerated changelog [\#163](https://github.com/chef/chef-zero/pull/163) ([jkeiser](https://github.com/jkeiser))
+- Adding back logic to delete the association request when adding a user to an org \(as well as adding the user to the groups\) [\#160](https://github.com/chef/chef-zero/pull/160) ([tyler-ball](https://github.com/tyler-ball))
 - Server api version [\#155](https://github.com/chef/chef-zero/pull/155) ([andrewjamesbrown](https://github.com/andrewjamesbrown))
 - Add /organizations/NAME/nodes/NAME/\_identifiers endpoint [\#152](https://github.com/chef/chef-zero/pull/152) ([andrewjamesbrown](https://github.com/andrewjamesbrown))
-- CS12 Support [\#117](https://github.com/chef/chef-zero/pull/117) ([marcparadise](https://github.com/marcparadise))
-
-**Fixed bugs:**
-
-- Adding back logic to delete the association request when adding a user to an org \(as well as adding the user to the groups\) [\#160](https://github.com/chef/chef-zero/pull/160) ([tyler-ball](https://github.com/tyler-ball))
 - Switch to pedant in chef-server repo [\#151](https://github.com/chef/chef-zero/pull/151) ([andrewjamesbrown](https://github.com/andrewjamesbrown))
 - Update gem dependencies [\#146](https://github.com/chef/chef-zero/pull/146) ([andrewjamesbrown](https://github.com/andrewjamesbrown))
 - Remove dependency on chef [\#140](https://github.com/chef/chef-zero/pull/140) ([terceiro](https://github.com/terceiro))
-
-**Merged pull requests:**
-
-- Autogenerated changelog [\#163](https://github.com/chef/chef-zero/pull/163) ([jkeiser](https://github.com/jkeiser))
+- CS12 Support [\#117](https://github.com/chef/chef-zero/pull/117) ([marcparadise](https://github.com/marcparadise))
 
 ## [v4.2.3](https://github.com/chef/chef-zero/tree/v4.2.3) (2015-06-19)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.2.2...v4.2.3)
@@ -231,21 +219,12 @@
 ## [v4.0](https://github.com/chef/chef-zero/tree/v4.0) (2015-02-11)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v3.2.1...v4.0)
 
-**Closed issues:**
-
-- Upgrading to chef-client 12 packages appear to break on TK's chef-zero provisioner [\#108](https://github.com/chef/chef-zero/issues/108)
-- The local\_mode on chef 12.0.0.alpha.2 can't create object to local filesystem. [\#99](https://github.com/chef/chef-zero/issues/99)
-
 **Merged pull requests:**
 
 - Policyfile get/set API [\#111](https://github.com/chef/chef-zero/pull/111) ([danielsdeleo](https://github.com/danielsdeleo))
 
 ## [v3.2.1](https://github.com/chef/chef-zero/tree/v3.2.1) (2014-11-26)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v2.2.1...v3.2.1)
-
-**Closed issues:**
-
-- missing `else`? [\#102](https://github.com/chef/chef-zero/issues/102)
 
 **Merged pull requests:**
 
@@ -259,11 +238,6 @@
 
 ## [v3.2](https://github.com/chef/chef-zero/tree/v3.2) (2014-09-27)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v3.1.3...v3.2)
-
-**Closed issues:**
-
-- chef-zero not copying data\_bags into cache [\#83](https://github.com/chef/chef-zero/issues/83)
-- Wrong generated client keys with Ruby 1.9.2 [\#65](https://github.com/chef/chef-zero/issues/65)
 
 **Merged pull requests:**
 
@@ -288,25 +262,8 @@
 ## [v3.0](https://github.com/chef/chef-zero/tree/v3.0) (2014-08-22)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v3.0.0.rc.1...v3.0)
 
-**Implemented enhancements:**
-
-- Make Enterprise Chef pass oc-chef-pedant [\#73](https://github.com/chef/chef-zero/issues/73)
-- Add Enterprise Chef users endpoints [\#72](https://github.com/chef/chef-zero/issues/72)
-- Add Enterprise Chef containers endpoints [\#71](https://github.com/chef/chef-zero/issues/71)
-- Add Enterprise Chef groups endpoints [\#70](https://github.com/chef/chef-zero/issues/70)
-- Add Enterprise Chef acls endpoints [\#69](https://github.com/chef/chef-zero/issues/69)
-- Add Enterprise Chef organizations endpoints [\#68](https://github.com/chef/chef-zero/issues/68)
-
-**Closed issues:**
-
-- SSL support [\#86](https://github.com/chef/chef-zero/issues/86)
-
 ## [v3.0.0.rc.1](https://github.com/chef/chef-zero/tree/v3.0.0.rc.1) (2014-08-22)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v2.2...v3.0.0.rc.1)
-
-**Closed issues:**
-
-- Vagrant on windows fails to load Chef-Zero due to Chef dependencies [\#55](https://github.com/chef/chef-zero/issues/55)
 
 **Merged pull requests:**
 
@@ -343,13 +300,6 @@
 ## [v2.1](https://github.com/chef/chef-zero/tree/v2.1) (2014-05-26)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.6.3...v2.1)
 
-**Closed issues:**
-
-- Is there a good way to detect if cookbook is being run using chef-zero? [\#63](https://github.com/chef/chef-zero/issues/63)
-- Not loading roles [\#61](https://github.com/chef/chef-zero/issues/61)
-- How to handle changing url of ChefZero during chef-client run [\#59](https://github.com/chef/chef-zero/issues/59)
-- data\_bag\_item fails in definition block executions [\#58](https://github.com/chef/chef-zero/issues/58)
-
 **Merged pull requests:**
 
 - Add multi-tenancy support and chef local mode tests [\#64](https://github.com/chef/chef-zero/pull/64) ([jkeiser](https://github.com/jkeiser))
@@ -357,27 +307,11 @@
 ## [v1.6.3](https://github.com/chef/chef-zero/tree/v1.6.3) (2014-02-10)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.7.3...v1.6.3)
 
-**Closed issues:**
-
-- chef-zero 404'ing on data bag items [\#56](https://github.com/chef/chef-zero/issues/56)
-- Errno::ENAMETOOLONG [\#53](https://github.com/chef/chef-zero/issues/53)
-- Backport fix for Isssue \#48 to the 1.x line [\#51](https://github.com/chef/chef-zero/issues/51)
-- Search strange behavior [\#42](https://github.com/chef/chef-zero/issues/42)
-
 ## [v1.7.3](https://github.com/chef/chef-zero/tree/v1.7.3) (2014-01-22)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v2.0.2...v1.7.3)
 
-**Closed issues:**
-
-- search query fails when using parenthesis [\#38](https://github.com/chef/chef-zero/issues/38)
-
 ## [v2.0.2](https://github.com/chef/chef-zero/tree/v2.0.2) (2014-01-21)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v2.0.1...v2.0.2)
-
-**Closed issues:**
-
-- Parsing metadata blows up on evaluating metadata.json. [\#48](https://github.com/chef/chef-zero/issues/48)
-- depsolve endpoint needs informative error messages [\#32](https://github.com/chef/chef-zero/issues/32)
 
 **Merged pull requests:**
 
@@ -397,10 +331,6 @@
 ## [v2.0.0](https://github.com/chef/chef-zero/tree/v2.0.0) (2013-12-17)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.7.2...v2.0.0)
 
-**Closed issues:**
-
-- Not found returned for all roles [\#34](https://github.com/chef/chef-zero/issues/34)
-
 **Merged pull requests:**
 
 - Remove puma and fork a subprocess [\#43](https://github.com/chef/chef-zero/pull/43) ([sethvargo](https://github.com/sethvargo))
@@ -414,10 +344,6 @@
 
 ## [v1.7.1](https://github.com/chef/chef-zero/tree/v1.7.1) (2013-11-03)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.7...v1.7.1)
-
-**Implemented enhancements:**
-
-- Find a pure-Ruby server solution [\#36](https://github.com/chef/chef-zero/issues/36)
 
 ## [v1.7](https://github.com/chef/chef-zero/tree/v1.7) (2013-11-02)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.7.beta.1...v1.7)
@@ -435,10 +361,6 @@
 ## [v1.6.1](https://github.com/chef/chef-zero/tree/v1.6.1) (2013-10-11)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.6...v1.6.1)
 
-**Closed issues:**
-
-- \[\* TO \*\] search syntax doesn't work [\#37](https://github.com/chef/chef-zero/issues/37)
-
 **Merged pull requests:**
 
 - Range queries with smoke test [\#35](https://github.com/chef/chef-zero/pull/35) ([mattgleeson](https://github.com/mattgleeson))
@@ -452,13 +374,6 @@
 ## [v1.5.5](https://github.com/chef/chef-zero/tree/v1.5.5) (2013-08-08)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.5.4...v1.5.5)
 
-**Closed issues:**
-
-- Incorrect search behavior when a query parameter contains a '-' character [\#31](https://github.com/chef/chef-zero/issues/31)
-- databag.save throws 405 "Method not allowed" [\#29](https://github.com/chef/chef-zero/issues/29)
-- How can I validate if I am running in Chef-Zero mode? [\#28](https://github.com/chef/chef-zero/issues/28)
-- License missing from gemspec [\#26](https://github.com/chef/chef-zero/issues/26)
-
 **Merged pull requests:**
 
 - fixup end\_range typos [\#30](https://github.com/chef/chef-zero/pull/30) ([mattgleeson](https://github.com/mattgleeson))
@@ -467,29 +382,14 @@
 ## [v1.5.4](https://github.com/chef/chef-zero/tree/v1.5.4) (2013-07-12)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.5.3...v1.5.4)
 
-**Closed issues:**
-
-- Issue with  [\#25](https://github.com/chef/chef-zero/issues/25)
-- Typo error in README [\#24](https://github.com/chef/chef-zero/issues/24)
-- Add a CHANGELOG [\#11](https://github.com/chef/chef-zero/issues/11)
-
 ## [v1.5.3](https://github.com/chef/chef-zero/tree/v1.5.3) (2013-06-28)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.5.2...v1.5.3)
-
-**Closed issues:**
-
-- Chef Zero should set a server header for identification [\#23](https://github.com/chef/chef-zero/issues/23)
-- Data bag search of the form "x:y AND NOT z:w" fails [\#22](https://github.com/chef/chef-zero/issues/22)
 
 ## [v1.5.2](https://github.com/chef/chef-zero/tree/v1.5.2) (2013-06-27)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.5.1...v1.5.2)
 
 ## [v1.5.1](https://github.com/chef/chef-zero/tree/v1.5.1) (2013-06-19)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.5...v1.5.1)
-
-**Closed issues:**
-
-- Developing Vagrant-Chef-Zero [\#21](https://github.com/chef/chef-zero/issues/21)
 
 **Merged pull requests:**
 
@@ -512,23 +412,11 @@
 ## [v1.4.0.alpha](https://github.com/chef/chef-zero/tree/v1.4.0.alpha) (2013-06-07)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.3...v1.4.0.alpha)
 
-**Closed issues:**
-
-- Searching for a node with an exact name fails [\#15](https://github.com/chef/chef-zero/issues/15)
-
 ## [v1.3](https://github.com/chef/chef-zero/tree/v1.3) (2013-06-06)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.2.1...v1.3)
 
-**Closed issues:**
-
-- Searching is Broken [\#14](https://github.com/chef/chef-zero/issues/14)
-
 ## [v1.2.1](https://github.com/chef/chef-zero/tree/v1.2.1) (2013-06-05)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.2...v1.2.1)
-
-**Closed issues:**
-
-- Allow seeding of Data [\#13](https://github.com/chef/chef-zero/issues/13)
 
 ## [v1.2](https://github.com/chef/chef-zero/tree/v1.2) (2013-06-03)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v1.1.3...v1.2)
@@ -576,22 +464,12 @@
 ## [v0.9.11](https://github.com/chef/chef-zero/tree/v0.9.11) (2013-05-19)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v0.9.9...v0.9.11)
 
-**Closed issues:**
-
-- no port found in cookbook url - can't download cookbooks unless listening on port 80 [\#5](https://github.com/chef/chef-zero/issues/5)
-
 **Merged pull requests:**
 
 - Add '-d' flag [\#7](https://github.com/chef/chef-zero/pull/7) ([sethvargo](https://github.com/sethvargo))
 
 ## [v0.9.9](https://github.com/chef/chef-zero/tree/v0.9.9) (2013-05-14)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v0.9.8...v0.9.9)
-
-**Closed issues:**
-
-- HTTP 500 Returned when Accept Header isn't set. [\#3](https://github.com/chef/chef-zero/issues/3)
-- knife plugin? [\#2](https://github.com/chef/chef-zero/issues/2)
-- Cannot give a specific recipe from chef-client [\#1](https://github.com/chef/chef-zero/issues/1)
 
 **Merged pull requests:**
 
