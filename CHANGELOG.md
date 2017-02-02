@@ -1,5 +1,12 @@
 # Change Log
 
+## [v5.3.0](https://github.com/chef/chef-zero/tree/v5.3.0) (2017-02-02)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v5.2.0...v5.3.0)
+
+**Merged pull requests:**
+
+- change require per hashie author [\#252](https://github.com/chef/chef-zero/pull/252) ([lamont-granquist](https://github.com/lamont-granquist))
+
 ## [v5.2.0](https://github.com/chef/chef-zero/tree/v5.2.0) (2017-01-23)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v5.1.1...v5.2.0)
 
@@ -59,7 +66,7 @@
 - add normal tags with empty array [\#139](https://github.com/chef/chef-zero/pull/139) ([cl-lab-k](https://github.com/cl-lab-k))
 - Increase WEBrick request timeout to 300 seconds [\#138](https://github.com/chef/chef-zero/pull/138) ([kongslund](https://github.com/kongslund))
 - Make ChefZero aware of load balancers [\#109](https://github.com/chef/chef-zero/pull/109) ([joshk0](https://github.com/joshk0))
-- disable sslv3 and few unsecure options [\#106](https://github.com/chef/chef-zero/pull/106) ([sawanoboly](https://github.com/sawanoboly))
+- Disable sslv3 and a few insecure options [\#106](https://github.com/chef/chef-zero/pull/106) ([sawanoboly](https://github.com/sawanoboly))
 
 ## [v4.7.1](https://github.com/chef/chef-zero/tree/v4.7.1) (2016-07-07)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v4.7.0...v4.7.1)
