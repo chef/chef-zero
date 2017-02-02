@@ -1,5 +1,5 @@
 require "digest/md5"
-require "hashie/mash"
+require "hashie"
 
 module ChefZero
   module ChefData
