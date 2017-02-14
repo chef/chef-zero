@@ -51,12 +51,14 @@ module ChefZero
 
     def register_port(port, server)
       MUTEX.synchronize do
+        puts "register_port"
         @servers_by_port[port] = server
       end
     end
 
     def register_no_listen_server(server)
       MUTEX.synchronize do
+        puts "register_no_listen_server"
         1.upto(1000) do |port|
           unless @servers_by_port.key?(port)
             @servers_by_port[port] = server
@@ -77,6 +79,7 @@ module ChefZero
 
     def deregister(port)
       MUTEX.synchronize do
+        puts "deregister"
         @servers_by_port.delete(port)
       end
     end
