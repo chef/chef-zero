@@ -278,18 +278,20 @@ module ChefZero
       false
     end
 
+    def random_port
+      server = TCPServer.new('127.0.0.1', 0)
+      port   = server.addr[1].to_i
+      server.close
+
+      port
+    end
+
     def start_background(wait = 5)
       @server = WEBrick::HTTPServer.new(
         :DoNotListen => true,
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new,
-        :Port => proc do
-          server = TCPServer.new('127.0.0.1', 0)
-          port   = @server.addr[1].to_i
-          server.close
-
-          port
-        end,
+        :Port        => random_port,
         :RequestTimeout => 300,
         :SSLEnable => options[:ssl],
         :SSLOptions => ssl_opts,
