@@ -282,7 +282,7 @@ module ChefZero
       @server = WEBrick::HTTPServer.new(
         :DoNotListen => true,
         :AccessLog   => [],
-        :Logger      => WEBrick::Log.new(nil, DEBUG),
+        :Logger      => WEBrick::Log.new,
         :RequestTimeout => 300,
         :SSLEnable => options[:ssl],
         :SSLOptions => ssl_opts,
