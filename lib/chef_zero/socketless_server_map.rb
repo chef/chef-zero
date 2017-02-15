@@ -51,9 +51,9 @@ module ChefZero
 
     def register_port(port, server)
       MUTEX.synchronize do
-        puts "register_port"
         @servers_by_port[port] = server
       end
+      puts "register_port"
     end
 
     def register_no_listen_server(server)
