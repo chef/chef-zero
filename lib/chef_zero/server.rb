@@ -283,6 +283,13 @@ module ChefZero
         :DoNotListen => true,
         :AccessLog   => [],
         :Logger      => WEBrick::Log.new,
+        :Port => proc do
+          server = TCPServer.new('127.0.0.1', 0)
+          port   = @server.addr[1].to_i
+          server.close
+
+          port
+        end,
         :RequestTimeout => 300,
         :SSLEnable => options[:ssl],
         :SSLOptions => ssl_opts,
