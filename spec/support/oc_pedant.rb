@@ -85,8 +85,6 @@ delete_org true
 # which should be the fully-qualified path /on the machine Pedant is
 # running on/ to a private key for that user.
 superuser_name "pivotal"
-superuser_key key
-webui_key key
 
 def cheffs_or_else_user(value)
   ENV["CHEF_FS"] ? "pivotal" : value

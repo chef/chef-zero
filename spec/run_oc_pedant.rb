@@ -107,6 +107,8 @@ begin
       start_chef_server
     end
 
+  ENV["SECRETS_FILE"] = "spec/support/secrets.json"
+
   require "rspec/core"
   require "pedant"
   require "pedant/organization"
