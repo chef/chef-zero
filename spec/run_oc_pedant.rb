@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require "json"
 require "bundler"
 require "bundler/setup"
 
@@ -107,7 +108,9 @@ begin
       start_chef_server
     end
 
-  ENV["SECRETS_FILE"] = "spec/support/secrets.json"
+  test_secrets = JSON.parse(File.read("spec/support/secrets.json"))
+  ENV["SUPERUSER_KEY"] = test_secrets["chef-server"]["superuser_key"]
+  ENV["WEBUI_KEY"] = test_secrets["chef-server"]["webui_key"]
 
   require "rspec/core"
   require "pedant"

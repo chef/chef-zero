@@ -5,7 +5,6 @@ gemspec
 
 group :pedant do
   gem "oc-chef-pedant", :git => "https://github.com/chef/chef-server.git"
-  gem "veil", :git => "https://github.com/chef/chef_secrets.git"
 end
 
 group :changelog do
