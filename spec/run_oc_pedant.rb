@@ -6,8 +6,6 @@ require "bundler/setup"
 require "chef_zero/server"
 require "rspec/core"
 
-require "openssl"
-
 # This file runs oc-chef-pedant specs and is invoked by `rake pedant`
 # and other Rake tasks. Run `rake -T` to list tasks.
 #
@@ -196,8 +194,6 @@ begin
       default_skips + chef_fs_skips + %w{ --skip-knife }
     end
 
-  ENV["SUPERUSER_KEY"] = OpenSSL::PKey::RSA.new(2048).to_pem
-  ENV["WEBUI_KEY"] = OpenSSL::PKey::RSA.new(2048).to_pem
   Pedant.setup(pedant_args + pedant_args_from_env)
 
   rspec_args = Pedant.config.rspec_args + rspec_args_from_env
