@@ -8,7 +8,7 @@ group :pedant do
 end
 
 group :changelog do
-  gem "github_changelog_generator"
+  gem "github_changelog_generator", :git => "https://github.com/chef/github-changelog-generator.git"
 end
 
 group :development, :test do
