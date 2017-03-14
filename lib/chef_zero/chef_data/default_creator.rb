@@ -270,7 +270,8 @@ module ChefZero
 
       def get_org_acl_default(path)
         object_path = AclPath.get_object_path(path)
-        # The actual things containers correspond to don't have to exist, as long as the container does
+        # The actual things containers correspond to don't have to exist, as
+        # long as the container does
         return nil if !data_exists?(object_path)
         basic_acl =
           case path[3..-1].join("/")
@@ -282,20 +283,15 @@ module ChefZero
               "delete" => { "groups" => %w{admins} },
               "grant"  => { "groups" => %w{admins} },
             }
-          when "containers/environments", "containers/roles", "containers/policy_groups", "containers/policies"
+          when "containers/environments", "containers/roles",
+            "containers/policy_groups", "containers/policies",
+            "containers/cookbooks", "containers/cookbook_artifacts",
+            "containers/data"
             {
               "create" => { "groups" => %w{admins users} },
               "read"   => { "groups" => %w{admins users clients} },
               "update" => { "groups" => %w{admins users} },
               "delete" => { "groups" => %w{admins users} },
-              "grant"  => { "groups" => %w{admins} },
-            }
-          when "containers/cookbooks", "containers/cookbook_artifacts", "containers/data"
-            {
-              "create" => { "groups" => %w{admins users clients} },
-              "read"   => { "groups" => %w{admins users clients} },
-              "update" => { "groups" => %w{admins users clients} },
-              "delete" => { "groups" => %w{admins users clients} },
               "grant"  => { "groups" => %w{admins} },
             }
           when "containers/nodes"
