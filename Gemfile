@@ -15,7 +15,9 @@ group :development, :test do
   gem "chefstyle", "= 0.3.1"
 end
 
-gem "chef"
+# FIXME: remove once we release chef 13
+gem "chef", git: "https://github.com/chef/chef"
+gem "ohai", git: "https://github.com/chef/ohai"
 
 if ENV["GEMFILE_MOD"]
   puts "GEMFILE_MOD: #{ENV['GEMFILE_MOD']}"
