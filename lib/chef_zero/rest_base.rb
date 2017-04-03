@@ -19,15 +19,7 @@ module ChefZero
     end
 
     def check_api_version(request)
-      return if request.api_version.nil? # Not present in headers
-      version = request.api_version.to_i
-
-      unless version.to_s == request.api_version.to_s # Version is not an Integer
-        return json_response(406,
-          { "username" => request.requestor },
-          request_version: -1, response_version: -1
-        )
-      end
+      version = request.api_version
 
       if version > MAX_API_VERSION || version < MIN_API_VERSION
         response = {
@@ -38,10 +30,15 @@ module ChefZero
         }
 
         return json_response(406,
-          response,
-          request_version: version, response_version: -1
-        )
+                             response,
+                             request_version: version, response_version: -1
+                            )
       end
+    rescue ArgumentError
+      return json_response(406,
+                           { "username" => request.requestor },
+                           request_version: -1, response_version: -1
+                          )
     end
 
     def call(request)

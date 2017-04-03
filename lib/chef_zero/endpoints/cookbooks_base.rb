@@ -47,18 +47,15 @@ module ChefZero
       end
 
       def recipe_names(cookbook_name, cookbook)
-        result = []
-        if cookbook["recipes"]
-          cookbook["recipes"].each do |recipe|
-            if recipe["path"] == "recipes/#{recipe['name']}" && recipe["name"][-3..-1] == ".rb"
-              if recipe["name"] == "default.rb"
-                result << cookbook_name
-              end
-              result << "#{cookbook_name}::#{recipe['name'][0..-4]}"
-            end
+        cookbook["all_files"].inject([]) do |acc, file|
+          part, name = file["name"].split("/")
+          next unless part == "recipes" || File.extname(name) != ".rb"
+          if name == "default.rb"
+            acc << cookbook_name
+          else
+            acc << "#{cookbook_name}::#{File.basename(name, ".rb")}"
           end
         end
-        result
       end
     end
   end

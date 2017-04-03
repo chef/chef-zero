@@ -49,7 +49,7 @@ module ChefZero
         result = {}
         solved.each_pair do |name, versions|
           cookbook = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", name, versions[0]]))
-          result[name] = ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, name, versions[0], request.base_uri, "MIN")
+          result[name] = ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, name, versions[0], request.base_uri, "MIN", false, api_version: request.api_version)
         end
         json_response(200, result)
       end

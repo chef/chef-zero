@@ -3,8 +3,6 @@ require "rack/request"
 module ChefZero
   class RestRequest
 
-    ZERO = "0".freeze
-
     def initialize(env, rest_base_prefix = [])
       @env = env
       @rest_base_prefix = rest_base_prefix
@@ -28,11 +26,11 @@ module ChefZero
     end
 
     def api_version
-      @env["HTTP_X_OPS_SERVER_API_VERSION"] || ZERO
+      Integer(@env["HTTP_X_OPS_SERVER_API_VERSION"] || 0)
     end
 
     def api_v0?
-      api_version == ZERO
+      api_version == 0
     end
 
     def requestor

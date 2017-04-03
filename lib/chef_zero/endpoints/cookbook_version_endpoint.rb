@@ -37,7 +37,7 @@ module ChefZero
         end
 
         # Set the cookbook
-        set_data(request, request.rest_path, request.body, :create_dir, :create)
+        set_data(request, request.rest_path, populate_defaults(request, request.body), :create_dir, :create)
 
         # If the cookbook was updated, check for deleted files and clean them up
         if existing_cookbook
@@ -47,7 +47,7 @@ module ChefZero
           end
         end
 
-        already_json_response(existing_cookbook ? 200 : 201, populate_defaults(request, request.body))
+        already_json_response(existing_cookbook ? 200 : 201, populate_defaults(request, request.body, normalize: false))
       end
 
       def delete(request)
@@ -116,10 +116,12 @@ module ChefZero
         end
       end
 
-      def populate_defaults(request, response_json)
+      def populate_defaults(request, response_json, normalize: true)
         # Inject URIs into each cookbook file
         cookbook = FFI_Yajl::Parser.parse(response_json)
-        cookbook = ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, request.rest_path[3], request.rest_path[4], request.base_uri, request.method)
+        cookbook["chef_type"] ||= "cookbook_version"
+        cookbook["json_class"] ||= "Chef::CookbookVersion"
+        cookbook = ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, request.rest_path[3], request.rest_path[4], request.base_uri, request.method, false, api_version: request.api_version) if normalize
         FFI_Yajl::Encoder.encode(cookbook, :pretty => true)
       end
 
