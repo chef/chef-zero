@@ -1,3 +1,3 @@
 module ChefZero
-  VERSION = "5.3.2"
+  VERSION = "13.0.0"
 end
