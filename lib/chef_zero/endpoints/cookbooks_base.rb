@@ -47,6 +47,7 @@ module ChefZero
       end
 
       def recipe_names(cookbook_name, cookbook)
+        puts cookbook
         cookbook["recipes"].inject([]) do |acc, recipe|
           if recipe["name"].eql?("default.rb")
             acc << cookbook_name
