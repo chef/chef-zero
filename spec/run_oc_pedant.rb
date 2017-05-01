@@ -130,12 +130,6 @@ begin
                       "--skip-organizations",
                       "--skip-multiuser",
                       "--skip-user-keys",
-
-                      # chef-zero has some non-removable quirks, such as the fact that files
-                      # with 255-character names cannot be stored in local mode. This is
-                      # reserved only for quirks that are *irrevocable* and by design; and
-                      # should barely be used at all.
-                      "--skip-chef-zero-quirks",
                     ]
                   else
                     []
@@ -183,6 +177,14 @@ begin
 
     # The universe endpoint is unlikely to ever make sense for Chef Zero
     "--skip-universe",
+
+    # chef-zero has some non-removable quirks, such as the fact that files
+    # with 255-character names cannot be stored in local mode. This is
+    # reserved only for quirks that are *irrevocable* and by design; and
+    # should barely be used at all. This is also used to skip the user acl
+    # tests from chef-server as the user acls are not supported in chef-zero
+    # at this time.
+    "--skip-chef-zero-quirks",
   ]
 
   # The knife tests are very slow and don't give us a lot of extra coverage,
