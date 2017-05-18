@@ -231,6 +231,16 @@ module ChefZero
       [response_code, { "Content-Type" => "text/plain" }, text]
     end
 
+    # rfc090
+    # @param [ChefZero::RestRequest] request The HTTP request object
+    #
+    # @return [Fixnum], [nil]
+    #
+    def response_to_head(request)
+      get_data(request) # will raise 404 if non-existant
+      json_response(200, nil)
+    end
+
     # Returns an Array with the response code, HTTP headers, and JSON body.
     #
     # @param [Fixnum] response_code The HTTP response code
