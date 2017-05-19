@@ -21,7 +21,7 @@ module ChefZero
       end
 
       def head(request)
-        response_to_head(request)
+        head_request(request)
       end
 
       def populate_defaults(request, response_json)

@@ -231,12 +231,12 @@ module ChefZero
       [response_code, { "Content-Type" => "text/plain" }, text]
     end
 
-    # rfc090
+    # rfc090 returns 404 error or 200 with an emtpy body
     # @param [ChefZero::RestRequest] request The HTTP request object
     #
-    # @return [Fixnum], [nil]
+    # @return (see #json_response)
     #
-    def response_to_head(request)
+    def head_request(request)
       get_data(request) # will raise 404 if non-existant
       json_response(200, nil)
     end
