@@ -15,9 +15,6 @@ cache: bundler
 script:
   - bundle update
   - bundle exec rake pedant
-env:
-  global:
-    - "PEDANT_OPTS=\"--skip-oc_id\""
 
 matrix:
   include:
