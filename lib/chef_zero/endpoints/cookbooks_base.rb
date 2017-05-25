@@ -47,13 +47,12 @@ module ChefZero
       end
 
       def recipe_names(cookbook_name, cookbook)
-        cookbook["all_files"].inject([]) do |acc, file|
-          part, name = file["name"].split("/")
-          next unless part == "recipes" || File.extname(name) != ".rb"
-          if name == "default.rb"
+        puts cookbook
+        cookbook["recipes"].inject([]) do |acc, recipe|
+          if recipe["name"].eql?("default.rb")
             acc << cookbook_name
           else
-            acc << "#{cookbook_name}::#{File.basename(name, ".rb")}"
+            acc << "#{cookbook_name}::#{File.basename(recipe["name"], ".rb")}"
           end
         end
       end
