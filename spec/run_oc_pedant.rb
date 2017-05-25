@@ -161,6 +161,10 @@ begin
     # Chef Zero does not intend to support authorization the way erchef does.
     "--skip-authorization",
 
+    # Chef Zero does not intend to support oc_id authentication/authorization
+    # the way erchef does.
+    "--skip-oc_id",
+
     # Omnibus tests depend on erchef features that are specific to erchef and
     # bundled in the omnibus package. Currently the only test in this category
     # is for the search reindexing script.

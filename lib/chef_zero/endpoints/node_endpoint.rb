@@ -20,6 +20,10 @@ module ChefZero
         super(request)
       end
 
+      def head(request)
+        head_request(request)
+      end
+
       def populate_defaults(request, response_json)
         node = FFI_Yajl::Parser.parse(response_json)
         node = ChefData::DataNormalizer.normalize_node(node, request.rest_path[3])
