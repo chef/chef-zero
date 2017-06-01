@@ -13,7 +13,7 @@ module ChefZero
         if value = request.query_params["external_authentication_uid"]
           response[2] = filter("external_authentication_uid", value, request, response[2])
         elsif value = request.query_params["email"]
-          response[2] = filter("email", value, request, response[2])
+          response[2] = filter("email", value, request, response[2], insensitive: true)
         end
 
         if request.query_params["verbose"]
@@ -83,17 +83,21 @@ module ChefZero
 
       private
 
-      def filter(key, value, request, resp)
+      def filter(key, value, request, resp, opts = {})
         results = parse_json(resp)
         new_results = {}
         results.each do |name, url|
           record = get_data(request, request.rest_path + [ name ], :nil)
           if record
             record = parse_json(record)
-            new_results[name] = url if record[key] == value
+            new_results[name] = url if record[key] && is_equal(record[key], value, opts[:insensitive])
           end
         end
         to_json(new_results)
+      end
+
+      def is_equal(a, b, ignore_case)
+        ignore_case ? a.casecmp(b).zero? : a == b
       end
     end
   end
