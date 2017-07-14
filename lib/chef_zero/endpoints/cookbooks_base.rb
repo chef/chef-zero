@@ -23,6 +23,24 @@ module ChefZero
         results
       end
 
+      def format_universe_list(request, cookbooks_list)
+        require 'pp'
+        results = {}
+        cookbooks_list.each do |name, versions|
+          results[name] ||= {}
+          versions.each do |version|
+            cookbook_data = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + [ "cookbooks", name, version ], :nil))
+            pp cookbook_data
+            results[name][version] ||= {
+              "dependencies" => cookbook_data["metadata"]["dependencies"],
+              "location_path" => build_uri(request.base_uri, request.rest_path[0..1] + ["cookbooks", name, version]),
+              "location_type" => "chef_server",
+            }
+          end
+        end
+        results
+      end
+
       def all_cookbooks_list(request)
         result = {}
         # Race conditions exist here (if someone deletes while listing).  I don't care.
