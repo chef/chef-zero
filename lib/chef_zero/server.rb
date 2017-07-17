@@ -1,6 +1,6 @@
 #
 # Author:: John Keiser (<jkeiser@opscode.com>)
-# Copyright:: Copyright (c) 2012 Opscode, Inc.
+# Copyright:: Copyright (c) 2012-2017, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -105,6 +105,7 @@ require "chef_zero/endpoints/file_store_file_endpoint"
 require "chef_zero/endpoints/not_found_endpoint"
 require "chef_zero/endpoints/version_endpoint"
 require "chef_zero/endpoints/server_api_version_endpoint"
+require "chef_zero/endpoints/universe_endpoint"
 
 module ChefZero
 
@@ -623,6 +624,7 @@ module ChefZero
         [ "/organizations/*/sandboxes/*", SandboxEndpoint.new(self) ],
         [ "/organizations/*/search", SearchesEndpoint.new(self) ],
         [ "/organizations/*/search/*", SearchEndpoint.new(self) ],
+        [ "/organizations/*/universe", UniverseEndpoint.new(self) ],
         [ "/version", VersionEndpoint.new(self) ],
         [ "/server_api_version", ServerAPIVersionEndpoint.new(self) ],
 

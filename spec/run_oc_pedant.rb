@@ -179,9 +179,6 @@ begin
 
     # Chef 12 features not yet 100% supported by Chef Zero
 
-    # The universe endpoint is unlikely to ever make sense for Chef Zero
-    "--skip-universe",
-
     # chef-zero has some non-removable quirks, such as the fact that files
     # with 255-character names cannot be stored in local mode. This is
     # reserved only for quirks that are *irrevocable* and by design; and
