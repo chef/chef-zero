@@ -1,7 +1,21 @@
 # Change Log
 
-## [13.0.0](https://github.com/chef/chef-zero/tree/13.0.0) (2017-04-03)
-[Full Changelog](https://github.com/chef/chef-zero/compare/v5.3.2...13.0.0)
+## [v13.1.0](https://github.com/chef/chef-zero/tree/v13.1.0) (2017-07-17)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v13.0.0...v13.1.0)
+
+**Merged pull requests:**
+
+- add the universe endpoint [\#269](https://github.com/chef/chef-zero/pull/269) ([lamont-granquist](https://github.com/lamont-granquist))
+- Update gemfile dependencies [\#267](https://github.com/chef/chef-zero/pull/267) ([thommay](https://github.com/thommay))
+- GET /users?email=ME@MINE.COM -- compare emails ignoring case [\#266](https://github.com/chef/chef-zero/pull/266) ([srenatus](https://github.com/srenatus))
+- GET /users?email=ME@MINE.COM -- compare emails ignoring case [\#265](https://github.com/chef/chef-zero/pull/265) ([srenatus](https://github.com/srenatus))
+- implement rfc090 for named nodes endpoint [\#264](https://github.com/chef/chef-zero/pull/264) ([jeremymv2](https://github.com/jeremymv2))
+- Add skip-chef-zero-quirks to the defaults in chef-zero [\#263](https://github.com/chef/chef-zero/pull/263) ([jaymalasinha](https://github.com/jaymalasinha))
+- Add skip-chef-zero-quirks to the defaults in chef-zero [\#262](https://github.com/chef/chef-zero/pull/262) ([jaymalasinha](https://github.com/jaymalasinha))
+- Ensure that tests that use chef-zero git will work [\#259](https://github.com/chef/chef-zero/pull/259) ([thommay](https://github.com/thommay))
+
+## [v13.0.0](https://github.com/chef/chef-zero/tree/v13.0.0) (2017-04-03)
+[Full Changelog](https://github.com/chef/chef-zero/compare/v5.3.2...v13.0.0)
 
 **Merged pull requests:**
 
