@@ -20,7 +20,7 @@ module ChefZero
         end
 
         cb_data = normalize(request, request.body)
-        set_data(request, nil, to_json(cb_data), :create_dir)
+        set_data(request, nil, to_json(cb_data), :create_dir, :create)
 
         return already_json_response(201, request.body)
       end
