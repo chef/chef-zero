@@ -1,0 +1,35 @@
+---
+slack:
+  notify_channel: chef-notify
+
+github:
+  version_tag_format: "v{{version}}"
+  minor_bump_labels:
+    - "Version: Bump Minor"
+
+changelog:
+  rollup_header: Changes not yet released to rubygems.org
+
+rubygems:
+  - chef-zero
+
+merge_actions:
+  - built_in:bump_version:
+      ignore_labels:
+        - "Version: Skip Bump"
+        - "Expeditor: Skip All"
+  - bash:.expeditor/update_version.sh:
+      only_if:
+        - built_in:bump_version
+  - built_in:update_changelog:
+      ignore_labels:
+        - "Changelog: Skip Update"
+        - "Expeditor: Skip All"
+  - built_in:build_gem:
+      only_if:
+        - built_in:bump_version
+
+promote:
+  action:
+    - built_in:publish_rubygems
+    - built_in:rollover_changelog

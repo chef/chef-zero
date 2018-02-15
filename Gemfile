@@ -7,12 +7,8 @@ group :pedant do
   gem "oc-chef-pedant", :git => "https://github.com/chef/chef-server.git"
 end
 
-group :changelog do
-  gem "github_changelog_generator", :git => "https://github.com/chef/github-changelog-generator.git"
-end
-
 group :development, :test do
-  gem "chefstyle", "= 0.3.1"
+  gem "chefstyle", git: "https://github.com/chef/chefstyle.git", branch: "master"
 end
 
 gem "chef", "~> 13"
