@@ -109,17 +109,15 @@ module ChefZero
       private
 
       def fix_exceptions
-        begin
-          yield
-        rescue DataAlreadyExistsError => e
-          err = DataAlreadyExistsError.new([ "organizations", single_org ] + e.path, e)
-          err.set_backtrace(e.backtrace)
-          raise err
-        rescue DataNotFoundError => e
-          err = DataNotFoundError.new([ "organizations", single_org ] + e.path, e)
-          err.set_backtrace(e.backtrace)
-          raise e
-        end
+        yield
+      rescue DataAlreadyExistsError => e
+        err = DataAlreadyExistsError.new([ "organizations", single_org ] + e.path, e)
+        err.set_backtrace(e.backtrace)
+        raise err
+      rescue DataNotFoundError => e
+        err = DataNotFoundError.new([ "organizations", single_org ] + e.path, e)
+        err.set_backtrace(e.backtrace)
+        raise e
       end
 
       def skip_organizations?(path, name = nil)

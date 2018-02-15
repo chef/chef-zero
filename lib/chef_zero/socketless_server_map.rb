@@ -41,7 +41,7 @@ module ChefZero
 
     include Singleton
 
-    def initialize()
+    def initialize
       reset!
     end
 

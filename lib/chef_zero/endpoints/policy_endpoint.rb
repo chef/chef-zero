@@ -8,7 +8,7 @@ module ChefZero
       def get(request)
         revisions = list_data(request, request.rest_path + ["revisions"])
         data = { revisions: hashify_list(revisions) }
-        return json_response(200, data)
+        json_response(200, data)
       end
 
       # DELETE /organizations/ORG/policies/NAME
@@ -17,7 +17,7 @@ module ChefZero
         data = { revisions: hashify_list(revisions) }
 
         delete_data_dir(request, nil, :recursive)
-        return json_response(200, data)
+        json_response(200, data)
       end
     end
   end

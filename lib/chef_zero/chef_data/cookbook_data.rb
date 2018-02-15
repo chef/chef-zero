@@ -4,53 +4,158 @@ require "hashie"
 module ChefZero
   module ChefData
     module CookbookData
-      def self.to_hash(cookbook, name, version = nil)
-        frozen = false
-        if cookbook.has_key?(:frozen)
-          frozen = cookbook[:frozen]
-          cookbook = cookbook.dup
-          cookbook.delete(:frozen)
+      class << self
+        def to_hash(cookbook, name, version = nil)
+          frozen = false
+          if cookbook.has_key?(:frozen)
+            frozen = cookbook[:frozen]
+            cookbook = cookbook.dup
+            cookbook.delete(:frozen)
+          end
+
+          result = files_from(cookbook)
+          recipe_names = result[:all_files].select do |file|
+            file[:name].start_with?("recipes/")
+          end.map do |recipe|
+            recipe_name = recipe[:name][0..-2]
+            recipe_name == "default" ? name : "#{name}::#{recipe_name}"
+          end
+          result[:metadata] = metadata_from(cookbook, name, version, recipe_names)
+          result[:name] = "#{name}-#{result[:metadata][:version]}"
+          result[:json_class] = "Chef::CookbookVersion"
+          result[:cookbook_name] = name
+          result[:version] = result[:metadata][:version]
+          result[:chef_type] = "cookbook_version"
+          result[:frozen?] = true if frozen
+          result
         end
 
-        result = files_from(cookbook)
-        recipe_names = result[:all_files].select do |file|
-          file[:name].start_with?("recipes/")
-        end.map do |recipe|
-          recipe_name = recipe[:name][0..-2]
-          recipe_name == "default" ? name : "#{name}::#{recipe_name}"
+        def metadata_from(directory, name, version, recipe_names)
+          metadata = PretendCookbookMetadata.new(PretendCookbook.new(name, recipe_names))
+          # If both .rb and .json exist, read .json
+          if has_child(directory, "metadata.json")
+            metadata.from_json(read_file(directory, "metadata.json"))
+          elsif has_child(directory, "metadata.rb")
+            begin
+              file = filename(directory, "metadata.rb") || "(#{name}/metadata.rb)"
+              metadata.instance_eval(read_file(directory, "metadata.rb"), file)
+            rescue
+              ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n  #{$!.backtrace.join("\n  ")}")
+            end
+          end
+          result = {}
+          metadata.to_hash.each_pair do |key, value|
+            result[key.to_sym] = value
+          end
+          result[:version] = version if version
+          result
         end
-        result[:metadata] = metadata_from(cookbook, name, version, recipe_names)
-        result[:name] = "#{name}-#{result[:metadata][:version]}"
-        result[:json_class] = "Chef::CookbookVersion"
-        result[:cookbook_name] = name
-        result[:version] = result[:metadata][:version]
-        result[:chef_type] = "cookbook_version"
-        result[:frozen?] = true if frozen
-        result
-      end
 
-      def self.metadata_from(directory, name, version, recipe_names)
-        metadata = PretendCookbookMetadata.new(PretendCookbook.new(name, recipe_names))
-        # If both .rb and .json exist, read .json
-        if has_child(directory, "metadata.json")
-          metadata.from_json(read_file(directory, "metadata.json"))
-        elsif has_child(directory, "metadata.rb")
-          begin
-            file = filename(directory, "metadata.rb") || "(#{name}/metadata.rb)"
-            metadata.instance_eval(read_file(directory, "metadata.rb"), file)
-          rescue
-            ChefZero::Log.error("Error loading cookbook #{name}: #{$!}\n  #{$!.backtrace.join("\n  ")}")
+        private
+
+        def files_from(directory)
+          # TODO some support .rb only
+          result = load_files(directory)
+
+          set_specificity(result, :templates)
+          set_specificity(result, :files)
+
+          result = {
+            all_files: result,
+          }
+          result
+        end
+
+        def has_child(directory, name)
+          if directory.is_a?(Hash)
+            directory.has_key?(name)
+          else
+            directory.child(name).exists?
           end
         end
-        result = {}
-        metadata.to_hash.each_pair do |key, value|
-          result[key.to_sym] = value
-        end
-        result[:version] = version if version
-        result
-      end
 
-      private
+        def read_file(directory, name)
+          if directory.is_a?(Hash)
+            directory[name]
+          else
+            directory.child(name).read
+          end
+        end
+
+        def filename(directory, name)
+          if directory.respond_to?(:file_path)
+            File.join(directory.file_path, name)
+          else
+            nil
+          end
+        end
+
+        def get_directory(directory, name)
+          if directory.is_a?(Hash)
+            directory[name].is_a?(Hash) ? directory[name] : nil
+          else
+            result = directory.child(name)
+            result.dir? ? result : nil
+          end
+        end
+
+        def list(directory)
+          if directory.is_a?(Hash)
+            directory.keys
+          else
+            directory.children.map { |c| c.name }
+          end
+        end
+
+        def load_child_files(parent, key, recursive, part)
+          result = load_files(get_directory(parent, key), recursive, part)
+          result.each do |file|
+            file[:path] = "#{key}/#{file[:path]}"
+          end
+          result
+        end
+
+        def load_files(directory, recursive = true, part = nil)
+          result = []
+          if directory
+            list(directory).each do |child_name|
+              dir = get_directory(directory, child_name)
+              if dir
+                child_part = child_name if part.nil?
+                if recursive
+                  result += load_child_files(directory, child_name, recursive, child_part)
+                end
+              else
+                result += load_file(read_file(directory, child_name), child_name, part)
+              end
+            end
+          end
+          result
+        end
+
+        def load_file(value, name, part = nil)
+          specific_name = part ? "#{part}/#{name}" : name
+          [{
+            :name => specific_name,
+            :path => name,
+            :checksum => Digest::MD5.hexdigest(value),
+            :specificity => "default",
+          }]
+        end
+
+        def set_specificity(files, type)
+          files.each do |file|
+            next unless file[:name].split("/")[0] == type.to_s
+
+            parts = file[:path].split("/")
+            file[:specificity] = if parts.size == 2
+                                   "default"
+                                 else
+                                   parts[1]
+                                 end
+          end
+        end
+      end
 
       # Just enough cookbook to make a Metadata object
       class PretendCookbook
@@ -67,15 +172,15 @@ module ChefZero
       class PretendCookbookMetadata < Hash
         # @param [String] path
         def initialize(cookbook)
-          self.name(cookbook.name)
-          self.recipes(cookbook.fully_qualified_recipe_names)
+          name(cookbook.name)
+          recipes(cookbook.fully_qualified_recipe_names)
           %w{attributes grouping dependencies supports recommendations suggestions conflicting providing replacing recipes}.each do |hash_arg|
             self[hash_arg.to_sym] = Hashie::Mash.new
           end
         end
 
         def from_json(json)
-          self.merge!(FFI_Yajl::Parser.parse(json))
+          merge!(FFI_Yajl::Parser.parse(json))
         end
 
         private
@@ -119,109 +224,6 @@ module ChefZero
               store key.to_sym, values.first
             end
           end
-        end
-      end
-
-      def self.files_from(directory)
-        # TODO some support .rb only
-        result = load_files(directory)
-
-        set_specificity(result, :templates)
-        set_specificity(result, :files)
-
-        result = {
-          all_files: result,
-        }
-        result
-      end
-
-      def self.has_child(directory, name)
-        if directory.is_a?(Hash)
-          directory.has_key?(name)
-        else
-          directory.child(name).exists?
-        end
-      end
-
-      def self.read_file(directory, name)
-        if directory.is_a?(Hash)
-          directory[name]
-        else
-          directory.child(name).read
-        end
-      end
-
-      def self.filename(directory, name)
-        if directory.respond_to?(:file_path)
-          File.join(directory.file_path, name)
-        else
-          nil
-        end
-      end
-
-      def self.get_directory(directory, name)
-        if directory.is_a?(Hash)
-          directory[name].is_a?(Hash) ? directory[name] : nil
-        else
-          result = directory.child(name)
-          result.dir? ? result : nil
-        end
-      end
-
-      def self.list(directory)
-        if directory.is_a?(Hash)
-          directory.keys
-        else
-          directory.children.map { |c| c.name }
-        end
-      end
-
-      def self.load_child_files(parent, key, recursive, part)
-        result = load_files(get_directory(parent, key), recursive, part)
-        result.each do |file|
-          file[:path] = "#{key}/#{file[:path]}"
-        end
-        result
-      end
-
-      def self.load_files(directory, recursive = true, part = nil)
-        result = []
-        if directory
-          list(directory).each do |child_name|
-            dir = get_directory(directory, child_name)
-            if dir
-              child_part = child_name if part.nil?
-              if recursive
-                result += load_child_files(directory, child_name, recursive, child_part)
-              end
-            else
-              result += load_file(read_file(directory, child_name), child_name, part)
-            end
-          end
-        end
-        result
-      end
-
-      def self.load_file(value, name, part = nil)
-        specific_name = part ? "#{part}/#{name}" : name
-        [{
-          :name => specific_name,
-          :path => name,
-          :checksum => Digest::MD5.hexdigest(value),
-          :specificity => "default",
-        }]
-      end
-
-      def self.set_specificity(files, type)
-        files.each do |file|
-          next unless file[:name].split("/")[0] == type.to_s
-
-          parts = file[:path].split("/")
-          file[:specificity] = if parts.size == 2
-                                 "default"
-                               else
-                                 parts[1]
-                               end
         end
       end
     end

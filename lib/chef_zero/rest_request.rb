@@ -70,7 +70,7 @@ module ChefZero
     def to_s
       result = "#{method} #{rest_path.join('/')}"
       if query_params.size > 0
-        result << "?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&') }"
+        result << "?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&')}"
       end
       if body.chomp != ""
         result << "\n--- #{method} BODY ---\n"

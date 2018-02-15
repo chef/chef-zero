@@ -76,7 +76,7 @@ module ChefZero
 
         full_policy_doc = parse_json(get_data(request, policy_path))
         full_policy_doc = ChefData::DataNormalizer.normalize_policy(full_policy_doc, policy_name, current_revision_id)
-        return json_response(200, full_policy_doc)
+        json_response(200, full_policy_doc)
       end
     end
   end

@@ -23,7 +23,7 @@ module ChefZero
               raise "~ unsupported"
             else
               if term[index] == '\\'
-                index = index + 1
+                index += 1
                 if index >= term.length
                   raise "Backslash at end of string '#{term}'"
                 end

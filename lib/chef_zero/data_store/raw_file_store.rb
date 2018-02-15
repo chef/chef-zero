@@ -80,11 +80,9 @@ module ChefZero
       end
 
       def get(path, request = nil)
-        begin
-          return IO.read(path_to(path))
-        rescue Errno::ENOENT
-          raise DataNotFoundError.new(path)
-        end
+        return IO.read(path_to(path))
+      rescue Errno::ENOENT
+        raise DataNotFoundError.new(path)
       end
 
       def set(path, data, *options)
@@ -105,11 +103,9 @@ module ChefZero
       end
 
       def delete(path)
-        begin
-          File.delete(path_to(path))
-        rescue Errno::ENOENT
-          raise DataNotFoundError.new(path)
-        end
+        File.delete(path_to(path))
+      rescue Errno::ENOENT
+        raise DataNotFoundError.new(path)
       end
 
       def delete_dir(path, *options)
@@ -128,19 +124,17 @@ module ChefZero
       end
 
       def list(path)
-        begin
-          Dir.entries(path_to(path)).select { |entry| entry != "." && entry != ".." }.to_a
-        rescue Errno::ENOENT
-          raise DataNotFoundError.new(path)
-        end
+        Dir.entries(path_to(path)).select { |entry| entry != "." && entry != ".." }.to_a
+      rescue Errno::ENOENT
+        raise DataNotFoundError.new(path)
       end
 
       def exists?(path, options = {})
-        File.exists?(path_to(path))
+        File.exist?(path_to(path))
       end
 
       def exists_dir?(path)
-        File.exists?(path_to(path))
+        File.exist?(path_to(path))
       end
     end
   end

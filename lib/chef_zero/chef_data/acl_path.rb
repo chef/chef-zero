@@ -104,14 +104,13 @@ module ChefZero
         end
       end
 
-      private
-
       # /acls/root -> nil
       # /acls/containers/containers -> /acls/root
       # /acls/TYPE/X -> /acls/containers/TYPE
       #
       # Method *assumes* acl_data_path is valid.
       # Returns nil if the path is /acls/root
+      private_class_method
       def self.partition_parent_acl_data_path(acl_data_path)
         if acl_data_path.size == 3
           if acl_data_path == %w{acls containers containers}
@@ -124,6 +123,7 @@ module ChefZero
         end
       end
 
+      private_class_method
       def self.partition_acl_data_path(path, data_types)
         if path.size == 0
           %w{acls root}

@@ -65,7 +65,7 @@ module ChefZero
       def recipe_names(cookbook_name, cookbook)
         cookbook["all_files"].inject([]) do |acc, file|
           part, name = file["name"].split("/")
-          next unless part == "recipes" || File.extname(name) != ".rb"
+          next acc unless part == "recipes" || File.extname(name) != ".rb"
           if name == "default.rb"
             acc << cookbook_name
           else

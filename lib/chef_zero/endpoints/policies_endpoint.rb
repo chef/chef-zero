@@ -19,7 +19,7 @@ module ChefZero
           }
         end
 
-        return json_response(200, response_data)
+        json_response(200, response_data)
       end
     end
   end

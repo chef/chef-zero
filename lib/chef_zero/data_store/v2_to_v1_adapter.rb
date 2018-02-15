@@ -90,13 +90,11 @@ module ChefZero
       protected
 
       def fix_exceptions
-        begin
-          yield
-        rescue DataAlreadyExistsError => e
-          raise DataAlreadyExistsError.new(e.path[2..-1], e)
-        rescue DataNotFoundError => e
-          raise DataNotFoundError.new(e.path[2..-1], e)
-        end
+        yield
+      rescue DataAlreadyExistsError => e
+        raise DataAlreadyExistsError.new(e.path[2..-1], e)
+      rescue DataNotFoundError => e
+        raise DataNotFoundError.new(e.path[2..-1], e)
       end
 
       def fix_path(path)

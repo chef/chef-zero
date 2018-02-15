@@ -67,7 +67,7 @@ module ChefZero
       def peek_term_token
         return nil if @query_string[@index] =~ /\s/
         op = peek_operator_token
-        return !op || op == "-"
+        !op || op == "-"
       end
 
       def peek_operator_token

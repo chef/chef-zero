@@ -27,7 +27,7 @@ module ChefZero
           data[cookbook_artifact] = { url: cookbook_url, versions: versions }
         end
 
-        return json_response(200, data)
+        json_response(200, data)
       end
     end
   end

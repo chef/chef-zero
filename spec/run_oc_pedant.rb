@@ -49,12 +49,12 @@ def start_cheffs_server(chef_repo_path)
   require "chef/chef_fs/chef_fs_data_store"
   require "chef_zero/server"
 
-  Dir.mkdir(chef_repo_path) if !File.exists?(chef_repo_path)
+  Dir.mkdir(chef_repo_path) if !File.exist?(chef_repo_path)
 
   # 11.6 and below had a bug where it couldn't create the repo children automatically
   if Chef::VERSION.to_f < 11.8
     %w{clients cookbooks data_bags environments nodes roles users}.each do |child|
-      Dir.mkdir("#{chef_repo_path}/#{child}") if !File.exists?("#{chef_repo_path}/#{child}")
+      Dir.mkdir("#{chef_repo_path}/#{child}") if !File.exist?("#{chef_repo_path}/#{child}")
     end
   end
 
