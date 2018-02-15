@@ -156,7 +156,7 @@ module ChefZero
 
       def client?(request, rest_path = nil)
         rest_path ||= request.rest_path
-        request.rest_path[2] == "clients"
+        rest_path[2] == "clients"
       end
 
       # Return the data store keys path for the request client or user, e.g.

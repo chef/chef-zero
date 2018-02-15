@@ -48,6 +48,7 @@ module ChefZero
 
         # Take the passed-in options
 
+        # rubocop:disable Lint/UnderscorePrefixedVariableName
         define_singleton_method(:chef_server_options) do
           @chef_server_options ||= begin
             _chef_server_options = { port: 8900, signals: false, log_requests: true }
@@ -55,11 +56,12 @@ module ChefZero
             _chef_server_options = _chef_server_options.freeze
           end
         end
+        # rubocop:enable Lint/UnderscorePrefixedVariableName
 
         # Merge in chef_server_options from let(:chef_server_options)
-        def chef_server_options
+        def chef_server_options # rubocop:disable Lint/NestedMethodDefinition
           chef_server_options = self.class.chef_server_options.dup
-          chef_server_options = chef_server_options.merge(chef_zero_opts) if self.respond_to?(:chef_zero_opts)
+          chef_server_options = chef_server_options.merge(chef_zero_opts) if respond_to?(:chef_zero_opts)
           chef_server_options
         end
 

@@ -82,7 +82,7 @@ module ChefZero
             # If the dep is not already in the list, add it to the list to solve
             # and bring in all environment-allowed cookbook versions to desired_versions
             if !new_desired_versions.has_key?(dep_name)
-              new_unsolved = new_unsolved + [dep_name]
+              new_unsolved += [dep_name]
               # If the dep is missing, we will try other versions of the cookbook that might not have the bad dep.
               if !exists_data_dir?(request, request.rest_path[0..1] + ["cookbooks", dep_name])
                 @last_missing_dep = dep_name.to_s
@@ -101,7 +101,7 @@ module ChefZero
           result = depsolve(request, new_unsolved, new_desired_versions, environment_constraints)
           return result if result
         end
-        return nil
+        nil
       end
 
       def sort_versions(versions)

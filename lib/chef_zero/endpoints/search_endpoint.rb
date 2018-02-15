@@ -96,8 +96,8 @@ module ChefZero
               end
             end
           end
-          value.each_pair do |key, value|
-            result[key] = value unless %w{default normal override automatic}.include?(key)
+          value.each_pair do |key, val|
+            result[key] = val unless %w{default normal override automatic}.include?(key)
           end
           result
 
@@ -155,8 +155,6 @@ module ChefZero
         }
       end
 
-      private
-
       # Deep Merge core documentation.
       # deep_merge! method permits merging of arbitrary child elements. The two top level
       # elements must be hashes. These hashes can contain unlimited (to stack limit) levels
@@ -194,7 +192,7 @@ module ChefZero
           end
         when Array
           if dest.kind_of?(Array)
-            dest = dest | source
+            dest |= source
           else
             dest = source
           end

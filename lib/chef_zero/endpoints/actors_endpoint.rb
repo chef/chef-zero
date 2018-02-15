@@ -10,9 +10,9 @@ module ChefZero
 
         # apply query filters: if one applies, stop processing rest
         # (precendence matches chef-server: https://github.com/chef/chef-server/blob/268a0c9/src/oc_erchef/apps/chef_objects/src/chef_user.erl#L554-L559)
-        if value = request.query_params["external_authentication_uid"]
+        if (value = request.query_params["external_authentication_uid"])
           response[2] = filter("external_authentication_uid", value, request, response[2])
-        elsif value = request.query_params["email"]
+        elsif (value = request.query_params["email"])
           response[2] = filter("email", value, request, response[2], insensitive: true)
         end
 
@@ -97,7 +97,7 @@ module ChefZero
       end
 
       def is_equal(a, b, ignore_case)
-        ignore_case ? a.casecmp(b).zero? : a == b
+        ignore_case ? a.casecmp(b) == 0 : a == b
       end
     end
   end

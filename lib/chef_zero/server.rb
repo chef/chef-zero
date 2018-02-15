@@ -493,7 +493,7 @@ module ChefZero
         if contents[cookbook_type]
           contents[cookbook_type].each_pair do |name_version, cookbook|
             if cookbook_type == "cookbook_artifacts"
-              name, dash, identifier = name_version.rpartition("-")
+              name, _, identifier = name_version.rpartition("-")
               cookbook_data = ChefData::CookbookData.to_hash(cookbook, name, identifier)
             elsif name_version =~ /(.+)-(\d+\.\d+\.\d+)$/
               cookbook_data = ChefData::CookbookData.to_hash(cookbook, $1, $2)

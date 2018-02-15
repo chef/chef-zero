@@ -455,17 +455,17 @@ module ChefZero
         when 0, 1
           return true
         when 2
-          return path[0] == "organizations" || (path[0] == "acls" && path[1] != "root")
+          path[0] == "organizations" || (path[0] == "acls" && path[1] != "root")
         when 3
           # If it has a container, it is a directory.
-          return path[0] == "organizations" &&
-              (path[2] == "acls" || data.exists?(path[0..1] + [ "containers", path[2] ]))
+          path[0] == "organizations" &&
+            (path[2] == "acls" || data.exists?(path[0..1] + [ "containers", path[2] ]))
         when 4
-          return path[0] == "organizations" && (
+          path[0] == "organizations" && (
             (path[2] == "acls" && path[1] != "root") ||
             %w{cookbooks cookbook_artifacts data policies policy_groups}.include?(path[2]))
         else
-          return false
+          false
         end
       end
     end

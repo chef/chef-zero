@@ -20,7 +20,7 @@ module ChefZero
 
       def put(request)
         # We grab the old body to trigger a 404 if it doesn't exist
-        old_body = get_data(request)
+        get_data(request)
 
         # If it's a rename, check for conflict and delete the old value
         if is_rename?(request)
@@ -69,7 +69,7 @@ module ChefZero
 
       # Does this request change the value of the identity key?
       def is_rename?(request)
-        return false unless key = identity_key_value(request)
+        return false unless (key = identity_key_value(request))
         key != request.rest_path[-1]
       end
     end

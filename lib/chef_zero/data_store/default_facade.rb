@@ -66,15 +66,13 @@ module ChefZero
       end
 
       def get(path, request = nil)
-        begin
-          real_store.get(path, request)
-        rescue DataNotFoundError
-          result = default_creator.get(path)
-          if result
-            FFI_Yajl::Encoder.encode(result, :pretty => true)
-          else
-            raise
-          end
+        real_store.get(path, request)
+      rescue DataNotFoundError
+        result = default_creator.get(path)
+        if result
+          FFI_Yajl::Encoder.encode(result, :pretty => true)
+        else
+          raise
         end
       end
 

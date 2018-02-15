@@ -17,7 +17,7 @@ module ChefZero
 
         response_data[cookbook_name] = { url: cookbook_url, versions: versions }
 
-        return json_response(200, response_data)
+        json_response(200, response_data)
       end
     end
   end

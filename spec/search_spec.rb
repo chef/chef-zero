@@ -2,7 +2,7 @@ require "chef_zero/solr/solr_parser"
 require "chef_zero/solr/solr_doc"
 
 describe ChefZero::Solr::SolrParser do
-  let (:all_docs) do
+  let(:all_docs) do
     docs = []
     [{ "foo" => "a" },
      { "foo" => "d" }].each_with_index do |h, i|
