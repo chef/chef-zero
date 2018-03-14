@@ -11,7 +11,7 @@ group :development, :test do
   gem "chefstyle", git: "https://github.com/chef/chefstyle.git", branch: "master"
 end
 
-gem "chef", "~> 13"
+gem "chef", "~> 14"
 
 if ENV["GEMFILE_MOD"]
   puts "GEMFILE_MOD: #{ENV['GEMFILE_MOD']}"

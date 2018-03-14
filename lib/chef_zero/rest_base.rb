@@ -35,7 +35,7 @@ module ChefZero
                             )
       end
     rescue ArgumentError
-      return json_response(406,
+      json_response(406,
                            { "username" => request.requestor },
                            request_version: -1, response_version: -1
                           )
