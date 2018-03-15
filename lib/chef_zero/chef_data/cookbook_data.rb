@@ -2,6 +2,10 @@ require "digest/md5"
 require "hashie"
 
 module ChefZero
+  class Mash < ::Hashie::Mash
+    disable_warnings
+  end
+
   module ChefData
     module CookbookData
       class << self
@@ -175,7 +179,7 @@ module ChefZero
           name(cookbook.name)
           recipes(cookbook.fully_qualified_recipe_names)
           %w{attributes grouping dependencies supports recommendations suggestions conflicting providing replacing recipes}.each do |hash_arg|
-            self[hash_arg.to_sym] = Hashie::Mash.new
+            self[hash_arg.to_sym] = Mash.new
           end
         end
 
