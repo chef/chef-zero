@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 14.0.1 -->
-## [v14.0.1](https://github.com/chef/chef-zero/tree/v14.0.1) (2018-02-16)
+<!-- latest_release 14.0.2 -->
+## [v14.0.2](https://github.com/chef/chef-zero/tree/v14.0.2) (2018-03-16)
 
 #### Merged Pull Requests
-- bump required ruby version [#274](https://github.com/chef/chef-zero/pull/274) ([thommay](https://github.com/thommay))
+- Disable Hashie method override warns [#276](https://github.com/chef/chef-zero/pull/276) ([adamdecaf](https://github.com/adamdecaf))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.1.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Disable Hashie method override warns [#276](https://github.com/chef/chef-zero/pull/276) ([adamdecaf](https://github.com/adamdecaf)) <!-- 14.0.2 -->
 - bump required ruby version [#274](https://github.com/chef/chef-zero/pull/274) ([thommay](https://github.com/thommay)) <!-- 14.0.1 -->
 <!-- release_rollup -->
 
