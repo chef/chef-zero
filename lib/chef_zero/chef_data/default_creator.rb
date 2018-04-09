@@ -22,7 +22,6 @@ module ChefZero
       attr_reader :single_org
       attr_reader :osc_compat
       attr_reader :creators
-      attr_reader :deleted
 
       PERMISSIONS = %w{create read update delete grant}
       DEFAULT_SUPERUSERS = %w{pivotal}
