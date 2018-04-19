@@ -115,9 +115,9 @@ module ChefZero
         if value.is_a?(Hash) && !options[:allow_dirs]
           raise "exists? does not work with directories (#{path} = #{value.class})"
         end
-        return true
+        true
       rescue DataNotFoundError
-        return false
+        false
       end
 
       def exists_dir?(path)
@@ -125,9 +125,9 @@ module ChefZero
         if !dir.is_a? Hash
           raise "exists_dir? only works with directories (#{path} = #{dir.class})"
         end
-        return true
+        true
       rescue DataNotFoundError
-        return false
+        false
       end
 
       private
