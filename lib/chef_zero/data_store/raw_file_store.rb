@@ -80,7 +80,7 @@ module ChefZero
       end
 
       def get(path, request = nil)
-        return IO.read(path_to(path))
+        IO.read(path_to(path))
       rescue Errno::ENOENT
         raise DataNotFoundError.new(path)
       end
