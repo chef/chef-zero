@@ -16,6 +16,9 @@ script:
   - bundle update
   - bundle exec rake pedant
 
+env:
+  - "GEMFILE_MOD=\"gem 'chef', '~> 13.0'\""
+
 matrix:
   include:
     - rvm: 2.5.0
