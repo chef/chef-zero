@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 14.0.4 -->
-## [v14.0.4](https://github.com/chef/chef-zero/tree/v14.0.4) (2018-04-19)
+<!-- latest_release 14.0.5 -->
+## [v14.0.5](https://github.com/chef/chef-zero/tree/v14.0.5) (2018-04-20)
 
 #### Merged Pull Requests
-- remove the explicit chef gem [#279](https://github.com/chef/chef-zero/pull/279) ([lamont-granquist](https://github.com/lamont-granquist))
+- reinstate the default chef gem pin [#280](https://github.com/chef/chef-zero/pull/280) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.1.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- reinstate the default chef gem pin [#280](https://github.com/chef/chef-zero/pull/280) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.5 -->
 - remove the explicit chef gem [#279](https://github.com/chef/chef-zero/pull/279) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.4 -->
 - fix for new rubocop engine [#278](https://github.com/chef/chef-zero/pull/278) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.3 -->
 - Disable Hashie method override warns [#276](https://github.com/chef/chef-zero/pull/276) ([adamdecaf](https://github.com/adamdecaf)) <!-- 14.0.2 -->
