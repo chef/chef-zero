@@ -14,6 +14,8 @@ end
 if ENV["GEMFILE_MOD"]
   puts "GEMFILE_MOD: #{ENV['GEMFILE_MOD']}"
   instance_eval(ENV["GEMFILE_MOD"])
+else
+  gem "chef", "~> 13.0"
 end
 
 # If you want to load debugging tools into the bundle exec sandbox,
