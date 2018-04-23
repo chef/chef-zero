@@ -1,26 +1,24 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 14.0.6 -->
-## [v14.0.6](https://github.com/chef/chef-zero/tree/v14.0.6) (2018-04-23)
-
-#### Merged Pull Requests
-- pin chef to 14.x [#281](https://github.com/chef/chef-zero/pull/281) ([lamont-granquist](https://github.com/lamont-granquist))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=13.1.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- pin chef to 14.x [#281](https://github.com/chef/chef-zero/pull/281) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.6 -->
-- reinstate the default chef gem pin [#280](https://github.com/chef/chef-zero/pull/280) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.5 -->
-- remove the explicit chef gem [#279](https://github.com/chef/chef-zero/pull/279) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.4 -->
-- fix for new rubocop engine [#278](https://github.com/chef/chef-zero/pull/278) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.3 -->
-- Disable Hashie method override warns [#276](https://github.com/chef/chef-zero/pull/276) ([adamdecaf](https://github.com/adamdecaf)) <!-- 14.0.2 -->
-- bump required ruby version [#274](https://github.com/chef/chef-zero/pull/274) ([thommay](https://github.com/thommay)) <!-- 14.0.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.0.6](https://github.com/chef/chef-zero/tree/v14.0.6) (2018-04-23)
+
+#### Merged Pull Requests
+- bump required ruby version [#274](https://github.com/chef/chef-zero/pull/274) ([thommay](https://github.com/thommay))
+- Disable Hashie method override warns [#276](https://github.com/chef/chef-zero/pull/276) ([adamdecaf](https://github.com/adamdecaf))
+- fix for new rubocop engine [#278](https://github.com/chef/chef-zero/pull/278) ([lamont-granquist](https://github.com/lamont-granquist))
+- remove the explicit chef gem [#279](https://github.com/chef/chef-zero/pull/279) ([lamont-granquist](https://github.com/lamont-granquist))
+- reinstate the default chef gem pin [#280](https://github.com/chef/chef-zero/pull/280) ([lamont-granquist](https://github.com/lamont-granquist))
+- pin chef to 14.x [#281](https://github.com/chef/chef-zero/pull/281) ([lamont-granquist](https://github.com/lamont-granquist))
+<!-- latest_stable_release -->
+
 ## [v13.1.0](https://github.com/chef/chef-zero/tree/v13.1.0) (2017-07-17)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v13.0.0...v13.1.0)
 
@@ -34,7 +32,6 @@
 - Add skip-chef-zero-quirks to the defaults in chef-zero [\#263](https://github.com/chef/chef-zero/pull/263) ([jaymalasinha](https://github.com/jaymalasinha))
 - Add skip-chef-zero-quirks to the defaults in chef-zero [\#262](https://github.com/chef/chef-zero/pull/262) ([jaymalasinha](https://github.com/jaymalasinha))
 - Ensure that tests that use chef-zero git will work [\#259](https://github.com/chef/chef-zero/pull/259) ([thommay](https://github.com/thommay))
-<!-- latest_stable_release -->
 
 ## [v13.0.0](https://github.com/chef/chef-zero/tree/v13.0.0) (2017-04-03)
 [Full Changelog](https://github.com/chef/chef-zero/compare/v5.3.2...v13.0.0)
