@@ -140,10 +140,10 @@ module ChefZero
         def load_file(value, name, part = nil)
           specific_name = part ? "#{part}/#{name}" : name
           [{
-            :name => specific_name,
-            :path => name,
-            :checksum => Digest::MD5.hexdigest(value),
-            :specificity => "default",
+            name: specific_name,
+            path: name,
+            checksum: Digest::MD5.hexdigest(value),
+            specificity: "default",
           }]
         end
 

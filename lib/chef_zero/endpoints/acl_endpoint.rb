@@ -30,7 +30,7 @@ module ChefZero
         path, perm = validate_request(request)
         acls = FFI_Yajl::Parser.parse(get_data(request, path))
         acls[perm] = FFI_Yajl::Parser.parse(request.body)[perm]
-        set_data(request, path, FFI_Yajl::Encoder.encode(acls, :pretty => true))
+        set_data(request, path, FFI_Yajl::Encoder.encode(acls, pretty: true))
         json_response(200, { "uri" => "#{build_uri(request.base_uri, request.rest_path)}" })
       end
     end

@@ -31,7 +31,7 @@ module ChefZero
             request_body = FFI_Yajl::Parser.parse(request.body)
             if !request_body["frozen?"]
               request_body["frozen?"] = true
-              request.body = FFI_Yajl::Encoder.encode(request_body, :pretty => true)
+              request.body = FFI_Yajl::Encoder.encode(request_body, pretty: true)
             end
           end
         end
@@ -122,7 +122,7 @@ module ChefZero
         cookbook["chef_type"] ||= "cookbook_version"
         cookbook["json_class"] ||= "Chef::CookbookVersion"
         cookbook = ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1], cookbook, request.rest_path[3], request.rest_path[4], request.base_uri, request.method, false, api_version: request.api_version) if normalize
-        FFI_Yajl::Encoder.encode(cookbook, :pretty => true)
+        FFI_Yajl::Encoder.encode(cookbook, pretty: true)
       end
 
       def latest_version(versions)

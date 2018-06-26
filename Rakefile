@@ -18,7 +18,7 @@ Environment:
                 e.g. LOG_LEVEL=debug
 END
 
-task :default => :pedant
+task default: :pedant
 
 desc "Run specs"
 task :spec do
@@ -26,7 +26,7 @@ task :spec do
 end
 
 desc "Run oc-chef-pedant\n\n#{ENV_DOCS}"
-task :pedant => :oc_pedant
+task pedant: :oc_pedant
 
 desc "Run oc-chef-pedant with CHEF_FS set\n\n#{ENV_DOCS}"
 task :cheffs do

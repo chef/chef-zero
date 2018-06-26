@@ -16,7 +16,7 @@ module ChefZero
         new_org.each do |key, value|
           org[key] = value
         end
-        save_org = FFI_Yajl::Encoder.encode(org, :pretty => true)
+        save_org = FFI_Yajl::Encoder.encode(org, pretty: true)
         if new_org["name"] != request.rest_path[-1]
           # This is a rename
           return error(400, "Cannot rename org #{request.rest_path[-1]} to #{new_org['name']}: rename not supported for orgs")
@@ -39,7 +39,7 @@ module ChefZero
       def populate_defaults(request, response_json)
         org = FFI_Yajl::Parser.parse(response_json)
         org = ChefData::DataNormalizer.normalize_organization(org, request.rest_path[1])
-        FFI_Yajl::Encoder.encode(org, :pretty => true)
+        FFI_Yajl::Encoder.encode(org, pretty: true)
       end
     end
   end

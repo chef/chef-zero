@@ -145,7 +145,7 @@ module ChefZero
     def set_data(request, rest_path, data, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.set(rest_path, data, *options, :requestor => request.requestor)
+        data_store.set(rest_path, data, *options, requestor: request.requestor)
       rescue DataStore::DataNotFoundError
         if options.include?(:data_store_exceptions)
           raise
@@ -158,7 +158,7 @@ module ChefZero
     def create_data_dir(request, rest_path, name, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.create_dir(rest_path, name, *options, :requestor => request.requestor)
+        data_store.create_dir(rest_path, name, *options, requestor: request.requestor)
       rescue DataStore::DataNotFoundError
         if options.include?(:data_store_exceptions)
           raise
@@ -177,7 +177,7 @@ module ChefZero
     def create_data(request, rest_path, name, data, *options)
       rest_path ||= request.rest_path
       begin
-        data_store.create(rest_path, name, data, *options, :requestor => request.requestor)
+        data_store.create(rest_path, name, data, *options, requestor: request.requestor)
       rescue DataStore::DataNotFoundError
         if options.include?(:data_store_exceptions)
           raise
@@ -296,7 +296,7 @@ module ChefZero
     end
 
     def to_json(data)
-      FFI_Yajl::Encoder.encode(data, :pretty => true)
+      FFI_Yajl::Encoder.encode(data, pretty: true)
     end
 
     def get_data_or_else(request, path, or_else_value)

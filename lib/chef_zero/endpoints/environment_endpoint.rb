@@ -26,7 +26,7 @@ module ChefZero
       def populate_defaults(request, response_json)
         response = FFI_Yajl::Parser.parse(response_json)
         response = ChefData::DataNormalizer.normalize_environment(response, request.rest_path[3])
-        FFI_Yajl::Encoder.encode(response, :pretty => true)
+        FFI_Yajl::Encoder.encode(response, pretty: true)
       end
     end
   end

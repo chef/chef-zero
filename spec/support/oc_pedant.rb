@@ -93,49 +93,49 @@ end
 keyfile_maybe = ENV["CHEF_FS"] ? { key_file: key } : { key_file: nil }
 
 requestors({
-             :clients => {
+             clients: {
                # The the admin user, for the purposes of getting things rolling
-               :admin => {
-                 :name => "pedant_admin_client",
-                 :create_me => true,
-                 :create_knife => true,
-                 :admin => true,
+               admin: {
+                 name: "pedant_admin_client",
+                 create_me: true,
+                 create_knife: true,
+                 admin: true,
                },
-               :non_admin => {
-                 :name => "pedant_client",
-                 :create_me => true,
-                 :create_knife => true,
+               non_admin: {
+                 name: "pedant_client",
+                 create_me: true,
+                 create_knife: true,
                },
-               :bad => {
-                 :name => "bad_client",
-                 :create_me => true,
-                 :create_knife => true,
-                 :bogus => true,
+               bad: {
+                 name: "bad_client",
+                 create_me: true,
+                 create_knife: true,
+                 bogus: true,
                },
              },
 
-             :users => {
+             users: {
                # An administrator in the testing organization
-               :admin => {
-                 :name => cheffs_or_else_user("pedant_admin_user"),
-                 :create_me => !ENV["CHEF_FS"],
-                 :associate => !ENV["CHEF_FS"],
-                 :create_knife => true,
+               admin: {
+                 name: cheffs_or_else_user("pedant_admin_user"),
+                 create_me: !ENV["CHEF_FS"],
+                 associate: !ENV["CHEF_FS"],
+                 create_knife: true,
                }.merge(keyfile_maybe),
 
-               :non_admin => {
-                 :name => cheffs_or_else_user("pedant_user"),
-                 :create_me => !ENV["CHEF_FS"],
-                 :associate => !ENV["CHEF_FS"],
-                 :create_knife => true,
+               non_admin: {
+                 name: cheffs_or_else_user("pedant_user"),
+                 create_me: !ENV["CHEF_FS"],
+                 associate: !ENV["CHEF_FS"],
+                 create_knife: true,
                }.merge(keyfile_maybe),
 
                # A user that is not a member of the testing organization
-               :bad => {
-                 :name => cheffs_or_else_user("pedant-nobody"),
-                 :create_me => !ENV["CHEF_FS"],
-                 :create_knife => true,
-                 :associate => false,
+               bad: {
+                 name: cheffs_or_else_user("pedant-nobody"),
+                 create_me: !ENV["CHEF_FS"],
+                 create_knife: true,
+                 associate: false,
                }.merge(keyfile_maybe),
              },
            })

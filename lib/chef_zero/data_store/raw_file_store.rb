@@ -69,7 +69,7 @@ module ChefZero
           FileUtils.mkdir_p(path_to(path))
         end
         begin
-          File.open(path_to(path, name), File::WRONLY | File::CREAT | File::EXCL | File::BINARY, :internal_encoding => nil) do |file|
+          File.open(path_to(path, name), File::WRONLY | File::CREAT | File::EXCL | File::BINARY, internal_encoding: nil) do |file|
             file.write data
           end
         rescue Errno::ENOENT
@@ -94,7 +94,7 @@ module ChefZero
           if options.include?(:create)
             mode |= File::CREAT
           end
-          File.open(path_to(path), mode, :internal_encoding => nil) do |file|
+          File.open(path_to(path), mode, internal_encoding: nil) do |file|
             file.write data
           end
         rescue Errno::ENOENT

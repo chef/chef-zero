@@ -17,11 +17,11 @@ module ChefZero
         result_checksums = {}
         needed_checksums.keys.each do |needed_checksum|
           if list_data(request, request.rest_path[0..1] + %w{file_store checksums}).include?(needed_checksum)
-            result_checksums[needed_checksum] = { :needs_upload => false }
+            result_checksums[needed_checksum] = { needs_upload: false }
           else
             result_checksums[needed_checksum] = {
-              :needs_upload => true,
-              :url => build_uri(request.base_uri, request.rest_path[0..1] + ["file_store", "checksums", needed_checksum]),
+              needs_upload: true,
+              url: build_uri(request.base_uri, request.rest_path[0..1] + ["file_store", "checksums", needed_checksum]),
             }
             sandbox_checksums << needed_checksum
           end
@@ -35,14 +35,14 @@ module ChefZero
         time_str = "#{time_str[0..21]}:#{time_str[22..23]}"
 
         create_data(request, request.rest_path, id, FFI_Yajl::Encoder.encode({
-          :create_time => time_str,
-          :checksums => sandbox_checksums,
-        }, :pretty => true))
+          create_time: time_str,
+          checksums: sandbox_checksums,
+        }, pretty: true))
 
         json_response(201, {
-          :uri => build_uri(request.base_uri, request.rest_path + [id]),
-          :checksums => result_checksums,
-          :sandbox_id => id,
+          uri: build_uri(request.base_uri, request.rest_path + [id]),
+          checksums: result_checksums,
+          sandbox_id: id,
         })
       end
     end

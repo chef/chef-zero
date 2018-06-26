@@ -12,7 +12,7 @@ module ChefZero
         validator = FFI_Yajl::Parser.parse(get_data(request, validator_path))
         private_key, public_key = server.gen_key_pair
         validator["public_key"] = public_key
-        set_data(request, validator_path, FFI_Yajl::Encoder.encode(validator, :pretty => true))
+        set_data(request, validator_path, FFI_Yajl::Encoder.encode(validator, pretty: true))
         json_response(200, { "private_key" => private_key })
       end
     end

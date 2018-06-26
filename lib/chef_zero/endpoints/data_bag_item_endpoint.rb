@@ -18,7 +18,7 @@ module ChefZero
       def self.populate_defaults(request, response_json, data_bag, data_bag_item)
         response = FFI_Yajl::Parser.parse(response_json)
         response = ChefData::DataNormalizer.normalize_data_bag_item(response, data_bag, data_bag_item, request.method)
-        FFI_Yajl::Encoder.encode(response, :pretty => true)
+        FFI_Yajl::Encoder.encode(response, pretty: true)
       end
     end
   end

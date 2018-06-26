@@ -26,7 +26,7 @@ module ChefZero
           if !users["users"] || !users["users"].include?(username)
             users["users"] ||= []
             users["users"] |= [ username ]
-            set_data(request, [ "organizations", orgname, "groups", "users" ], FFI_Yajl::Encoder.encode(users, :pretty => true))
+            set_data(request, [ "organizations", orgname, "groups", "users" ], FFI_Yajl::Encoder.encode(users, pretty: true))
           end
         elsif json["response"] == "reject"
           delete_data(request, association_request_path)

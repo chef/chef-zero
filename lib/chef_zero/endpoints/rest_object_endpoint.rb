@@ -52,7 +52,7 @@ module ChefZero
           existing_json = FFI_Yajl::Parser.parse(existing_value)
           merged_json = existing_json.merge(request_json)
           if merged_json.size > request_json.size
-            return FFI_Yajl::Encoder.encode(merged_json, :pretty => true)
+            return FFI_Yajl::Encoder.encode(merged_json, pretty: true)
           end
         end
 

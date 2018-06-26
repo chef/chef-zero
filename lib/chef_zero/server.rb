@@ -112,12 +112,12 @@ module ChefZero
   class Server
 
     DEFAULT_OPTIONS = {
-      :host => ["127.0.0.1"],
-      :port => 8889,
-      :log_level => :warn,
-      :generate_real_keys => true,
-      :single_org => "chef",
-      :ssl => false,
+      host: ["127.0.0.1"],
+      port: 8889,
+      log_level: :warn,
+      generate_real_keys: true,
+      single_org: "chef",
+      ssl: false,
     }.freeze
 
     GLOBAL_ENDPOINTS = [
@@ -281,14 +281,14 @@ module ChefZero
 
     def start_background(wait = 5)
       @server = WEBrick::HTTPServer.new(
-        :DoNotListen => true,
-        :AccessLog   => [],
-        :Logger      => WEBrick::Log.new(StringIO.new, 7),
-        :RequestTimeout => 300,
-        :SSLEnable => options[:ssl],
-        :SSLOptions => ssl_opts,
-        :SSLCertName => [ [ "CN", WEBrick::Utils.getservername ] ],
-        :StartCallback => proc do
+        DoNotListen: true,
+        AccessLog: [],
+        Logger: WEBrick::Log.new(StringIO.new, 7),
+        RequestTimeout: 300,
+        SSLEnable: options[:ssl],
+        SSLOptions: ssl_opts,
+        SSLCertName: [ [ "CN", WEBrick::Utils.getservername ] ],
+        StartCallback: proc do
           @running = true
         end
       )
@@ -484,7 +484,7 @@ module ChefZero
       if contents["policy_groups"]
         contents["policy_groups"].each_pair do |group_name, group|
           group["policies"].each do |policy_name, policy_revision|
-            data_store.set(["organizations", org_name, "policy_groups", group_name, "policies", policy_name], FFI_Yajl::Encoder.encode(policy_revision["revision_id"], :pretty => true), :create, :create_dir)
+            data_store.set(["organizations", org_name, "policy_groups", group_name, "policies", policy_name], FFI_Yajl::Encoder.encode(policy_revision["revision_id"], pretty: true), :create, :create_dir)
           end
         end
       end
@@ -502,7 +502,7 @@ module ChefZero
             end
             raise "No version specified" if !cookbook_data[:version]
             data_store.create_dir(["organizations", org_name, cookbook_type], cookbook_data[:cookbook_name], :recursive)
-            data_store.set(["organizations", org_name, cookbook_type, cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, :pretty => true), :create)
+            data_store.set(["organizations", org_name, cookbook_type, cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, pretty: true), :create)
             cookbook_data.values.each do |files|
               next unless files.is_a? Array
               files.each do |file|
@@ -699,7 +699,7 @@ module ChefZero
     end
 
     def dejsonize(value)
-      value.is_a?(Hash) ? FFI_Yajl::Encoder.encode(value, :pretty => true) : value
+      value.is_a?(Hash) ? FFI_Yajl::Encoder.encode(value, pretty: true) : value
     end
 
     def get_file(directory, path)
