@@ -1,10 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.0.7 -->
+## [v14.0.7](https://github.com/chef/chef-zero/tree/v14.0.7) (2018-07-03)
+
+#### Merged Pull Requests
+- remove hashrocket syntax [#283](https://github.com/chef/chef-zero/pull/283) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.0.6 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- remove hashrocket syntax [#283](https://github.com/chef/chef-zero/pull/283) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.7 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
