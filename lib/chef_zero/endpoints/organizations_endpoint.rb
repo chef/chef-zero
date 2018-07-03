@@ -25,14 +25,14 @@ module ChefZero
         elsif exists_data_dir?(request, request.rest_path + [ name ])
           error(409, "Organization already exists")
         else
-          create_data_dir(request, request.rest_path, name, :requestor => request.requestor)
+          create_data_dir(request, request.rest_path, name, requestor: request.requestor)
 
           org = {
             "guid" => UUIDTools::UUID.random_create.to_s.delete("-"),
             "assigned_at" => Time.now.to_s,
           }.merge(contents)
           org_path = request.rest_path + [ name ]
-          set_data(request, org_path + [ "org" ], FFI_Yajl::Encoder.encode(org, :pretty => true))
+          set_data(request, org_path + [ "org" ], FFI_Yajl::Encoder.encode(org, pretty: true))
 
           if server.generate_real_keys?
             # Create the validator client
@@ -42,7 +42,7 @@ module ChefZero
             validator = FFI_Yajl::Encoder.encode({
               "validator" => true,
               "public_key" => public_key,
-            }, :pretty => true)
+            }, pretty: true)
             set_data(request, validator_path, validator)
           end
 

@@ -9,7 +9,7 @@ module ChefZero
       def populate_defaults(request, response_json)
         role = FFI_Yajl::Parser.parse(response_json)
         role = ChefData::DataNormalizer.normalize_role(role, request.rest_path[3])
-        FFI_Yajl::Encoder.encode(role, :pretty => true)
+        FFI_Yajl::Encoder.encode(role, pretty: true)
       end
     end
   end

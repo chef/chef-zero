@@ -333,7 +333,7 @@ module ChefZero
         if data.is_a?(String)
           data
         else
-          FFI_Yajl::Encoder.encode(data, :pretty => true)
+          FFI_Yajl::Encoder.encode(data, pretty: true)
         end
       end
 

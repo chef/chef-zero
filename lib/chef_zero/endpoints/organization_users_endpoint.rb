@@ -30,7 +30,7 @@ module ChefZero
         if !users["users"] || !users["users"].include?(username)
           users["users"] ||= []
           users["users"] |= [ username ]
-          set_data(request, [ "organizations", orgname, "groups", "users" ], FFI_Yajl::Encoder.encode(users, :pretty => true))
+          set_data(request, [ "organizations", orgname, "groups", "users" ], FFI_Yajl::Encoder.encode(users, pretty: true))
         end
         json_response(201, { "uri" => build_uri(request.base_uri, request.rest_path + [ username ]) })
       end
