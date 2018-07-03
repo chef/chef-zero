@@ -32,7 +32,7 @@ chef_server "http://127.0.0.1:8889"
 # testing location, you should not specify a value for this parameter.
 # The tests will still run, albeit slower, as they will now need to
 # poll for a period to ensure they are querying committed results.
-#search_server "http://localhost:8983"
+# search_server "http://localhost:8983"
 
 # Related to the 'search_server' parameter, this specifies the maximum
 # amout of time (in seconds) that search endpoint requests should be

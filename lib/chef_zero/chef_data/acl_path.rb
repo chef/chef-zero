@@ -14,8 +14,8 @@ module ChefZero
     # - stop adding pivotal to acls (he already has access to what he needs)
     module AclPath
       ORG_DATA_TYPES = %w{clients cookbook_artifacts cookbooks containers data environments groups
-                          nodes policies policy_groups roles sandboxes}
-      TOP_DATA_TYPES = %w{containers organizations users}
+                          nodes policies policy_groups roles sandboxes}.freeze
+      TOP_DATA_TYPES = %w{containers organizations users}.freeze
 
       # ACL data paths for a partition are:
       # /          -> /acls/root

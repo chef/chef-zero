@@ -9,11 +9,11 @@ module ChefZero
       def put(request)
         data = parse_json(request.body)
 
-        if data.has_key?("policy_name") && policy_name_invalid?(data["policy_name"])
+        if data.key?("policy_name") && policy_name_invalid?(data["policy_name"])
           return error(400, "Field 'policy_name' invalid", pretty: false)
         end
 
-        if data.has_key?("policy_group") && policy_name_invalid?(data["policy_group"])
+        if data.key?("policy_group") && policy_name_invalid?(data["policy_group"])
           return error(400, "Field 'policy_group' invalid", pretty: false)
         end
 

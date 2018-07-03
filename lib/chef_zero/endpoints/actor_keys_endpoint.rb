@@ -5,8 +5,8 @@ module ChefZero
     # /users/USER/keys
     # /organizations/ORG/clients/CLIENT/keys
     class ActorKeysEndpoint < RestBase
-      DEFAULT_PUBLIC_KEY_NAME = "default"
-      DATE_FORMAT = "%FT%TZ" # e.g. 2015-12-24T21:00:00Z
+      DEFAULT_PUBLIC_KEY_NAME = "default".freeze
+      DATE_FORMAT = "%FT%TZ".freeze # e.g. 2015-12-24T21:00:00Z
 
       def get(request, alt_uri_root = nil)
         path = data_path(request)

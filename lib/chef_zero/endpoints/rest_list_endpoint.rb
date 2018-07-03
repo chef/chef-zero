@@ -17,7 +17,7 @@ module ChefZero
         # Get the result
         result_hash = {}
         list_data(request).sort.each do |name|
-          result_hash[name] = "#{build_uri(request.base_uri, request.rest_path + [name])}"
+          result_hash[name] = (build_uri(request.base_uri, request.rest_path + [name])).to_s
         end
         json_response(200, result_hash)
       end
@@ -29,7 +29,7 @@ module ChefZero
           error(400, "Must specify #{identity_keys.map { |k| k.inspect }.join(' or ')} in JSON")
         else
           create_data(request, request.rest_path, key, contents)
-          json_response(201, { "uri" => "#{build_uri(request.base_uri, request.rest_path + [key])}" })
+          json_response(201, { "uri" => (build_uri(request.base_uri, request.rest_path + [key])).to_s })
         end
       end
 

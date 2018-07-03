@@ -39,7 +39,7 @@ module ChefZero
           matches_values?(doc[DEFAULT_FIELD])
         end
 
-        DEFAULT_FIELD = "text"
+        DEFAULT_FIELD = "text".freeze
       end
     end
   end

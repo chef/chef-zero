@@ -124,11 +124,11 @@ module ChefZero
       "/license",
       "/version",
       "/server_api_version",
-    ]
+    ].freeze
 
     def initialize(options = {})
       @options = DEFAULT_OPTIONS.merge(options)
-      if @options[:single_org] && !@options.has_key?(:osc_compat)
+      if @options[:single_org] && !@options.key?(:osc_compat)
         @options[:osc_compat] = true
       end
       @options.freeze
