@@ -219,7 +219,7 @@ module ChefZero
         with_object_path("cookbooks/#{name}") do
           # If you didn't specify metadata.rb, we generate it for you. If you
           # explicitly set it to nil, that means you don't want it at all.
-          if data.has_key?("metadata.rb")
+          if data.key?("metadata.rb")
             if data["metadata.rb"].nil?
               data.delete("metadata.rb")
             end
@@ -235,7 +235,7 @@ module ChefZero
         with_object_path("cookbook_artifacts/#{name}") do
           # If you didn't specify metadata.rb, we generate it for you. If you
           # explicitly set it to nil, that means you don't want it at all.
-          if data.has_key?("metadata.rb")
+          if data.key?("metadata.rb")
             if data["metadata.rb"].nil?
               data.delete("metadata.rb")
             end

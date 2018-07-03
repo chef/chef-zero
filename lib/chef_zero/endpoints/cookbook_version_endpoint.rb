@@ -74,7 +74,7 @@ module ChefZero
         FFI_Yajl::Parser.parse(cookbook).each_pair do |key, value|
           if value.is_a?(Array)
             value.each do |file|
-              if file.is_a?(Hash) && file.has_key?("checksum")
+              if file.is_a?(Hash) && file.key?("checksum")
                 result << file["checksum"]
               end
             end

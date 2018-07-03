@@ -36,7 +36,7 @@ module ChefZero
       def create_dir(path, name, *options)
         parent = _get(path, options.include?(:recursive))
 
-        if parent.has_key?(name)
+        if parent.key?(name)
           if !options.include?(:recursive)
             raise DataAlreadyExistsError.new(path + [name])
           end
@@ -52,7 +52,7 @@ module ChefZero
 
         parent = _get(path, options.include?(:create_dir))
 
-        if parent.has_key?(name)
+        if parent.key?(name)
           raise DataAlreadyExistsError.new(path + [name])
         end
         parent[name] = data
@@ -82,7 +82,7 @@ module ChefZero
 
       def delete(path)
         parent = _get(path[0, path.length - 1])
-        if !parent.has_key?(path[-1])
+        if !parent.key?(path[-1])
           raise DataNotFoundError.new(path)
         end
         if !parent[path[-1]].is_a?(String)
@@ -93,7 +93,7 @@ module ChefZero
 
       def delete_dir(path, *options)
         parent = _get(path[0, path.length - 1])
-        if !parent.has_key?(path[-1])
+        if !parent.key?(path[-1])
           raise DataNotFoundError.new(path)
         end
         if !parent[path[-1]].is_a?(Hash)
@@ -135,7 +135,7 @@ module ChefZero
       def _get(path, create_dir = false)
         value = @data
         path.each_with_index do |path_part, index|
-          if !value.has_key?(path_part)
+          if !value.key?(path_part)
             if create_dir
               value[path_part] = {}
             else

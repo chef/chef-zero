@@ -47,7 +47,7 @@ module ChefZero
           end
 
           json_response(201, {
-            "uri" => "#{build_uri(request.base_uri, org_path)}",
+            "uri" => (build_uri(request.base_uri, org_path)).to_s,
             "name" => name,
             "org_type" => org["org_type"],
             "full_name" => full_name,

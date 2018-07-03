@@ -23,7 +23,7 @@ module ChefZero
         end
         set_data(request, request.rest_path + [ "org" ], save_org)
         json_response(200, {
-          "uri" => "#{build_uri(request.base_uri, request.rest_path)}",
+          "uri" => (build_uri(request.base_uri, request.rest_path)).to_s,
           "name" => org["name"],
           "org_type" => org["org_type"],
           "full_name" => org["full_name"],

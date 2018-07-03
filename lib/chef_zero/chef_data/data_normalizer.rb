@@ -6,13 +6,13 @@ module ChefZero
   module ChefData
     class DataNormalizer
 
-      COOKBOOK_SEGMENTS = %w{ resources providers recipes definitions libraries attributes files templates root_files }
+      COOKBOOK_SEGMENTS = %w{ resources providers recipes definitions libraries attributes files templates root_files }.freeze
 
       def self.normalize_acls(acls)
         ChefData::DefaultCreator::PERMISSIONS.each do |perm|
           acls[perm] ||= {}
           acls[perm]["groups"] ||= []
-          if acls[perm].has_key? "users"
+          if acls[perm].key? "users"
             # When clients and users are split, their combined list
             # is the final list of actors that a subsequent GET will
             # provide. Each list is guaranteed to be unique, but the
@@ -98,7 +98,7 @@ module ChefZero
         if method == "PUT" && api_version < 2
           cookbook["all_files"] = cookbook.delete(["root_files"]) { [] }
           COOKBOOK_SEGMENTS.each do |segment|
-            next unless cookbook.has_key? segment
+            next unless cookbook.key? segment
             cookbook[segment].each do |file|
               file["name"] = "#{segment}/#{file['name']}"
               cookbook["all_files"] << file
@@ -108,7 +108,7 @@ module ChefZero
         elsif method != "PUT"
           if cookbook.key? "all_files"
             cookbook["all_files"].each do |file|
-              if file.is_a?(Hash) && file.has_key?("checksum")
+              if file.is_a?(Hash) && file.key?("checksum")
                 file["url"] ||= endpoint.build_uri(base_uri, org_prefix + ["file_store", "checksums", file["checksum"]])
               end
             end

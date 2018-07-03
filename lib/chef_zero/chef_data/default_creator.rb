@@ -24,8 +24,8 @@ module ChefZero
       attr_reader :creators
       attr_writer :deleted
 
-      PERMISSIONS = %w{create read update delete grant}
-      DEFAULT_SUPERUSERS = %w{pivotal}
+      PERMISSIONS = %w{create read update delete grant}.freeze
+      DEFAULT_SUPERUSERS = %w{pivotal}.freeze
 
       def clear
         @creators = { [] => @superusers }
@@ -166,7 +166,7 @@ module ChefZero
         "containers" => %w{clients containers cookbook_artifacts cookbooks data environments groups nodes policies policy_groups roles sandboxes},
         "groups" => %w{admins billing-admins clients users},
         "association_requests" => {},
-      }
+      }.freeze
 
       def list_org_default(path)
         if path.size >= 3 && path[2] == "acls"
@@ -373,7 +373,7 @@ module ChefZero
           end
           owners = filter_owners(path, unknown_owners)
 
-          #ANGRY
+          # ANGRY
           # Non-default containers do not get superusers added to them,
           # because reasons.
           unless path.size == 4 && path[0] == "organizations" && path[2] == "containers" && !exists?(path)

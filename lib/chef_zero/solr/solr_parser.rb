@@ -200,7 +200,7 @@ module ChefZero
         end
       end
 
-      DEFAULT_FIELD = "text"
+      DEFAULT_FIELD = "text".freeze
     end
   end
 end

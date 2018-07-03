@@ -11,7 +11,7 @@ module ChefZero
       class << self
         def to_hash(cookbook, name, version = nil)
           frozen = false
-          if cookbook.has_key?(:frozen)
+          if cookbook.key?(:frozen)
             frozen = cookbook[:frozen]
             cookbook = cookbook.dup
             cookbook.delete(:frozen)
@@ -72,7 +72,7 @@ module ChefZero
 
         def has_child(directory, name)
           if directory.is_a?(Hash)
-            directory.has_key?(name)
+            directory.key?(name)
           else
             directory.child(name).exists?
           end

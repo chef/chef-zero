@@ -8,14 +8,14 @@ def run_oc_pedant(env = {})
   require File.expand_path("spec/run_oc_pedant")
 end
 
-ENV_DOCS = <<END
-Environment:
- - RSPEC_OPTS   Options to pass to RSpec
-                e.g. RSPEC_OPTS="--fail-fast --profile 5"
- - PEDANT_OPTS  Options to pass to oc-chef-pedant
-                e.g. PEDANT_OPTS="--focus-keys --skip-users"
- - LOG_LEVEL    Set the log level (default: warn)
-                e.g. LOG_LEVEL=debug
+ENV_DOCS = <<~END.freeze
+  Environment:
+   - RSPEC_OPTS   Options to pass to RSpec
+                  e.g. RSPEC_OPTS="--fail-fast --profile 5"
+   - PEDANT_OPTS  Options to pass to oc-chef-pedant
+                  e.g. PEDANT_OPTS="--focus-keys --skip-users"
+   - LOG_LEVEL    Set the log level (default: warn)
+                  e.g. LOG_LEVEL=debug
 END
 
 task default: :pedant
