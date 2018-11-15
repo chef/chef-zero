@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 14.0.10 -->
-## [v14.0.10](https://github.com/chef/chef-zero/tree/v14.0.10) (2018-11-15)
+<!-- latest_release 14.0.11 -->
+## [v14.0.11](https://github.com/chef/chef-zero/tree/v14.0.11) (2018-11-15)
 
 #### Merged Pull Requests
-- Don&#39;t ship the readme in the gem [#289](https://github.com/chef/chef-zero/pull/289) ([tas50](https://github.com/tas50))
+- Require Rack 2.0.6 or later to resolve CVEs [#288](https://github.com/chef/chef-zero/pull/288) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.0.6 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Require Rack 2.0.6 or later to resolve CVEs [#288](https://github.com/chef/chef-zero/pull/288) ([tas50](https://github.com/tas50)) <!-- 14.0.11 -->
 - Don&#39;t ship the readme in the gem [#289](https://github.com/chef/chef-zero/pull/289) ([tas50](https://github.com/tas50)) <!-- 14.0.10 -->
 - Misc cleanup for gemspec, rakefile, gemfile, and expeditor [#287](https://github.com/chef/chef-zero/pull/287) ([tas50](https://github.com/tas50)) <!-- 14.0.9 -->
 - fixes for new chefstyle [#284](https://github.com/chef/chef-zero/pull/284) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.8 -->
