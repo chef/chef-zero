@@ -1,4 +1,5 @@
 source "https://rubygems.org"
+
 gemspec
 
 # gem 'rest-client', :git => 'https://github.com/chef/rest-client.git'
@@ -16,6 +17,12 @@ if ENV["GEMFILE_MOD"]
   instance_eval(ENV["GEMFILE_MOD"])
 else
   gem "chef", "~> 14.0"
+end
+
+group :debug do
+  gem "pry"
+  gem "pry-byebug"
+  gem "pry-stack_explorer"
 end
 
 # If you want to load debugging tools into the bundle exec sandbox,

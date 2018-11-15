@@ -11,6 +11,7 @@ before_install:
 sudo: false
 language: ruby
 cache: bundler
+bundler_args: --jobs 7 --without debug
 
 script:
   - bundle update
