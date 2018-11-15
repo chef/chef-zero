@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.author = "John Keiser"
   s.email = "jkeiser@chef.io"
-  s.homepage = "http://www.chef.io"
+  s.homepage = "https://github.com/chef/chef-zero"
   s.license = "Apache-2.0"
 
   s.required_ruby_version = ">= 2.4.0"
@@ -25,6 +25,6 @@ Gem::Specification.new do |s|
   s.bindir       = "bin"
   s.executables  = ["chef-zero"]
   s.require_path = "lib"
-  s.files = %w{LICENSE README.md Gemfile Rakefile} + Dir.glob("*.gemspec") +
+  s.files = %w{LICENSE Gemfile Rakefile} + Dir.glob("*.gemspec") +
     Dir.glob("{lib,spec}/**/*", File::FNM_DOTMATCH).reject { |f| File.directory?(f) }
 end
