@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 14.0.8 -->
-## [v14.0.8](https://github.com/chef/chef-zero/tree/v14.0.8) (2018-07-03)
+<!-- latest_release 14.0.9 -->
+## [v14.0.9](https://github.com/chef/chef-zero/tree/v14.0.9) (2018-11-15)
 
 #### Merged Pull Requests
-- fixes for new chefstyle [#284](https://github.com/chef/chef-zero/pull/284) ([lamont-granquist](https://github.com/lamont-granquist))
+- Misc cleanup for gemspec, rakefile, gemfile, and expeditor [#287](https://github.com/chef/chef-zero/pull/287) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.0.6 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Misc cleanup for gemspec, rakefile, gemfile, and expeditor [#287](https://github.com/chef/chef-zero/pull/287) ([tas50](https://github.com/tas50)) <!-- 14.0.9 -->
 - fixes for new chefstyle [#284](https://github.com/chef/chef-zero/pull/284) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.8 -->
 - remove hashrocket syntax [#283](https://github.com/chef/chef-zero/pull/283) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.0.7 -->
 <!-- release_rollup -->
