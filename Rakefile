@@ -1,7 +1,4 @@
-require "bundler"
 require "bundler/gem_tasks"
-
-require "chef_zero/version"
 
 def run_oc_pedant(env = {})
   ENV.update(env)
@@ -59,5 +56,5 @@ begin
     task.options += ["--display-cop-names", "--no-color"]
   end
 rescue LoadError
-  puts "chefstyle/rubocop is not available.  gem install chefstyle to do style checking."
+  puts "chefstyle/rubocop is not available. bundle install first to make sure all dependencies are installed."
 end
