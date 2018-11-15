@@ -26,7 +26,7 @@ matrix:
     - rvm: 2.5.3
       env:
         - CHEF_FS=true
-        - "GEMFILE_MOD=\"gem 'chef', github: 'chef/chef'\""
+        - "GEMFILE_MOD=\"gem 'ohai', github: 'chef/ohai'; gem 'chef', github: 'chef/chef'\""
     - rvm: 2.5.3
       env: FILE_STORE=true
     - rvm: 2.5.3

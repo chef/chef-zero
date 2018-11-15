@@ -17,6 +17,7 @@ if ENV["GEMFILE_MOD"]
   instance_eval(ENV["GEMFILE_MOD"])
 else
   gem "chef", "~> 14.0"
+  gem "ohai", "~> 14.0"
 end
 
 group :debug do
