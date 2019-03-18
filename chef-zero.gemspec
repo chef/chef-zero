@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.version = ChefZero::VERSION
   s.summary = "Self-contained, easy-setup, fast-start in-memory Chef server for testing and solo setup purposes"
   s.description = s.summary
-  s.author = "John Keiser"
-  s.email = "jkeiser@chef.io"
+  s.author = "Chef Software, Inc."
+  s.email = "oss@chef.io"
   s.homepage = "https://github.com/chef/chef-zero"
   s.license = "Apache-2.0"
 
