@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.4.0"
 
-  s.add_dependency "mixlib-log", "~> 2.0"
+  s.add_dependency "mixlib-log", ">= 2.0", "< 4.0"
   s.add_dependency "hashie", ">= 2.0", "< 4.0"
   s.add_dependency "uuidtools", "~> 2.1"
   s.add_dependency "ffi-yajl", "~> 2.2"
