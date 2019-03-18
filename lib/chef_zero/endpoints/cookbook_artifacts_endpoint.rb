@@ -9,10 +9,10 @@ module ChefZero
 
         artifacts = begin
           list_data(request)
-        rescue Exception => e
-          if e.response_code == 404
-            return already_json_response(200, "{}")
-          end
+                    rescue Exception => e
+                      if e.response_code == 404
+                        return already_json_response(200, "{}")
+                      end
         end
 
         artifacts.each do |cookbook_artifact|

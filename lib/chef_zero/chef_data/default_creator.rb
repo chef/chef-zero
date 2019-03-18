@@ -278,10 +278,10 @@ module ChefZero
           when "root", "containers/containers", "containers/groups"
             {
               "create" => { "groups" => %w{admins} },
-              "read"   => { "groups" => %w{admins users} },
+              "read" => { "groups" => %w{admins users} },
               "update" => { "groups" => %w{admins} },
               "delete" => { "groups" => %w{admins} },
-              "grant"  => { "groups" => %w{admins} },
+              "grant" => { "groups" => %w{admins} },
             }
           when "containers/environments", "containers/roles",
             "containers/policy_groups", "containers/policies",
@@ -289,50 +289,50 @@ module ChefZero
             "containers/data"
             {
               "create" => { "groups" => %w{admins users} },
-              "read"   => { "groups" => %w{admins users clients} },
+              "read" => { "groups" => %w{admins users clients} },
               "update" => { "groups" => %w{admins users} },
               "delete" => { "groups" => %w{admins users} },
-              "grant"  => { "groups" => %w{admins} },
+              "grant" => { "groups" => %w{admins} },
             }
           when "containers/nodes"
             {
               "create" => { "groups" => %w{admins users clients} },
-              "read"   => { "groups" => %w{admins users clients} },
+              "read" => { "groups" => %w{admins users clients} },
               "update" => { "groups" => %w{admins users} },
               "delete" => { "groups" => %w{admins users} },
-              "grant"  => { "groups" => %w{admins} },
+              "grant" => { "groups" => %w{admins} },
             }
           when "containers/clients"
             {
               "create" => { "groups" => %w{admins} },
-              "read"   => { "groups" => %w{admins users} },
+              "read" => { "groups" => %w{admins users} },
               "update" => { "groups" => %w{admins} },
               "delete" => { "groups" => %w{admins users} },
-              "grant"  => { "groups" => %w{admins} },
+              "grant" => { "groups" => %w{admins} },
             }
           when "containers/sandboxes"
             {
               "create" => { "groups" => %w{admins users} },
-              "read"   => { "groups" => %w{admins} },
+              "read" => { "groups" => %w{admins} },
               "update" => { "groups" => %w{admins} },
               "delete" => { "groups" => %w{admins} },
-              "grant"  => { "groups" => %w{admins} },
+              "grant" => { "groups" => %w{admins} },
             }
           when "groups/admins", "groups/clients", "groups/users"
             {
               "create" => { "groups" => %w{admins} },
-              "read"   => { "groups" => %w{admins} },
+              "read" => { "groups" => %w{admins} },
               "update" => { "groups" => %w{admins} },
               "delete" => { "groups" => %w{admins} },
-              "grant"  => { "groups" => %w{admins} },
+              "grant" => { "groups" => %w{admins} },
             }
           when "groups/billing-admins"
             {
               "create" => { "groups" => %w{} },
-              "read"   => { "groups" => %w{billing-admins} },
+              "read" => { "groups" => %w{billing-admins} },
               "update" => { "groups" => %w{billing-admins} },
               "delete" => { "groups" => %w{} },
-              "grant"  => { "groups" => %w{} },
+              "grant" => { "groups" => %w{} },
             }
           else
             {}
