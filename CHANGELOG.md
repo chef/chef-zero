@@ -1,11 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.0.12 -->
+## [v14.0.12](https://github.com/chef/chef-zero/tree/v14.0.12) (2019-03-19)
+
+#### Merged Pull Requests
+- Loosen the mixlib-log depedency + misc cleanup [#292](https://github.com/chef/chef-zero/pull/292) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.0.11 -->
 ### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Loosen the mixlib-log depedency + misc cleanup [#292](https://github.com/chef/chef-zero/pull/292) ([tas50](https://github.com/tas50)) <!-- 14.0.12 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
