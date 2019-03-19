@@ -52,7 +52,7 @@ module ChefZero
         cookbooks_list.keys.sort.each do |name|
           constraint = Gem::Requirement.new(constraints[name])
           versions = []
-          cookbooks_list[name].sort_by { |version| Gem::Version.new(version.dup) }.reverse.each do |version|
+          cookbooks_list[name].sort_by { |version| Gem::Version.new(version.dup) }.reverse_each do |version|
             break if num_versions && versions.size >= num_versions
             if constraint.satisfied_by?(Gem::Version.new(version.dup))
               versions << version
