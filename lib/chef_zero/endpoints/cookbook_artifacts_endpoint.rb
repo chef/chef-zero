@@ -8,12 +8,12 @@ module ChefZero
         data = {}
 
         artifacts = begin
-          list_data(request)
+                      list_data(request)
                     rescue Exception => e
                       if e.response_code == 404
                         return already_json_response(200, "{}")
                       end
-        end
+                    end
 
         artifacts.each do |cookbook_artifact|
           cookbook_url = build_uri(request.base_uri, request.rest_path + [cookbook_artifact])
