@@ -18,6 +18,7 @@
 
 require "thread"
 require "singleton"
+require "chef_zero/dist"
 
 module ChefZero
 
@@ -83,7 +84,7 @@ module ChefZero
 
     def request(port, request_env)
       server = @servers_by_port[port]
-      raise ServerNotFound, "No socketless chef-zero server on given port #{port.inspect}" unless server
+      raise ServerNotFound, "No socketless #{ChefZero::Dist::PRODUCT} server on given port #{port.inspect}" unless server
       server.handle_socketless_request(request_env)
     end
 

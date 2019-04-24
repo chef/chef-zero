@@ -7,6 +7,7 @@ require "rubygems"
 $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
 require "chef_zero/log"
+require "chef_zero/dist"
 require "chef_zero/version"
 require "chef_zero/server"
 require "chef_zero/data_store/raw_file_store"
@@ -28,7 +29,7 @@ end
 options = {}
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: chef-zero [ARGS]"
+  opts.banner = "Usage: #{ChefZero::Dist::CLIENT} [ARGS]"
 
   opts.on("-H", "--host HOST", "Host to bind to (default: 127.0.0.1)") do |value|
     options[:host] ||= []
@@ -100,7 +101,7 @@ if options[:daemon]
     server.start(true)
   else
     if ENV["OS"] == "Windows_NT"
-      abort "Daemonization is not supported on Windows. Running 'start chef-zero' will fork the process."
+      abort "Daemonization is not supported on Windows. Running 'start #{ChefZero::Dist::CLIENT}' will fork the process."
     else
       abort "Process.daemon requires Ruby >= 1.9"
     end

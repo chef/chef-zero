@@ -35,6 +35,7 @@ require "chef_zero/data_store/memory_store_v2"
 require "chef_zero/data_store/v1_to_v2_adapter"
 require "chef_zero/data_store/default_facade"
 require "chef_zero/version"
+require "chef_zero/dist.rb"
 
 require "chef_zero/endpoints/rest_list_endpoint"
 require "chef_zero/endpoints/authenticate_user_endpoint"
@@ -231,7 +232,7 @@ module ChefZero
       if publish
         output = publish.respond_to?(:puts) ? publish : STDOUT
         output.puts <<-EOH.gsub(/^ {10}/, "")
-          >> Starting Chef Zero (v#{ChefZero::VERSION})...
+          >> Starting #{ChefZero::Dist::PRODUCT} (v#{ChefZero::VERSION})...
         EOH
       end
 
@@ -248,7 +249,7 @@ module ChefZero
 
       %w{INT TERM}.each do |signal|
         Signal.trap(signal) do
-          puts "\n>> Stopping Chef Zero..."
+          puts "\n>> Stopping #{ChefZero::Dist::PRODUCT}..."
           @server.shutdown
         end
       end
@@ -362,7 +363,7 @@ module ChefZero
       end
     rescue Timeout::Error
       if @thread
-        ChefZero::Log.error("Chef Zero did not stop within #{wait} seconds! Killing...")
+        ChefZero::Log.error("#{ChefZero::Dist::PRODUCT} did not stop within #{wait} seconds! Killing...")
         @thread.kill
         SocketlessServerMap.deregister(port)
       end
