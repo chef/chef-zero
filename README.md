@@ -71,6 +71,7 @@ You may currently pass the following options to the initializer:
 - `host` - the host to run on (Default: '127.0.0.1')
 - `port` - the port to run on (Default: 8889)
 - `debug` - run in debug mode to see all requests and responses (Default: false)
+- `maxclients` - the number of threads to serve requests in WEBrick (Default: 100)
 
 ## CLI (Command Line)
 
@@ -141,6 +142,7 @@ Usage: chef-zero [ARGS]
         --multi-org                  Whether to run in multi-org mode
         --file-store PATH            Persist data to files at the given path
         --[no-]ssl                   Use SSL with self-signed certificate(Auto generate before every run).  Default: false.
+        --maxclients NUM             MaxClients for WEBrick.  Default: 100.
     -h, --help                       Show this message
         --version                    Show version
 ```
