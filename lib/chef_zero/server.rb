@@ -118,6 +118,7 @@ module ChefZero
       generate_real_keys: true,
       single_org: "chef",
       ssl: false,
+      maxclients: 100,
     }.freeze
 
     GLOBAL_ENDPOINTS = [
@@ -291,6 +292,7 @@ module ChefZero
         StartCallback: proc do
           @running = true
         end
+        MaxClients: options[:maxclients],
       )
       ENV["HTTPS"] = "on" if options[:ssl]
       @server.mount("/", Rack::Handler::WEBrick, app)

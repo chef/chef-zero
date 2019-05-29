@@ -73,6 +73,10 @@ OptionParser.new do |opts|
     options[:ssl] = value
   end
 
+  opts.on("--maxclients NUM", "MaxClients for WEBrick.  Default: 100.") do |value|
+    options[:maxclients] = value
+  end
+
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit
