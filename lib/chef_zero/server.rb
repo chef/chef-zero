@@ -291,7 +291,7 @@ module ChefZero
         SSLCertName: [ [ "CN", WEBrick::Utils.getservername ] ],
         StartCallback: proc do
           @running = true
-        end
+        end,
         MaxClients: options[:maxclients],
       )
       ENV["HTTPS"] = "on" if options[:ssl]
