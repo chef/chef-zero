@@ -292,7 +292,7 @@ module ChefZero
         :StartCallback => proc do
           @running = true
         end,
-        :MaxClients => options[:maxclients],
+        :MaxClients => options[:maxclients]
       )
       ENV["HTTPS"] = "on" if options[:ssl]
       @server.mount("/", Rack::Handler::WEBrick, app)
