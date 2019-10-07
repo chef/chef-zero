@@ -1,26 +1,23 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 14.0.13 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v14.0.13](https://github.com/chef/chef-zero/tree/v14.0.13) (2019-10-07)
 
 #### Merged Pull Requests
 - Add ChefZero::Dist to abstract branding details to a single location [#293](https://github.com/chef/chef-zero/pull/293) ([Tensibai](https://github.com/Tensibai))
-<!-- latest_release -->
-
-<!-- release_rollup since=14.0.12 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Add ChefZero::Dist to abstract branding details to a single location [#293](https://github.com/chef/chef-zero/pull/293) ([Tensibai](https://github.com/Tensibai)) <!-- 14.0.13 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v14.0.12](https://github.com/chef/chef-zero/tree/v14.0.12) (2019-03-19)
 
 #### Merged Pull Requests
 - Loosen the mixlib-log depedency + misc cleanup [#292](https://github.com/chef/chef-zero/pull/292) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.0.11](https://github.com/chef/chef-zero/tree/v14.0.11) (2018-11-15)
 
