@@ -1,8 +1,8 @@
 require "ffi_yajl"
-require "chef_zero/endpoints/rest_object_endpoint"
-require "chef_zero/rest_error_response"
-require "chef_zero/chef_data/data_normalizer"
-require "chef_zero/data_store/data_not_found_error"
+require_relative "rest_object_endpoint"
+require_relative "../rest_error_response"
+require_relative "../chef_data/data_normalizer"
+require_relative "../data_store/data_not_found_error"
 
 module ChefZero
   module Endpoints

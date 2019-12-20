@@ -1,6 +1,6 @@
-require "chef_zero"
-require "chef_zero/rest_base"
-require "chef_zero/chef_data/default_creator"
+require_relative "../../chef_zero"
+require_relative "../rest_base"
+require_relative "default_creator"
 
 module ChefZero
   module ChefData

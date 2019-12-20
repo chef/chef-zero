@@ -1,7 +1,7 @@
-require "chef_zero/rest_request"
-require "chef_zero/rest_error_response"
-require "chef_zero/data_store/data_not_found_error"
-require "chef_zero/chef_data/acl_path"
+require_relative "rest_request"
+require_relative "rest_error_response"
+require_relative "data_store/data_not_found_error"
+require_relative "chef_data/acl_path"
 
 module ChefZero
   class RestBase

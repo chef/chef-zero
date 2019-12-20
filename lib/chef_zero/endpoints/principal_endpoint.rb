@@ -1,6 +1,6 @@
 require "ffi_yajl"
-require "chef_zero"
-require "chef_zero/rest_base"
+require_relative "../../chef_zero"
+require_relative "../rest_base"
 
 module ChefZero
   module Endpoints

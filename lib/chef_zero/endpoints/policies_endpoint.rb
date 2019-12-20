@@ -1,4 +1,4 @@
-require "chef_zero/chef_data/data_normalizer"
+require_relative "../chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints

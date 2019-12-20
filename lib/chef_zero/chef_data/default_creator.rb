@@ -1,4 +1,4 @@
-require "chef_zero/chef_data/acl_path"
+require_relative "acl_path"
 
 module ChefZero
   module ChefData

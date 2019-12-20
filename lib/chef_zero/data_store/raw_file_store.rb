@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require "chef_zero/data_store/data_already_exists_error"
-require "chef_zero/data_store/data_not_found_error"
-require "chef_zero/data_store/interface_v2"
+require_relative "data_already_exists_error"
+require_relative "data_not_found_error"
+require_relative "interface_v2"
 require "fileutils"
 
 module ChefZero

@@ -18,7 +18,7 @@
 
 require "thread"
 require "singleton"
-require "chef_zero/dist"
+require_relative "dist"
 
 module ChefZero
 

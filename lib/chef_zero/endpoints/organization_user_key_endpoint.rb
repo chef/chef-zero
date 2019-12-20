@@ -1,5 +1,5 @@
-require "chef_zero/rest_base"
-require "chef_zero/endpoints/actor_keys_endpoint"
+require_relative "../rest_base"
+require_relative "actor_keys_endpoint"
 
 module ChefZero
   module Endpoints

@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require "chef_zero/data_store/v2_to_v1_adapter"
-require "chef_zero/data_store/memory_store_v2"
-require "chef_zero/data_store/default_facade"
+require_relative "v2_to_v1_adapter"
+require_relative "memory_store_v2"
+require_relative "default_facade"
 
 module ChefZero
   module DataStore

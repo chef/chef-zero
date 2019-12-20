@@ -1,5 +1,5 @@
 require "ffi_yajl"
-require "chef_zero/rest_base"
+require_relative "../rest_base"
 require "uuidtools"
 
 module ChefZero

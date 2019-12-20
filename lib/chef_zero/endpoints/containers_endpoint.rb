@@ -1,5 +1,5 @@
 require "ffi_yajl"
-require "chef_zero/endpoints/rest_list_endpoint"
+require_relative "rest_list_endpoint"
 
 module ChefZero
   module Endpoints

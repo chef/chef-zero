@@ -1,5 +1,5 @@
-require "chef_zero/rest_base"
-require "chef_zero/dist"
+require_relative "../rest_base"
+require_relative "../dist"
 
 module ChefZero
   module Endpoints
