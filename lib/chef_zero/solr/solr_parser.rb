@@ -1,9 +1,9 @@
-require "chef_zero/solr/query/binary_operator"
-require "chef_zero/solr/query/unary_operator"
-require "chef_zero/solr/query/term"
-require "chef_zero/solr/query/phrase"
-require "chef_zero/solr/query/range_query"
-require "chef_zero/solr/query/subquery"
+require_relative "query/binary_operator"
+require_relative "query/unary_operator"
+require_relative "query/term"
+require_relative "query/phrase"
+require_relative "query/range_query"
+require_relative "query/subquery"
 
 module ChefZero
   module Solr

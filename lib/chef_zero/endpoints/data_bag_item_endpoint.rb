@@ -1,7 +1,7 @@
 require "ffi_yajl"
-require "chef_zero/endpoints/rest_object_endpoint"
-require "chef_zero/endpoints/data_bag_item_endpoint"
-require "chef_zero/chef_data/data_normalizer"
+require_relative "rest_object_endpoint"
+require_relative "data_bag_item_endpoint"
+require_relative "../chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints

@@ -1,5 +1,5 @@
 module ChefZero
-  require "chef_zero/log"
+  require_relative "chef_zero/log"
 
   MIN_API_VERSION = 0
   MAX_API_VERSION = 2

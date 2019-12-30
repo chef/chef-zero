@@ -1,7 +1,7 @@
 require "ffi_yajl"
-require "chef_zero/endpoints/rest_list_endpoint"
-require "chef_zero/endpoints/data_bag_item_endpoint"
-require "chef_zero/rest_error_response"
+require_relative "rest_list_endpoint"
+require_relative "data_bag_item_endpoint"
+require_relative "../rest_error_response"
 
 module ChefZero
   module Endpoints

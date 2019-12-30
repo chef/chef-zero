@@ -1,4 +1,4 @@
-require "chef_zero/data_store/interface_v2"
+require_relative "interface_v2"
 
 module ChefZero
   module DataStore

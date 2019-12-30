@@ -3,11 +3,6 @@ branches:
   only:
   - master
 
-# Early warning system to catch if Rubygems breaks something
-before_install:
-  - gem update --system
-  - gem install bundler
-
 language: ruby
 cache: bundler
 bundler_args: --jobs 7 --without debug
@@ -31,12 +26,3 @@ matrix:
     - rvm: 2.5.3
       script: bundle exec rake chef_spec
       env: TEST=chef_spec
-    - rvm: 2.5.3
-      script: bundle exec rake spec
-      env: TEST=rake_spec
-    - rvm: 2.4.5
-      script: bundle exec rake spec
-      env: TEST=rake_spec
-    - rvm: 2.5.3
-      script: bundle exec rake style
-      env: TEST=chefstyle

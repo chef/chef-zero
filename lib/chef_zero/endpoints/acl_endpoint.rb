@@ -1,6 +1,6 @@
 require "ffi_yajl"
-require "chef_zero/rest_base"
-require "chef_zero/chef_data/acl_path"
+require_relative "../rest_base"
+require_relative "../chef_data/acl_path"
 
 module ChefZero
   module Endpoints

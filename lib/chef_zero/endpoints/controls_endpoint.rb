@@ -1,4 +1,4 @@
-require "chef_zero/dist"
+require_relative "../dist"
 module ChefZero
   module Endpoints
     # /organizations/ORG/controls

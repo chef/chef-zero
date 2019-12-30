@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require "chef_zero/data_store/data_error"
+require_relative "data_error"
 
 module ChefZero
   module DataStore

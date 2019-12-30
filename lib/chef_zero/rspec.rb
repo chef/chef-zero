@@ -1,6 +1,6 @@
 require "tempfile"
-require "chef_zero/server"
-require "chef_zero/rest_request"
+require_relative "server"
+require_relative "rest_request"
 
 module ChefZero
   module RSpec

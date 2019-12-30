@@ -1,9 +1,9 @@
 require "ffi_yajl"
-require "chef_zero/endpoints/rest_object_endpoint"
-require "chef_zero/chef_data/data_normalizer"
-require "chef_zero/rest_error_response"
-require "chef_zero/solr/solr_parser"
-require "chef_zero/solr/solr_doc"
+require_relative "rest_object_endpoint"
+require_relative "../chef_data/data_normalizer"
+require_relative "../rest_error_response"
+require_relative "../solr/solr_parser"
+require_relative "../solr/solr_doc"
 
 module ChefZero
   module Endpoints

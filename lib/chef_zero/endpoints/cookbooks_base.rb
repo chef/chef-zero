@@ -1,6 +1,6 @@
 require "ffi_yajl"
-require "chef_zero/rest_base"
-require "chef_zero/chef_data/data_normalizer"
+require_relative "../rest_base"
+require_relative "../chef_data/data_normalizer"
 
 module ChefZero
   module Endpoints

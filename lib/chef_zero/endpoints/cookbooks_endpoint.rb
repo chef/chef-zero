@@ -1,4 +1,4 @@
-require "chef_zero/endpoints/cookbooks_base"
+require_relative "cookbooks_base"
 
 module ChefZero
   module Endpoints

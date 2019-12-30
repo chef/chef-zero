@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require "chef_zero/data_store/interface_v1"
+require_relative "interface_v1"
 
 module ChefZero
   module DataStore

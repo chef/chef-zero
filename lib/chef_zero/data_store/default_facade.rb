@@ -1,5 +1,5 @@
-require "chef_zero/data_store/interface_v2"
-require "chef_zero/chef_data/default_creator"
+require_relative "interface_v2"
+require_relative "../chef_data/default_creator"
 
 module ChefZero
   module DataStore
