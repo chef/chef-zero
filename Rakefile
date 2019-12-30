@@ -59,3 +59,10 @@ begin
 rescue LoadError
   puts "chefstyle gem is not installed. bundle install first to make sure all dependencies are installed."
 end
+
+begin
+  require "yard"
+  YARD::Rake::YardocTask.new(:docs)
+rescue LoadError
+  puts "yard is not available. bundle install first to make sure all dependencies are installed."
+end

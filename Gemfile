@@ -9,7 +9,9 @@ group :pedant do
 end
 
 group :development, :test do
-  gem "chefstyle", git: "https://github.com/chef/chefstyle.git", branch: "master"
+  gem "chefstyle"
+  gem "rake"
+  gem "rspec", "~> 3.0"
 end
 
 if ENV["GEMFILE_MOD"]

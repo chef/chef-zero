@@ -11,16 +11,13 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/chef/chef-zero"
   s.license = "Apache-2.0"
 
-  s.required_ruby_version = ">= 2.4.0"
+  s.required_ruby_version = ">= 2.4"
 
   s.add_dependency "mixlib-log", ">= 2.0", "< 4.0"
   s.add_dependency "hashie", ">= 2.0", "< 4.0"
   s.add_dependency "uuidtools", "~> 2.1"
   s.add_dependency "ffi-yajl", "~> 2.2"
   s.add_dependency "rack", "~> 2.0", ">= 2.0.6"
-
-  s.add_development_dependency "rake"
-  s.add_development_dependency "rspec"
 
   s.bindir       = "bin"
   s.executables  = ["chef-zero"]
