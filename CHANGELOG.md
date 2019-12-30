@@ -1,10 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.0.14 -->
+## [v14.0.14](https://github.com/chef/chef-zero/tree/v14.0.14) (2019-12-30)
+
+#### Merged Pull Requests
+- Move testing to Buildkite [#297](https://github.com/chef/chef-zero/pull/297) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.0.13 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Move testing to Buildkite [#297](https://github.com/chef/chef-zero/pull/297) ([tas50](https://github.com/tas50)) <!-- 14.0.14 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
