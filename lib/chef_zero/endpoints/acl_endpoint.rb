@@ -23,6 +23,7 @@ module ChefZero
         if !acl_path || !%w{read create update delete grant}.include?(perm)
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
+
         [acl_path, perm]
       end
 

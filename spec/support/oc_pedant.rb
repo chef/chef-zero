@@ -140,7 +140,7 @@ requestors({
              },
            })
 
-self[:tags] = [:validation, :authentication, :authorization]
+self[:tags] = %i{validation authentication authorization}
 verify_error_messages false
 
 ruby_users_endpoint? false

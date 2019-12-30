@@ -5,9 +5,9 @@ module ChefZero
     def initialize(routes)
       @routes = routes.map do |route, endpoint|
         if route =~ /\*\*$/
-          pattern = Regexp.new("^#{route[0..-3].gsub('*', '[^/]*')}")
+          pattern = Regexp.new("^#{route[0..-3].gsub("*", "[^/]*")}")
         else
-          pattern = Regexp.new("^#{route.gsub('*', '[^/]*')}$")
+          pattern = Regexp.new("^#{route.gsub("*", "[^/]*")}$")
         end
         [ pattern, endpoint ]
       end

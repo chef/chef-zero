@@ -9,7 +9,7 @@ module ChefZero
       def put(request)
         existing_sandbox = FFI_Yajl::Parser.parse(get_data(request))
         existing_sandbox["checksums"].each do |checksum|
-          if !exists_data?(request, request.rest_path[0..1] + ["file_store", "checksums", checksum])
+          unless exists_data?(request, request.rest_path[0..1] + ["file_store", "checksums", checksum])
             raise RestErrorResponse.new(503, "Checksum not uploaded: #{checksum}")
           end
         end

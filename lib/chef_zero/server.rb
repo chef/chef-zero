@@ -176,7 +176,8 @@ module ChefZero
     end
 
     def local_mode_url
-      raise "Port not yet set, cannot generate URL" unless port.kind_of?(Integer)
+      raise "Port not yet set, cannot generate URL" unless port.is_a?(Integer)
+
       "chefzero://localhost:#{port}"
     end
 
@@ -275,7 +276,7 @@ module ChefZero
       true
     rescue Errno::EADDRINUSE
       ChefZero::Log.warn("Port #{port} not available")
-      @server.listeners.each { |l| l.close }
+      @server.listeners.each(&:close)
       @server.listeners.clear
       false
     end
@@ -305,7 +306,7 @@ module ChefZero
           break
         end
       end
-      if !@port
+      unless @port
         raise Errno::EADDRINUSE,
           "No port in :port range #{options[:port]} is available"
       end
@@ -501,11 +502,13 @@ module ChefZero
             else
               cookbook_data = ChefData::CookbookData.to_hash(cookbook, name_version)
             end
-            raise "No version specified" if !cookbook_data[:version]
+            raise "No version specified" unless cookbook_data[:version]
+
             data_store.create_dir(["organizations", org_name, cookbook_type], cookbook_data[:cookbook_name], :recursive)
             data_store.set(["organizations", org_name, cookbook_type, cookbook_data[:cookbook_name], cookbook_data[:version]], FFI_Yajl::Encoder.encode(cookbook_data, pretty: true), :create)
             cookbook_data.values.each do |files|
               next unless files.is_a? Array
+
               files.each do |file|
                 data_store.set(["organizations", org_name, "file_store", "checksums", file[:checksum]], get_file(cookbook, file[:path]), :create)
               end
@@ -642,6 +645,7 @@ module ChefZero
 
     def app
       return @app if @app
+
       router = RestRouter.new(endpoints)
       router.not_found = NotFoundEndpoint.new
 

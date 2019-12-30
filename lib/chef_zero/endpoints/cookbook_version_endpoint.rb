@@ -27,9 +27,10 @@ module ChefZero
             if request.query_params["force"] != "true"
               raise RestErrorResponse.new(409, "The cookbook #{name} at version #{version} is frozen. Use the 'force' option to override.")
             end
+
             # For some reason, you are forever unable to modify "frozen?" on a frozen cookbook.
             request_body = FFI_Yajl::Parser.parse(request.body)
-            if !request_body["frozen?"]
+            unless request_body["frozen?"]
               request_body["frozen?"] = true
               request.body = FFI_Yajl::Encoder.encode(request_body, pretty: true)
             end
@@ -92,6 +93,7 @@ module ChefZero
           rescue ChefZero::DataStore::DataNotFoundError
             # Not all chef versions support cookbook_artifacts
             raise unless cookbook_type == "cookbook_artifacts"
+
             cookbooks = []
           end
           cookbooks.each do |cookbook_name|

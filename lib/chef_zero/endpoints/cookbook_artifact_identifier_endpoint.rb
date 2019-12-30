@@ -60,8 +60,8 @@ module ChefZero
       def normalize(request, cookbook_artifact_data)
         cookbook = parse_json(cookbook_artifact_data)
         ChefData::DataNormalizer.normalize_cookbook(self, request.rest_path[0..1],
-                                                    cookbook, request.rest_path[3], request.rest_path[4],
-                                                    request.base_uri, request.method, true, api_version: request.api_version)
+          cookbook, request.rest_path[3], request.rest_path[4],
+          request.base_uri, request.method, true, api_version: request.api_version)
       end
     end
   end

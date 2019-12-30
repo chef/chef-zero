@@ -2,7 +2,7 @@ require "chef_zero/socketless_server_map"
 
 describe "Socketless Mode" do
 
-  let(:server_map) { ChefZero::SocketlessServerMap.instance.tap { |i| i.reset! } }
+  let(:server_map) { ChefZero::SocketlessServerMap.instance.tap(&:reset!) }
 
   let(:server) { instance_double("ChefZero::Server") }
 

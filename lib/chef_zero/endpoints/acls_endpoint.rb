@@ -17,9 +17,10 @@ module ChefZero
         path = request.rest_path[0..-2] # Strip off _acl
         path = path[0..1] if path.size == 3 && path[0] == "organizations" && %w{organization organizations}.include?(path[2])
         acl_path = ChefData::AclPath.get_acl_data_path(path)
-        if !acl_path
+        unless acl_path
           raise RestErrorResponse.new(404, "Object not found: #{build_uri(request.base_uri, request.rest_path)}")
         end
+
         acls = FFI_Yajl::Parser.parse(get_data(request, acl_path))
         acls = ChefData::DataNormalizer.normalize_acls(acls)
         if request.query_params["detail"] == "granular"

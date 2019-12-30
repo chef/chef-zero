@@ -37,7 +37,7 @@ module ChefZero
         parent = _get(path, options.include?(:recursive))
 
         if parent.key?(name)
-          if !options.include?(:recursive)
+          unless options.include?(:recursive)
             raise DataAlreadyExistsError.new(path + [name])
           end
         else
@@ -46,7 +46,7 @@ module ChefZero
       end
 
       def create(path, name, data, *options)
-        if !data.is_a?(String)
+        unless data.is_a?(String)
           raise "set only works with strings (given data: #{data.inspect})"
         end
 
@@ -55,19 +55,21 @@ module ChefZero
         if parent.key?(name)
           raise DataAlreadyExistsError.new(path + [name])
         end
+
         parent[name] = data
       end
 
       def get(path, request = nil)
         value = _get(path)
         if value.is_a?(Hash)
-          raise "get() called on directory #{path.join('/')}"
+          raise "get() called on directory #{path.join("/")}"
         end
+
         value
       end
 
       def set(path, data, *options)
-        if !data.is_a?(String)
+        unless data.is_a?(String)
           raise "set only works with strings: #{path} = #{data.inspect}"
         end
 
@@ -77,36 +79,40 @@ module ChefZero
         if !options.include?(:create) && !parent[path[-1]]
           raise DataNotFoundError.new(path)
         end
+
         parent[path[-1]] = data
       end
 
       def delete(path)
         parent = _get(path[0, path.length - 1])
-        if !parent.key?(path[-1])
+        unless parent.key?(path[-1])
           raise DataNotFoundError.new(path)
         end
-        if !parent[path[-1]].is_a?(String)
+        unless parent[path[-1]].is_a?(String)
           raise "delete only works with strings: #{path}"
         end
+
         parent.delete(path[-1])
       end
 
       def delete_dir(path, *options)
         parent = _get(path[0, path.length - 1])
-        if !parent.key?(path[-1])
+        unless parent.key?(path[-1])
           raise DataNotFoundError.new(path)
         end
-        if !parent[path[-1]].is_a?(Hash)
+        unless parent[path[-1]].is_a?(Hash)
           raise "delete_dir only works with directories: #{path}"
         end
+
         parent.delete(path[-1])
       end
 
       def list(path)
         dir = _get(path)
-        if !dir.is_a? Hash
+        unless dir.is_a? Hash
           raise "list only works with directories (#{path} = #{dir.class})"
         end
+
         dir.keys.sort
       end
 
@@ -115,6 +121,7 @@ module ChefZero
         if value.is_a?(Hash) && !options[:allow_dirs]
           raise "exists? does not work with directories (#{path} = #{value.class})"
         end
+
         true
       rescue DataNotFoundError
         false
@@ -122,9 +129,10 @@ module ChefZero
 
       def exists_dir?(path)
         dir = _get(path)
-        if !dir.is_a? Hash
+        unless dir.is_a? Hash
           raise "exists_dir? only works with directories (#{path} = #{dir.class})"
         end
+
         true
       rescue DataNotFoundError
         false
@@ -135,7 +143,7 @@ module ChefZero
       def _get(path, create_dir = false)
         value = @data
         path.each_with_index do |path_part, index|
-          if !value.key?(path_part)
+          unless value.key?(path_part)
             if create_dir
               value[path_part] = {}
             else

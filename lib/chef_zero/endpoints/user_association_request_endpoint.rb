@@ -11,6 +11,7 @@ module ChefZero
         if id !~ /^#{username}-(.+)/
           raise RestErrorResponse.new(400, "Association request #{id} is invalid.  Must be #{username}-orgname.")
         end
+
         orgname = $1
 
         json = FFI_Yajl::Parser.parse(request.body)

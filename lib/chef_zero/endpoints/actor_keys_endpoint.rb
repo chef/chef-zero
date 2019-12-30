@@ -50,7 +50,7 @@ module ChefZero
         response_body["private_key"] = private_key if generate_keys
 
         json_response(201, response_body,
-                      headers: { "Location" => response_body["uri"] })
+          headers: { "Location" => response_body["uri"] })
       end
 
       private
@@ -117,6 +117,7 @@ module ChefZero
 
       def actor_path(request)
         return request.rest_path[0..3] if client?(request)
+
         request.rest_path[0..1]
       end
 

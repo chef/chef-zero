@@ -140,6 +140,7 @@ module ChefZero
 
       def exists?(path)
         return true if path.size == 0
+
         parent_list = list(path[0..-2])
         parent_list && parent_list.include?(path[-1])
       end
@@ -184,7 +185,8 @@ module ChefZero
         value = DEFAULT_ORG_SPINE
         2.upto(path.size - 1) do |index|
           value = nil if @deleted[path[0..index]]
-          break if !value
+          break unless value
+
           value = value[path[index]]
         end
 
@@ -272,7 +274,8 @@ module ChefZero
         object_path = AclPath.get_object_path(path)
         # The actual things containers correspond to don't have to exist, as
         # long as the container does
-        return nil if !data_exists?(object_path)
+        return nil unless data_exists?(object_path)
+
         basic_acl =
           case path[3..-1].join("/")
           when "root", "containers/containers", "containers/groups"
@@ -350,7 +353,7 @@ module ChefZero
           if path.size == 4 && path[0] == "organizations" && path[2] == "clients"
             begin
               client = FFI_Yajl::Parser.parse(data.get(path))
-              if !client["validator"]
+              unless client["validator"]
                 unknown_owners |= [ path[3] ]
               end
             rescue
@@ -453,7 +456,7 @@ module ChefZero
       def is_dir?(path)
         case path.size
         when 0, 1
-          return true
+          true
         when 2
           path[0] == "organizations" || (path[0] == "acls" && path[1] != "root")
         when 3

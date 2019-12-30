@@ -24,7 +24,7 @@ module ChefZero
       def initialize(path, cause = nil)
         @path = path
         @cause = cause
-        path_for_msg = path.nil? ? "nil" : "/#{path.join('/')}"
+        path_for_msg = path.nil? ? "nil" : "/#{path.join("/")}"
         super "Data path: #{path_for_msg}"
       end
     end

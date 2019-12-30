@@ -6,8 +6,8 @@ describe ChefZero::Solr::SolrParser do
     docs = []
     [{ "foo" => "a" },
      { "foo" => "d" }].each_with_index do |h, i|
-      docs.push ChefZero::Solr::SolrDoc.new(h, i)
-    end
+       docs.push ChefZero::Solr::SolrDoc.new(h, i)
+     end
     docs
   end
 

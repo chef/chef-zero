@@ -53,6 +53,7 @@ module ChefZero
 
       def actor_path(request)
         return request.rest_path[0..3] if request.rest_path[2] == "clients"
+
         request.rest_path[0..1]
       end
 

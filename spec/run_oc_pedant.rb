@@ -32,6 +32,7 @@ DEFAULT_LOG_LEVEL = :warn
 def log_level
   return ENV["LOG_LEVEL"].downcase.to_sym if ENV["LOG_LEVEL"]
   return :debug if ENV["DEBUG"]
+
   DEFAULT_LOG_LEVEL
 end
 
@@ -39,7 +40,7 @@ def start_chef_server(opts = {})
   opts = DEFAULT_SERVER_OPTIONS.merge(opts)
   opts[:log_level] = log_level
 
-  ChefZero::Server.new(opts).tap { |server| server.start_background }
+  ChefZero::Server.new(opts).tap(&:start_background)
 end
 
 def start_cheffs_server(chef_repo_path)
@@ -49,12 +50,12 @@ def start_cheffs_server(chef_repo_path)
   require "chef/chef_fs/chef_fs_data_store"
   require "chef_zero/server"
 
-  Dir.mkdir(chef_repo_path) if !File.exist?(chef_repo_path)
+  Dir.mkdir(chef_repo_path) unless File.exist?(chef_repo_path)
 
   # 11.6 and below had a bug where it couldn't create the repo children automatically
   if Chef::VERSION.to_f < 11.8
     %w{clients cookbooks data_bags environments nodes roles users}.each do |child|
-      Dir.mkdir("#{chef_repo_path}/#{child}") if !File.exist?("#{chef_repo_path}/#{child}")
+      Dir.mkdir("#{chef_repo_path}/#{child}") unless File.exist?("#{chef_repo_path}/#{child}")
     end
   end
 
@@ -84,6 +85,7 @@ end
 
 def args_from_env(key)
   return [] unless ENV[key]
+
   ENV[key].split
 end
 

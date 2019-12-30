@@ -11,7 +11,7 @@ module ChefZero
           else
             literal_string = nil
           end
-          super(terms.map { |term| term.regexp_string }.join("#{NON_WORD_CHARACTER}+"), literal_string)
+          super(terms.map(&:regexp_string).join("#{NON_WORD_CHARACTER}+"), literal_string)
         end
 
         def to_s

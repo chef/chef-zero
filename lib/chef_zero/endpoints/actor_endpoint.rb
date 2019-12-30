@@ -125,7 +125,7 @@ module ChefZero
       def rename_keys!(request, new_client_or_user_name)
         orig_keys_path = keys_path_base(request)
         new_keys_path = orig_keys_path.dup
-                          .tap { |path| path[-2] = new_client_or_user_name }
+          .tap { |path| path[-2] = new_client_or_user_name }
 
         key_names = list_data_or_else(request, orig_keys_path, nil)
         return unless key_names # No keys to move

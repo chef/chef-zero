@@ -30,15 +30,13 @@ module ChefZero
         }
 
         return json_response(406,
-                             response,
-                             request_version: version, response_version: -1
-                            )
+          response,
+          request_version: version, response_version: -1)
       end
     rescue ArgumentError
       json_response(406,
-                           { "username" => request.requestor },
-                           request_version: -1, response_version: -1
-                          )
+        { "username" => request.requestor },
+        request_version: -1, response_version: -1)
     end
 
     def call(request)
@@ -46,14 +44,15 @@ module ChefZero
       return response unless response.nil?
 
       method = request.method.downcase.to_sym
-      if !respond_to?(method)
-        accept_methods = [:get, :put, :post, :delete].select { |m| respond_to?(m) }
+      unless respond_to?(method)
+        accept_methods = %i{get put post delete}.select { |m| respond_to?(m) }
         accept_methods_str = accept_methods.map { |m| m.to_s.upcase }.join(", ")
-        return [405, { "Content-Type" => "text/plain", "Allow" => accept_methods_str }, "Bad request method for '#{request.env['REQUEST_PATH']}': #{request.env['REQUEST_METHOD']}"]
+        return [405, { "Content-Type" => "text/plain", "Allow" => accept_methods_str }, "Bad request method for '#{request.env["REQUEST_PATH"]}': #{request.env["REQUEST_METHOD"]}"]
       end
       if json_only && !accepts?(request, "application", "json")
         return [406, { "Content-Type" => "text/plain" }, "Must accept application/json"]
       end
+
       # Dispatch to get()/post()/put()/delete()
       begin
         send(method, request)
@@ -70,7 +69,8 @@ module ChefZero
     def accepts?(request, category, type)
       # If HTTP_ACCEPT is not sent at all, assume it accepts anything
       # This parses as per http://tools.ietf.org/html/rfc7231#section-5.3
-      return true if !request.env["HTTP_ACCEPT"]
+      return true unless request.env["HTTP_ACCEPT"]
+
       accepts = request.env["HTTP_ACCEPT"].split(/,\s*/).map { |x| x.split(";", 2)[0].strip }
       accepts.include?("#{category}/#{type}") || accepts.include?("#{category}/*") || accepts.include?("*/*")
     end
@@ -284,7 +284,7 @@ module ChefZero
     end
 
     def self.build_uri(base_uri, rest_path)
-      "#{base_uri}/#{rest_path.map { |v| URI.escape(v) }.join('/')}"
+      "#{base_uri}/#{rest_path.map { |v| URI.escape(v) }.join("/")}"
     end
 
     def populate_defaults(request, response)

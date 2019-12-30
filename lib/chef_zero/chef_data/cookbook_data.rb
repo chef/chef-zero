@@ -107,7 +107,7 @@ module ChefZero
           if directory.is_a?(Hash)
             directory.keys
           else
-            directory.children.map { |c| c.name }
+            directory.children.map(&:name)
           end
         end
 

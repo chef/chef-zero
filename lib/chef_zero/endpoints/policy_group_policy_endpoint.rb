@@ -48,7 +48,7 @@ module ChefZero
         # If the policy revision being submitted does not exist, create it.
         # Storage: /organizations/ORG/policies/POLICY/revisions/REVISION
         policyfile_path = request.rest_path[0..1] + ["policies", policy_name, "revisions", revision_id]
-        if !exists_data?(request, policyfile_path)
+        unless exists_data?(request, policyfile_path)
           create_data(request, policyfile_path[0..-2], revision_id, request.body, :create_dir)
         end
 

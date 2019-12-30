@@ -69,6 +69,7 @@ module ChefZero
           if chef_server_options[:server_scope] != self.class.chef_server_options[:server_scope]
             raise "server_scope: #{chef_server_options[:server_scope]} will not be honored: it can only be set on when_the_chef_server!"
           end
+
           Log.info("Starting #{ChefZero::Dist::PRODUCT} server with options #{chef_server_options}")
 
           ChefZero::RSpec.set_server_options(chef_server_options)
