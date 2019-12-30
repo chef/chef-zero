@@ -1,29 +1,26 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 14.0.17 -->
-## [v14.0.17](https://github.com/chef/chef-zero/tree/v14.0.17) (2019-12-30)
-
-#### Merged Pull Requests
-- Use Chefstyle gem and move dev deps to the Gemfile [#299](https://github.com/chef/chef-zero/pull/299) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.0.13 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Use Chefstyle gem and move dev deps to the Gemfile [#299](https://github.com/chef/chef-zero/pull/299) ([tas50](https://github.com/tas50)) <!-- 14.0.17 -->
-- Substitute require for require_relative [#296](https://github.com/chef/chef-zero/pull/296) ([tas50](https://github.com/tas50)) <!-- 14.0.16 -->
-- Apply Chefstyle [#298](https://github.com/chef/chef-zero/pull/298) ([tas50](https://github.com/tas50)) <!-- 14.0.15 -->
-- Move testing to Buildkite [#297](https://github.com/chef/chef-zero/pull/297) ([tas50](https://github.com/tas50)) <!-- 14.0.14 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.0.17](https://github.com/chef/chef-zero/tree/v14.0.17) (2019-12-30)
+
+#### Merged Pull Requests
+- Move testing to Buildkite [#297](https://github.com/chef/chef-zero/pull/297) ([tas50](https://github.com/tas50))
+- Apply Chefstyle [#298](https://github.com/chef/chef-zero/pull/298) ([tas50](https://github.com/tas50))
+- Substitute require for require_relative [#296](https://github.com/chef/chef-zero/pull/296) ([tas50](https://github.com/tas50))
+- Use Chefstyle gem and move dev deps to the Gemfile [#299](https://github.com/chef/chef-zero/pull/299) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.0.13](https://github.com/chef/chef-zero/tree/v14.0.13) (2019-10-07)
 
 #### Merged Pull Requests
 - Add ChefZero::Dist to abstract branding details to a single location [#293](https://github.com/chef/chef-zero/pull/293) ([Tensibai](https://github.com/Tensibai))
-<!-- latest_stable_release -->
 
 ## [v14.0.12](https://github.com/chef/chef-zero/tree/v14.0.12) (2019-03-19)
 
