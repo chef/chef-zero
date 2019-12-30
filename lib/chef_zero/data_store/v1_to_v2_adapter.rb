@@ -21,6 +21,7 @@ module ChefZero
         raise DataNotFoundError.new(path) if skip_organizations?(path)
         raise "Cannot create #{name} at #{path} with V1ToV2Adapter: only handles a single org named #{single_org}." if skip_organizations?(path, name)
         raise DataAlreadyExistsError.new(path + [ name ]) if path.size < 2
+
         fix_exceptions do
           real_store.create_dir(path[2..-1], name, *options)
         end
@@ -30,6 +31,7 @@ module ChefZero
         raise DataNotFoundError.new(path) if skip_organizations?(path)
         raise "Cannot create #{name} at #{path} with V1ToV2Adapter: only handles a single org named #{single_org}." if skip_organizations?(path, name)
         raise DataAlreadyExistsError.new(path + [ name ]) if path.size < 2
+
         fix_exceptions do
           real_store.create(path[2..-1], name, data, *options)
         end
@@ -37,6 +39,7 @@ module ChefZero
 
       def get(path, request = nil)
         raise DataNotFoundError.new(path) if skip_organizations?(path)
+
         fix_exceptions do
           # Make it so build_uri will include /organizations/ORG inside the V1 data store
           if request && request.rest_base_prefix.size == 0
@@ -53,6 +56,7 @@ module ChefZero
 
       def set(path, data, *options)
         raise DataNotFoundError.new(path) if skip_organizations?(path)
+
         fix_exceptions do
           real_store.set(path[2..-1], data, *options)
         end
@@ -60,6 +64,7 @@ module ChefZero
 
       def delete(path, *options)
         raise DataNotFoundError.new(path) if skip_organizations?(path) && !options.include?(:recursive)
+
         fix_exceptions do
           real_store.delete(path[2..-1])
         end
@@ -67,6 +72,7 @@ module ChefZero
 
       def delete_dir(path, *options)
         raise DataNotFoundError.new(path) if skip_organizations?(path) && !options.include?(:recursive)
+
         fix_exceptions do
           real_store.delete_dir(path[2..-1], *options)
         end
@@ -74,6 +80,7 @@ module ChefZero
 
       def list(path)
         raise DataNotFoundError.new(path) if skip_organizations?(path)
+
         if path == []
           [ "organizations" ]
         elsif path == [ "organizations" ]
@@ -87,6 +94,7 @@ module ChefZero
 
       def exists?(path)
         return false if skip_organizations?(path)
+
         fix_exceptions do
           real_store.exists?(path[2..-1])
         end
@@ -94,12 +102,14 @@ module ChefZero
 
       def exists_dir?(path)
         return false if skip_organizations?(path)
+
         if path == []
           true
         elsif path == [ "organizations" ] || path == [ "users" ]
           true
         else
           return false if skip_organizations?(path)
+
           fix_exceptions do
             real_store.exists_dir?(path[2..-1])
           end

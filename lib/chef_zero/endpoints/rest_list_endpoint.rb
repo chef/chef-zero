@@ -26,7 +26,7 @@ module ChefZero
         contents = request.body
         key = get_key(contents)
         if key.nil?
-          error(400, "Must specify #{identity_keys.map { |k| k.inspect }.join(' or ')} in JSON")
+          error(400, "Must specify #{identity_keys.map(&:inspect).join(" or ")} in JSON")
         else
           create_data(request, request.rest_path, key, contents)
           json_response(201, { "uri" => (build_uri(request.base_uri, request.rest_path + [key])).to_s })

@@ -54,6 +54,7 @@ module ChefZero
           versions = []
           cookbooks_list[name].sort_by { |version| Gem::Version.new(version.dup) }.reverse_each do |version|
             break if num_versions && versions.size >= num_versions
+
             if constraint.satisfied_by?(Gem::Version.new(version.dup))
               versions << version
             end
@@ -66,6 +67,7 @@ module ChefZero
         cookbook["all_files"].inject([]) do |acc, file|
           part, name = file["name"].split("/")
           next acc unless part == "recipes" || File.extname(name) != ".rb"
+
           if name == "default.rb"
             acc << cookbook_name
           else

@@ -53,7 +53,7 @@ module ChefZero
         user["admin"] ||= false
         user["admin"] = !!user["admin"]
         user["openid"] ||= nil
-        if !osc_compat
+        unless osc_compat
           if method == "GET"
             user.delete("admin")
             user.delete("password")
@@ -69,7 +69,7 @@ module ChefZero
       def self.normalize_data_bag_item(data_bag_item, data_bag_name, id, method)
         if method == "DELETE"
           # TODO SERIOUSLY, WHO DOES THIS MANY EXCEPTIONS IN THEIR INTERFACE
-          if !(data_bag_item["json_class"] == "Chef::DataBagItem" && data_bag_item["raw_data"])
+          unless data_bag_item["json_class"] == "Chef::DataBagItem" && data_bag_item["raw_data"]
             data_bag_item["id"] ||= id
             data_bag_item = { "raw_data" => data_bag_item }
             data_bag_item["chef_type"] ||= "data_bag_item"
@@ -93,14 +93,15 @@ module ChefZero
       end
 
       def self.normalize_cookbook(endpoint, org_prefix, cookbook, name, version, base_uri, method,
-                                  is_cookbook_artifact = false, api_version: 2)
+        is_cookbook_artifact = false, api_version: 2)
         # TODO I feel dirty
         if method == "PUT" && api_version < 2
           cookbook["all_files"] = cookbook.delete(["root_files"]) { [] }
           COOKBOOK_SEGMENTS.each do |segment|
             next unless cookbook.key? segment
+
             cookbook[segment].each do |file|
-              file["name"] = "#{segment}/#{file['name']}"
+              file["name"] = "#{segment}/#{file["name"]}"
               cookbook["all_files"] << file
             end
             cookbook.delete(segment)
@@ -131,6 +132,7 @@ module ChefZero
 
                 file.delete("full_path")
                 next unless COOKBOOK_SEGMENTS.include? segment
+
                 file["name"] = name
                 cookbook[segment] << file
               end

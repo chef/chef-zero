@@ -70,6 +70,7 @@ module ChefZero
       # Does this request change the value of the identity key?
       def is_rename?(request)
         return false unless (key = identity_key_value(request))
+
         key != request.rest_path[-1]
       end
     end

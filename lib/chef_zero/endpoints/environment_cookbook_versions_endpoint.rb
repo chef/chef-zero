@@ -15,12 +15,14 @@ module ChefZero
         run_list = FFI_Yajl::Parser.parse(request.body)["run_list"]
         run_list.each do |run_list_entry|
           if run_list_entry =~ /(.+)::.+\@(.+)/ || run_list_entry =~ /(.+)\@(.+)/
-            raise RestErrorResponse.new(412, "No such cookbook: #{$1}") if !cookbook_names.include?($1)
-            raise RestErrorResponse.new(412, "No such cookbook version for cookbook #{$1}: #{$2}") if !list_data(request, request.rest_path[0..1] + ["cookbooks", $1]).include?($2)
+            raise RestErrorResponse.new(412, "No such cookbook: #{$1}") unless cookbook_names.include?($1)
+            raise RestErrorResponse.new(412, "No such cookbook version for cookbook #{$1}: #{$2}") unless list_data(request, request.rest_path[0..1] + ["cookbooks", $1]).include?($2)
+
             desired_versions[$1] = [ $2 ]
           else
             desired_cookbook = run_list_entry.split("::")[0]
-            raise RestErrorResponse.new(412, "No such cookbook: #{desired_cookbook}") if !cookbook_names.include?(desired_cookbook)
+            raise RestErrorResponse.new(412, "No such cookbook: #{desired_cookbook}") unless cookbook_names.include?(desired_cookbook)
+
             desired_versions[desired_cookbook] = list_data(request, request.rest_path[0..1] + ["cookbooks", desired_cookbook])
           end
         end
@@ -35,7 +37,7 @@ module ChefZero
 
         # Depsolve!
         solved = depsolve(request, desired_versions.keys, desired_versions, environment_constraints)
-        if !solved
+        unless solved
           if @last_missing_dep && !cookbook_names.include?(@last_missing_dep)
             return raise RestErrorResponse.new(412, "No such cookbook: #{@last_missing_dep}")
           elsif @last_constraint_failure
@@ -64,7 +66,7 @@ module ChefZero
 
         # If everything is already
         solve_for = unsolved[0]
-        return desired_versions if !solve_for
+        return desired_versions unless solve_for
 
         # Go through each desired version of this cookbook, starting with the latest,
         # until we find one we can solve successfully with
@@ -81,10 +83,10 @@ module ChefZero
           cookbook_dependencies.each_pair do |dep_name, dep_constraint|
             # If the dep is not already in the list, add it to the list to solve
             # and bring in all environment-allowed cookbook versions to desired_versions
-            if !new_desired_versions.key?(dep_name)
+            unless new_desired_versions.key?(dep_name)
               new_unsolved += [dep_name]
               # If the dep is missing, we will try other versions of the cookbook that might not have the bad dep.
-              if !exists_data_dir?(request, request.rest_path[0..1] + ["cookbooks", dep_name])
+              unless exists_data_dir?(request, request.rest_path[0..1] + ["cookbooks", dep_name])
                 @last_missing_dep = dep_name.to_s
                 dep_not_found = true
                 break
@@ -110,7 +112,8 @@ module ChefZero
       end
 
       def filter_by_constraint(versions, cookbook_name, constraint)
-        return versions if !constraint
+        return versions unless constraint
+
         constraint = Gem::Requirement.new(constraint)
         new_versions = versions[cookbook_name]
         new_versions = new_versions.select { |version| constraint.satisfied_by?(Gem::Version.new(version.dup)) }

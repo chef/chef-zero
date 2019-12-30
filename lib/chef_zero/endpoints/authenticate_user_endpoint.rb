@@ -19,6 +19,7 @@ module ChefZero
         if user["password"] != password
           raise RestErrorResponse.new(401, "Bad username or password")
         end
+
         # Include only particular user data in the response
         user.keep_if { |key, value| %w{first_name last_name display_name email username}.include?(key) }
         json_response(200, {

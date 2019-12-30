@@ -44,6 +44,7 @@ module ChefZero
         if destructible
           Dir.entries(root).each do |entry|
             next if entry == "." || entry == ".."
+
             FileUtils.rm_rf(Path.join(root, entry))
           end
         end
@@ -110,9 +111,10 @@ module ChefZero
 
       def delete_dir(path, *options)
         if options.include?(:recursive)
-          if !File.exist?(path_to(path))
+          unless File.exist?(path_to(path))
             raise DataNotFoundError.new(path)
           end
+
           FileUtils.rm_rf(path_to(path))
         else
           begin

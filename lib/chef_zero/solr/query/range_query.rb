@@ -10,7 +10,7 @@ module ChefZero
         end
 
         def to_s
-          "#{@from_inclusive ? '[' : '{'}#{@from} TO #{@to}#{@to_inclusive ? ']' : '}'}"
+          "#{@from_inclusive ? "[" : "{"}#{@from} TO #{@to}#{@to_inclusive ? "]" : "}"}"
         end
 
         def matches_values?(values)
@@ -20,7 +20,7 @@ module ChefZero
               when -1
                 return false
               when 0
-                return false if !@from_inclusive
+                return false unless @from_inclusive
               end
             end
             unless @to == "*"
@@ -28,7 +28,7 @@ module ChefZero
               when 1
                 return false
               when 0
-                return false if !@to_inclusive
+                return false unless @to_inclusive
               end
             end
             return true

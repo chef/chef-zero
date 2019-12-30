@@ -100,7 +100,7 @@ module ChefZero
         begin
           real_store.delete(path)
         rescue DataNotFoundError
-          if !deleted
+          unless deleted
             raise
           end
         end
@@ -111,7 +111,7 @@ module ChefZero
         begin
           real_store.delete_dir(path, *options)
         rescue DataNotFoundError
-          if !deleted
+          unless deleted
             raise
           end
         end

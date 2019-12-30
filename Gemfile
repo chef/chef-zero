@@ -13,7 +13,7 @@ group :development, :test do
 end
 
 if ENV["GEMFILE_MOD"]
-  puts "GEMFILE_MOD: #{ENV['GEMFILE_MOD']}"
+  puts "GEMFILE_MOD: #{ENV["GEMFILE_MOD"]}"
   instance_eval(ENV["GEMFILE_MOD"])
 else
   gem "chef", "~> 14.0"

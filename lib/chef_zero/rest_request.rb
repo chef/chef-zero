@@ -18,7 +18,7 @@ module ChefZero
       else
         scheme = env["rack.url_scheme"]
       end
-      @base_uri ||= "#{scheme}://#{env['HTTP_HOST']}#{env['SCRIPT_NAME']}"
+      @base_uri ||= "#{scheme}://#{env["HTTP_HOST"]}#{env["SCRIPT_NAME"]}"
     end
 
     def base_uri=(value)
@@ -68,14 +68,14 @@ module ChefZero
     end
 
     def to_s
-      result = "#{method} #{rest_path.join('/')}"
+      result = "#{method} #{rest_path.join("/")}"
       if query_params.size > 0
-        result << "?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&')}"
+        result << "?#{query_params.map { |k, v| "#{k}=#{v}" }.join("&")}"
       end
       if body.chomp != ""
         result << "\n--- #{method} BODY ---\n"
         result << body
-        result << "\n" if !body.end_with?("\n")
+        result << "\n" unless body.end_with?("\n")
         result << "--- END #{method} BODY ---"
       end
       result

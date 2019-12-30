@@ -50,7 +50,7 @@ module ChefZero
             if @query_string[@index] == '\\'
               @index += 1
             end
-            @index += 1 if !eof?
+            @index += 1 unless eof?
             break if eof? || !peek_term_token
           end
           @query_string[start_index..@index - 1]
@@ -66,6 +66,7 @@ module ChefZero
 
       def peek_term_token
         return nil if @query_string[@index] =~ /\s/
+
         op = peek_operator_token
         !op || op == "-"
       end
@@ -79,6 +80,7 @@ module ChefZero
             return result
           end
         end
+
         nil
       end
 
@@ -145,13 +147,13 @@ module ChefZero
         # If it's the start of a range query, build that
         elsif token == "{" || token == "["
           left = next_token
-          parse_error(left, "Expected left term in range query") if !left
+          parse_error(left, "Expected left term in range query") unless left
           to = next_token
           parse_error(left, "Expected TO in range query") if to != "TO"
           right = next_token
-          parse_error(right, "Expected left term in range query") if !right
+          parse_error(right, "Expected left term in range query") unless right
           end_range = next_token
-          parse_error(right, "Expected end range '#{end_range}") if !["}", "]"].include?(end_range)
+          parse_error(right, "Expected end range '#{end_range}") unless ["}", "]"].include?(end_range)
           Query::RangeQuery.new(left, right, token == "[", end_range == "]")
 
         elsif token == "("

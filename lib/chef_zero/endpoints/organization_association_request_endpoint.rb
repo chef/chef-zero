@@ -11,6 +11,7 @@ module ChefZero
         if id !~ /(.+)-#{orgname}$/
           raise HttpErrorResponse.new(404, "Invalid ID #{id}.  Must be of the form username-#{orgname}")
         end
+
         username = $1
         path = request.rest_path[0..-2] + [username]
         delete_data(request, path)
