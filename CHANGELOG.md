@@ -1,21 +1,19 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.0 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v15.0.0](https://github.com/chef/chef-zero/tree/v15.0.0) (2020-02-19)
 
 #### Merged Pull Requests
 - remove deprecation warnings for ruby 2.7 [#300](https://github.com/chef/chef-zero/pull/300) ([lamont-granquist](https://github.com/lamont-granquist))
-<!-- latest_release -->
-
-<!-- release_rollup since=14.0.17 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- remove deprecation warnings for ruby 2.7 [#300](https://github.com/chef/chef-zero/pull/300) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.0 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v14.0.17](https://github.com/chef/chef-zero/tree/v14.0.17) (2019-12-30)
 
 #### Merged Pull Requests
@@ -23,7 +21,6 @@
 - Apply Chefstyle [#298](https://github.com/chef/chef-zero/pull/298) ([tas50](https://github.com/tas50))
 - Substitute require for require_relative [#296](https://github.com/chef/chef-zero/pull/296) ([tas50](https://github.com/tas50))
 - Use Chefstyle gem and move dev deps to the Gemfile [#299](https://github.com/chef/chef-zero/pull/299) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.0.13](https://github.com/chef/chef-zero/tree/v14.0.13) (2019-10-07)
 
