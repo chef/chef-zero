@@ -6,28 +6,10 @@ expeditor:
 
 steps:
 
-- label: run-lint-and-specs-ruby-2.4
-  command:
-    - apt-get update
-    - .expeditor/run_linux_tests.sh rake spec style
-  expeditor:
-    executor:
-      docker:
-        image: ruby:2.4-buster
-
-- label: run-lint-and-specs-ruby-2.5
-  command:
-    - apt-get update
-    - .expeditor/run_linux_tests.sh rake spec style
-  expeditor:
-    executor:
-      docker:
-        image: ruby:2.5-buster
-
 - label: run-lint-and-specs-ruby-2.6
   command:
     - apt-get update
-    - .expeditor/run_linux_tests.sh rake spec style
+    - .expeditor/run_linux_tests.sh rake spec style pedant
   expeditor:
     executor:
       docker:
@@ -36,7 +18,7 @@ steps:
 - label: run-lint-and-specs-ruby-2.7
   command:
     - apt-get update
-    - .expeditor/run_linux_tests.sh rake spec style
+    - .expeditor/run_linux_tests.sh rake spec style pedant
   expeditor:
     executor:
       docker:
@@ -45,7 +27,7 @@ steps:
 - label: run-specs-windows
   command:
     - bundle install --jobs=7 --retry=3 --without docs debug
-    - bundle exec rake spec
+    - bundle exec rake spec pedant
   expeditor:
     executor:
       docker:
