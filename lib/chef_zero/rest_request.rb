@@ -1,8 +1,8 @@
 require "rack/request"
+require "cgi"
 
 module ChefZero
   class RestRequest
-
     def initialize(env, rest_base_prefix = [])
       @env = env
       @rest_base_prefix = rest_base_prefix
@@ -61,7 +61,7 @@ module ChefZero
       @query_params ||= begin
         params = Rack::Request.new(env).GET
         params.keys.each do |key|
-          params[key] = URI.unescape(params[key])
+          params[key] = self.class.rfc2396_parser.unescape(params[key])
         end
         params
       end
@@ -79,6 +79,10 @@ module ChefZero
         result << "--- END #{method} BODY ---"
       end
       result
+    end
+
+    def self.rfc2396_parser
+      @parser ||= URI::RFC2396_Parser.new
     end
   end
 end

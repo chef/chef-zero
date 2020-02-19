@@ -77,7 +77,7 @@ module ChefZero
 
     def get_data(request, rest_path = nil, *options)
       rest_path ||= request.rest_path
-      rest_path = rest_path.map { |v| URI.decode(v) }
+      rest_path = rest_path.map { |v| self.class.rfc2396_parser.unescape(v) }
       begin
         data_store.get(rest_path, request)
       rescue DataStore::DataNotFoundError
@@ -284,7 +284,7 @@ module ChefZero
     end
 
     def self.build_uri(base_uri, rest_path)
-      "#{base_uri}/#{rest_path.map { |v| URI.escape(v) }.join("/")}"
+      "#{base_uri}/#{rest_path.map { |v| rfc2396_parser.escape(v) }.join("/")}"
     end
 
     def populate_defaults(request, response)
@@ -323,6 +323,10 @@ module ChefZero
       !name.is_a?(String) ||
         name.size > 255 ||
         name =~ /[+ !]/
+    end
+
+    def self.rfc2396_parser
+      @parser ||= URI::RFC2396_Parser.new
     end
   end
 end
