@@ -1,10 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.0.0 -->
+## [v15.0.0](https://github.com/chef/chef-zero/tree/v15.0.0) (2020-02-19)
+
+#### Merged Pull Requests
+- remove deprecation warnings for ruby 2.7 [#300](https://github.com/chef/chef-zero/pull/300) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.0.17 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- remove deprecation warnings for ruby 2.7 [#300](https://github.com/chef/chef-zero/pull/300) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
