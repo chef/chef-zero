@@ -1,4 +1,4 @@
-require "tempfile"
+require "tempfile" unless defined?(Tempfile)
 require_relative "server"
 require_relative "rest_request"
 

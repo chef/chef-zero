@@ -16,14 +16,14 @@
 # limitations under the License.
 #
 
-require "openssl"
+require "openssl" unless defined?(OpenSSL)
 require "open-uri"
-require "rubygems"
-require "timeout"
-require "stringio"
+require "rubygems" unless defined?(Gem)
+require "timeout" unless defined?(Timeout)
+require "stringio" unless defined?(StringIO)
 
-require "rack"
-require "webrick"
+require "rack" unless defined?(Rack)
+require "webrick" unless defined?(WEBrick)
 require "webrick/https"
 
 require_relative "../chef_zero"

@@ -1,6 +1,6 @@
 require_relative "../rest_base"
 require_relative "../rest_error_response"
-require "ffi_yajl"
+require "ffi_yajl" unless defined?(FFI_Yajl)
 
 module ChefZero
   module Endpoints

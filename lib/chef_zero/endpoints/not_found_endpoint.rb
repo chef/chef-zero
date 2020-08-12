@@ -1,4 +1,4 @@
-require "ffi_yajl"
+require "ffi_yajl" unless defined?(FFI_Yajl)
 
 module ChefZero
   module Endpoints
