@@ -1,4 +1,4 @@
-require "ffi_yajl"
+require "ffi_yajl" unless defined?(FFI_Yajl)
 require_relative "rest_list_endpoint"
 require_relative "data_bag_item_endpoint"
 require_relative "../rest_error_response"

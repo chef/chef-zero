@@ -1,4 +1,4 @@
-require "ffi_yajl"
+require "ffi_yajl" unless defined?(FFI_Yajl)
 require_relative "../../chef_zero"
 require_relative "../rest_base"
 

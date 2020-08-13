@@ -17,7 +17,7 @@
 #
 
 require "thread"
-require "singleton"
+require "singleton" unless defined?(Singleton)
 require_relative "dist"
 
 module ChefZero

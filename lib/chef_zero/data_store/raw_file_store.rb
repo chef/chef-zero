@@ -19,7 +19,7 @@
 require_relative "data_already_exists_error"
 require_relative "data_not_found_error"
 require_relative "interface_v2"
-require "fileutils"
+require "fileutils" unless defined?(FileUtils)
 
 module ChefZero
   module DataStore

@@ -1,4 +1,4 @@
-require "pp"
+require "pp" unless defined?(PP)
 
 module ChefZero
   class RestRouter
