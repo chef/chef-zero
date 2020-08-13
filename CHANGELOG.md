@@ -1,10 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.0.1 -->
+## [v15.0.1](https://github.com/chef/chef-zero/tree/v15.0.1) (2020-08-13)
+
+#### Merged Pull Requests
+- Optimize requires for non-omnibus installs [#302](https://github.com/chef/chef-zero/pull/302) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.0.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Optimize requires for non-omnibus installs [#302](https://github.com/chef/chef-zero/pull/302) ([tas50](https://github.com/tas50)) <!-- 15.0.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
