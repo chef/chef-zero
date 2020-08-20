@@ -11,7 +11,7 @@ require "chef_zero/dist"
 require "chef_zero/version"
 require "chef_zero/server"
 require "chef_zero/data_store/raw_file_store"
-require "optparse"
+require "optparse" unless defined?(OptionParser)
 
 def parse_port(port)
   array = []
