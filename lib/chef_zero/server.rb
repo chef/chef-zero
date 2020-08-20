@@ -17,7 +17,7 @@
 #
 
 require "openssl" unless defined?(OpenSSL)
-require "open-uri"
+require "open-uri" unless defined?(OpenURI)
 require "rubygems" unless defined?(Gem)
 require "timeout" unless defined?(Timeout)
 require "stringio" unless defined?(StringIO)

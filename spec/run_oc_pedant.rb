@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require "json"
+require "json" unless defined?(JSON)
 require "bundler"
 require "bundler/setup"
 
@@ -93,7 +93,7 @@ begin
   tmpdir = nil
   server =
     if ENV["FILE_STORE"]
-      require "tmpdir"
+      require "tmpdir" unless defined?(Dir.mktmpdir)
       require "chef_zero/data_store/raw_file_store"
       tmpdir = Dir.mktmpdir
       data_store = ChefZero::DataStore::RawFileStore.new(tmpdir, true)
@@ -102,7 +102,7 @@ begin
       start_chef_server(data_store: data_store)
 
     elsif ENV["CHEF_FS"]
-      require "tmpdir"
+      require "tmpdir" unless defined?(Dir.mktmpdir)
       tmpdir = Dir.mktmpdir
       start_cheffs_server(tmpdir)
 

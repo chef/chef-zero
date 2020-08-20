@@ -3,7 +3,7 @@
 # Trap interrupts to quit cleanly.
 Signal.trap("INT") { exit 1 }
 
-require "rubygems"
+require "rubygems" unless defined?(Gem)
 $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
 require "chef_zero/log"
