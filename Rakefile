@@ -61,7 +61,7 @@ rescue LoadError
 end
 
 begin
-  require "yard"
+  require "yard" unless defined?(YARD)
   YARD::Rake::YardocTask.new(:docs)
 rescue LoadError
   puts "yard is not available. bundle install first to make sure all dependencies are installed."

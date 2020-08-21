@@ -1,5 +1,5 @@
 require "rack/request"
-require "cgi"
+require "cgi" unless defined?(CGI)
 
 module ChefZero
   class RestRequest

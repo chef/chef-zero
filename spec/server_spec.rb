@@ -1,6 +1,6 @@
 require "chef_zero/server"
-require "net/http"
-require "uri"
+require "net/http" unless defined?(Net::HTTP)
+require "uri" unless defined?(URI)
 
 describe ChefZero::Server do
   context "with a server bound to port 8889" do

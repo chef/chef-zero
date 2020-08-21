@@ -3,7 +3,7 @@
 # Trap interrupts to quit cleanly.
 Signal.trap("INT") { exit 1 }
 
-require "rubygems"
+require "rubygems" unless defined?(Gem)
 $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
 require "chef_zero/log"
@@ -11,7 +11,7 @@ require "chef_zero/dist"
 require "chef_zero/version"
 require "chef_zero/server"
 require "chef_zero/data_store/raw_file_store"
-require "optparse"
+require "optparse" unless defined?(OptionParser)
 
 def parse_port(port)
   array = []

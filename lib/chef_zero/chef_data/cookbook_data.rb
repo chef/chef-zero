@@ -1,4 +1,4 @@
-require "digest/md5"
+require "digest/md5" unless defined?(Digest::MD5)
 require "hashie"
 
 module ChefZero
