@@ -62,6 +62,7 @@ module ChefZero
           user["email"] ||= nil
           user["first_name"] ||= nil
           user["last_name"] ||= nil
+          user["display_name"] ||= nil
         end
         user
       end
