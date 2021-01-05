@@ -1,4 +1,4 @@
-$:.unshift(File.dirname(__FILE__) + "/lib")
+$:.unshift(__dir__ + "/lib")
 require "chef_zero/version"
 
 Gem::Specification.new do |s|
@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency "uuidtools", "~> 2.1"
   s.add_dependency "ffi-yajl", "~> 2.2"
   s.add_dependency "rack", "~> 2.0", ">= 2.0.6"
+  s.add_dependency "webrick"
 
   s.bindir       = "bin"
   s.executables  = ["chef-zero"]
