@@ -1,26 +1,23 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.4 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v15.0.4](https://github.com/chef/chef-zero/tree/v15.0.4) (2021-01-05)
 
 #### Merged Pull Requests
 - Add missing Webrick dependency to the gemspec [#306](https://github.com/chef/chef-zero/pull/306) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-
-<!-- release_rollup since=15.0.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Add missing Webrick dependency to the gemspec [#306](https://github.com/chef/chef-zero/pull/306) ([tas50](https://github.com/tas50)) <!-- 15.0.4 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v15.0.3](https://github.com/chef/chef-zero/tree/v15.0.3) (2020-09-28)
 
 #### Merged Pull Requests
 - Added display_name in the normalize_user. [#304](https://github.com/chef/chef-zero/pull/304) ([antima-gupta](https://github.com/antima-gupta))
-<!-- latest_stable_release -->
 
 ## [v15.0.2](https://github.com/chef/chef-zero/tree/v15.0.2) (2020-08-21)
 
