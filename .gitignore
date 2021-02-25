@@ -19,3 +19,4 @@ tmp
 rspec.failures
 gemfiles/*.lock
 .ruby-version
+.idea/
