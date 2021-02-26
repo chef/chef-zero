@@ -188,8 +188,6 @@ begin
     # tests from chef-server as the user acls are not supported in chef-zero
     # at this time.
     "--skip-chef-zero-quirks",
-
-    "--skip-status"
   ]
 
   # The knife tests are very slow and don't give us a lot of extra coverage,
