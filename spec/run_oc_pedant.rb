@@ -189,7 +189,8 @@ begin
     # at this time.
     "--skip-chef-zero-quirks",
 
-    "--skip-status"
+    "--skip-status",
+    "--skip=email_case_insensitive"
   ]
 
   # The knife tests are very slow and don't give us a lot of extra coverage,
