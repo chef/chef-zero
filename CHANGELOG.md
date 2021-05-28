@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.5 -->
-## [v15.0.5](https://github.com/chef/chef-zero/tree/v15.0.5) (2021-02-25)
+<!-- latest_release 15.0.6 -->
+## [v15.0.6](https://github.com/chef/chef-zero/tree/v15.0.6) (2021-05-28)
 
 #### Merged Pull Requests
-- Zei/skipping status for pedant [#307](https://github.com/chef/chef-zero/pull/307) ([vinay-satish](https://github.com/vinay-satish))
+- Skipping User Email case insensitive pedant test [#311](https://github.com/chef/chef-zero/pull/311) ([jashaik](https://github.com/jashaik))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.4 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Skipping User Email case insensitive pedant test [#311](https://github.com/chef/chef-zero/pull/311) ([jashaik](https://github.com/jashaik)) <!-- 15.0.6 -->
 - Zei/skipping status for pedant [#307](https://github.com/chef/chef-zero/pull/307) ([vinay-satish](https://github.com/vinay-satish)) <!-- 15.0.5 -->
 <!-- release_rollup -->
 
