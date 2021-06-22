@@ -1,10 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.0.8 -->
+## [v15.0.8](https://github.com/chef/chef-zero/tree/v15.0.8) (2021-06-22)
+
+#### Merged Pull Requests
+- Upgrade to GitHub-native Dependabot [#309](https://github.com/chef/chef-zero/pull/309) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.0.7 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Upgrade to GitHub-native Dependabot [#309](https://github.com/chef/chef-zero/pull/309) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 15.0.8 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
