@@ -190,7 +190,8 @@ begin
     "--skip-chef-zero-quirks",
 
     "--skip-status",
-    "--skip=email_case_insensitive"
+    "--skip=email_case_insensitive",
+    "--skip=nginx_default_error"
   ]
 
   # The knife tests are very slow and don't give us a lot of extra coverage,
