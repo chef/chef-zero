@@ -5,7 +5,7 @@ gemspec
 # gem 'rest-client', :git => 'https://github.com/chef/rest-client.git'
 
 group :pedant do
-  gem "oc-chef-pedant", git: "https://github.com/chef/chef-server.git"
+  gem "oc-chef-pedant", git: "https://github.com/chef/chef-server.git", branch: "main"
 end
 
 group :development, :test do
