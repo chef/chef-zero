@@ -68,7 +68,7 @@ module ChefZero
 
     def accepts?(request, category, type)
       # If HTTP_ACCEPT is not sent at all, assume it accepts anything
-      # This parses as per http://tools.ietf.org/html/rfc7231#section-5.3
+      # This parses as per https://datatracker.ietf.org/doc/html/rfc7231#section-5.3
       return true unless request.env["HTTP_ACCEPT"]
 
       accepts = request.env["HTTP_ACCEPT"].split(/,\s*/).map { |x| x.split(";", 2)[0].strip }
