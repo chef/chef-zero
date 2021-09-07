@@ -1,29 +1,26 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.9 -->
-## [v15.0.9](https://github.com/chef/chef-zero/tree/v15.0.9) (2021-09-07)
-
-#### Merged Pull Requests
-- Update http -&gt; https links in tests / commments [#316](https://github.com/chef/chef-zero/pull/316) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.0.7 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update http -&gt; https links in tests / commments [#316](https://github.com/chef/chef-zero/pull/316) ([tas50](https://github.com/tas50)) <!-- 15.0.9 -->
-- Upgrade to GitHub-native Dependabot [#309](https://github.com/chef/chef-zero/pull/309) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 15.0.8 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.0.9](https://github.com/chef/chef-zero/tree/v15.0.9) (2021-09-07)
+
+#### Merged Pull Requests
+- Upgrade to GitHub-native Dependabot [#309](https://github.com/chef/chef-zero/pull/309) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update http -&gt; https links in tests / commments [#316](https://github.com/chef/chef-zero/pull/316) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v15.0.7](https://github.com/chef/chef-zero/tree/v15.0.7) (2021-06-22)
 
 #### Merged Pull Requests
 - Zei/skipping status for pedant [#307](https://github.com/chef/chef-zero/pull/307) ([vinay-satish](https://github.com/vinay-satish))
 - Skipping User Email case insensitive pedant test [#311](https://github.com/chef/chef-zero/pull/311) ([jashaik](https://github.com/jashaik))
 - Skipping nginx default error response verification pedant test [#312](https://github.com/chef/chef-zero/pull/312) ([jashaik](https://github.com/jashaik))
-<!-- latest_stable_release -->
 
 ## [v15.0.4](https://github.com/chef/chef-zero/tree/v15.0.4) (2021-01-05)
 
