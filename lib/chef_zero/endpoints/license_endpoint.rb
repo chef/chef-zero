@@ -17,7 +17,7 @@ module ChefZero
           "limit_exceeded" => (node_count > MAX_NODE_COUNT) ? true : false,
           "node_license" => MAX_NODE_COUNT,
           "node_count" => node_count,
-          "upgrade_url" => "http://blah.com",
+          "upgrade_url" => "https://blah.com",
         })
       end
     end
