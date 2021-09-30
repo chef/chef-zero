@@ -191,7 +191,8 @@ begin
 
     "--skip-status",
     "--skip=email_case_insensitive",
-    "--skip=nginx_default_error"
+    "--skip=nginx_default_error",
+    "--skip=response_headers"
   ]
 
   # The knife tests are very slow and don't give us a lot of extra coverage,
