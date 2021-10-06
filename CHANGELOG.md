@@ -1,10 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.0.10 -->
+## [v15.0.10](https://github.com/chef/chef-zero/tree/v15.0.10) (2021-10-06)
+
+#### Merged Pull Requests
+- Skipping response header test for pedant [#317](https://github.com/chef/chef-zero/pull/317) ([vinay-satish](https://github.com/vinay-satish))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.0.9 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Skipping response header test for pedant [#317](https://github.com/chef/chef-zero/pull/317) ([vinay-satish](https://github.com/vinay-satish)) <!-- 15.0.10 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
