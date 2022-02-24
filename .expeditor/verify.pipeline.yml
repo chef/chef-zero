@@ -13,7 +13,7 @@ steps:
   expeditor:
     executor:
       docker:
-        image: ruby:2.6-buster
+        image: ruby:2.6
 
 - label: run-lint-and-specs-ruby-2.7
   command:
@@ -22,7 +22,25 @@ steps:
   expeditor:
     executor:
       docker:
-        image: ruby:2.7-buster
+        image: ruby:2.7
+
+- label: run-lint-and-specs-ruby-3.0
+  command:
+    - apt-get update
+    - .expeditor/run_linux_tests.sh rake spec pedant style
+  expeditor:
+    executor:
+      docker:
+        image: ruby:3.0
+
+- label: run-lint-and-specs-ruby-3.1
+  command:
+    - apt-get update
+    - .expeditor/run_linux_tests.sh rake spec pedant style
+  expeditor:
+    executor:
+      docker:
+        image: ruby:3.1
 
 - label: run-specs-windows
   command:
