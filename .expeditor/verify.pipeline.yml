@@ -37,13 +37,3 @@ steps:
     executor:
       docker:
         image: ruby:3.1
-
-- label: run-specs-windows
-  command:
-    - bundle config set --local without docs debug
-    - bundle install --jobs=7 --retry=3
-    - bundle exec rake pedant style
-  expeditor:
-    executor:
-      docker:
-        host_os: windows
