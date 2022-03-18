@@ -1,3 +1,3 @@
 module ChefZero
-  VERSION = "15.0.11".freeze
+  VERSION = "15.0.12".freeze
 end
