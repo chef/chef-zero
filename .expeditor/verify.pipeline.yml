@@ -8,28 +8,32 @@ steps:
 
 - label: run-lint-and-specs-ruby-2.6
   command:
-    - apt-get update
     - .expeditor/run_linux_tests.sh rake spec pedant style
   expeditor:
     executor:
       docker:
-        image: ruby:2.6-buster
+        image: ruby:2.6
 
 - label: run-lint-and-specs-ruby-2.7
   command:
-    - apt-get update
     - .expeditor/run_linux_tests.sh rake spec pedant style
   expeditor:
     executor:
       docker:
-        image: ruby:2.7-buster
+        image: ruby:2.7
 
-- label: run-specs-windows
+- label: run-lint-and-specs-ruby-3.0
   command:
-    - bundle config set --local without docs debug
-    - bundle install --jobs=7 --retry=3
-    - bundle exec rake pedant style
+    - .expeditor/run_linux_tests.sh rake spec pedant style
   expeditor:
     executor:
       docker:
-        host_os: windows
+        image: ruby:3.0
+
+- label: run-lint-and-specs-ruby-3.1
+  command:
+    - .expeditor/run_linux_tests.sh rake spec pedant style
+  expeditor:
+    executor:
+      docker:
+        image: ruby:3.1
