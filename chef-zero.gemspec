@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency "hashie", ">= 2.0", "< 5.0"
   s.add_dependency "uuidtools", "~> 2.1"
   s.add_dependency "ffi-yajl", "~> 2.2"
-  s.add_dependency "rack", "~> 2.0", ">= 2.0.6"
+  s.add_dependency "rack", ">= 2.0.6", "< 4"
   s.add_dependency "webrick"
 
   s.bindir       = "bin"
