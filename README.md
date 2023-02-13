@@ -16,7 +16,7 @@ This server can be installed as a Ruby Gem.
 ```bash
 $ gem install chef-zero
 ```
-
+ 
 If you're using bundler, add `chef-zero` as a development dependency:
 
 ```ruby
