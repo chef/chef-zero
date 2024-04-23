@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/chef/chef-zero"
   s.license = "Apache-2.0"
 
-  s.required_ruby_version = ">= 2.6"
+  s.required_ruby_version = ">= 2.7"
 
   s.add_dependency "activesupport","~> 6.1"  #pin until we support ruby 2.6
   s.add_dependency "mixlib-log", ">= 2.0", "< 4.0"
