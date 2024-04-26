@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.12 -->
-## [v15.0.12](https://github.com/chef/chef-zero/tree/v15.0.12) (2022-03-18)
+<!-- latest_release 15.0.13 -->
+## [v15.0.13](https://github.com/chef/chef-zero/tree/v15.0.13) (2024-04-26)
 
 #### Merged Pull Requests
-- add ruby 3.0 and 3.1 tests in verify pipeline [#322](https://github.com/chef/chef-zero/pull/322) ([jayashrig158](https://github.com/jayashrig158))
+- Remove Ruby 2.6 support [#329](https://github.com/chef/chef-zero/pull/329) ([dafyddcrosby](https://github.com/dafyddcrosby))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.11 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Remove Ruby 2.6 support [#329](https://github.com/chef/chef-zero/pull/329) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.0.13 -->
 - add ruby 3.0 and 3.1 tests in verify pipeline [#322](https://github.com/chef/chef-zero/pull/322) ([jayashrig158](https://github.com/jayashrig158)) <!-- 15.0.12 -->
 <!-- release_rollup -->
 
