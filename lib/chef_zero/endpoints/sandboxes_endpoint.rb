@@ -15,8 +15,9 @@ module ChefZero
 
         needed_checksums = FFI_Yajl::Parser.parse(request.body)["checksums"]
         result_checksums = {}
+        available_checksums = list_data(request, request.rest_path[0..1] + %w{file_store checksums})
         needed_checksums.keys.each do |needed_checksum|
-          if list_data(request, request.rest_path[0..1] + %w{file_store checksums}).include?(needed_checksum)
+          if available_checksums.include?(needed_checksum)
             result_checksums[needed_checksum] = { needs_upload: false }
           else
             result_checksums[needed_checksum] = {
