@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.15 -->
-## [v15.0.15](https://github.com/chef/chef-zero/tree/v15.0.15) (2024-09-20)
+<!-- latest_release 15.0.16 -->
+## [v15.0.16](https://github.com/chef/chef-zero/tree/v15.0.16) (2024-09-20)
 
 #### Merged Pull Requests
-- ci: drop support for 2.7 tests on verify pipeline [#331](https://github.com/chef/chef-zero/pull/331) ([ahasunos](https://github.com/ahasunos))
+- config: update activesupport dependency pinning [#330](https://github.com/chef/chef-zero/pull/330) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.11 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- config: update activesupport dependency pinning [#330](https://github.com/chef/chef-zero/pull/330) ([ahasunos](https://github.com/ahasunos)) <!-- 15.0.16 -->
 - ci: drop support for 2.7 tests on verify pipeline [#331](https://github.com/chef/chef-zero/pull/331) ([ahasunos](https://github.com/ahasunos)) <!-- 15.0.15 -->
 - [SandboxesEndpoint#put] Move checksum discovery out of loop [#328](https://github.com/chef/chef-zero/pull/328) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.0.14 -->
 - Remove Ruby 2.6 support [#329](https://github.com/chef/chef-zero/pull/329) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.0.13 -->
