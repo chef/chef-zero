@@ -6,14 +6,6 @@ expeditor:
 
 steps:
 
-- label: run-lint-and-specs-ruby-2.7
-  command:
-    - .expeditor/run_linux_tests.sh rake spec pedant style
-  expeditor:
-    executor:
-      docker:
-        image: ruby:2.7
-
 - label: run-lint-and-specs-ruby-3.0
   command:
     - .expeditor/run_linux_tests.sh rake spec pedant style
