@@ -8,6 +8,8 @@ group :pedant do
   gem "oc-chef-pedant", git: "https://github.com/chef/chef-server.git", branch: "main"
 end
 
+gem "ffi", ">= 1.15.5", "< 1.17.0"
+
 group :development, :test do
   gem "chefstyle"
   gem "rake"
