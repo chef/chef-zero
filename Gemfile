@@ -20,8 +20,8 @@ if ENV["GEMFILE_MOD"]
   puts "GEMFILE_MOD: #{ENV["GEMFILE_MOD"]}"
   instance_eval(ENV["GEMFILE_MOD"])
 else
-  gem "chef", "~> 14.0"
-  gem "ohai", "~> 14.0"
+  gem "chef", "~> 18.6"
+  gem "ohai", "~> 18.0"
 end
 
 group :debug do
