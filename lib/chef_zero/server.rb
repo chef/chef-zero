@@ -23,6 +23,7 @@ require "timeout" unless defined?(Timeout)
 require "stringio" unless defined?(StringIO)
 
 require "rack" unless defined?(Rack)
+require "rackup" unless defined?(Rackup)
 require "webrick" unless defined?(WEBrick)
 require "webrick/https"
 
@@ -295,7 +296,7 @@ module ChefZero
         end
       )
       ENV["HTTPS"] = "on" if options[:ssl]
-      @server.mount("/", Rack::Handler::WEBrick, app)
+      @server.mount("/", Rackup::Handler::WEBrick, app)
 
       # Pick a port
       # If options[:port] can be an Enumerator, an Array, or an Integer,
