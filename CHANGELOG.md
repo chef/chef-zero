@@ -1,32 +1,29 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.17 -->
-## [v15.0.17](https://github.com/chef/chef-zero/tree/v15.0.17) (2025-03-04)
-
-#### Merged Pull Requests
-- Updating rack [#332](https://github.com/chef/chef-zero/pull/332) ([johnmccrae](https://github.com/johnmccrae))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.0.11 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Updating rack [#332](https://github.com/chef/chef-zero/pull/332) ([johnmccrae](https://github.com/johnmccrae)) <!-- 15.0.17 -->
-- config: update activesupport dependency pinning [#330](https://github.com/chef/chef-zero/pull/330) ([ahasunos](https://github.com/ahasunos)) <!-- 15.0.16 -->
-- ci: drop support for 2.7 tests on verify pipeline [#331](https://github.com/chef/chef-zero/pull/331) ([ahasunos](https://github.com/ahasunos)) <!-- 15.0.15 -->
-- [SandboxesEndpoint#put] Move checksum discovery out of loop [#328](https://github.com/chef/chef-zero/pull/328) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.0.14 -->
-- Remove Ruby 2.6 support [#329](https://github.com/chef/chef-zero/pull/329) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.0.13 -->
-- add ruby 3.0 and 3.1 tests in verify pipeline [#322](https://github.com/chef/chef-zero/pull/322) ([jayashrig158](https://github.com/jayashrig158)) <!-- 15.0.12 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.0.17](https://github.com/chef/chef-zero/tree/v15.0.17) (2025-03-12)
+
+#### Merged Pull Requests
+- add ruby 3.0 and 3.1 tests in verify pipeline [#322](https://github.com/chef/chef-zero/pull/322) ([jayashrig158](https://github.com/jayashrig158))
+- Remove Ruby 2.6 support [#329](https://github.com/chef/chef-zero/pull/329) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- [SandboxesEndpoint#put] Move checksum discovery out of loop [#328](https://github.com/chef/chef-zero/pull/328) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- ci: drop support for 2.7 tests on verify pipeline [#331](https://github.com/chef/chef-zero/pull/331) ([ahasunos](https://github.com/ahasunos))
+- config: update activesupport dependency pinning [#330](https://github.com/chef/chef-zero/pull/330) ([ahasunos](https://github.com/ahasunos))
+- Updating rack [#332](https://github.com/chef/chef-zero/pull/332) ([johnmccrae](https://github.com/johnmccrae))
+<!-- latest_stable_release -->
+
 ## [v15.0.11](https://github.com/chef/chef-zero/tree/v15.0.11) (2021-10-17)
 
 #### Merged Pull Requests
 - Skipping response header test for pedant [#317](https://github.com/chef/chef-zero/pull/317) ([vinay-satish](https://github.com/vinay-satish))
 - Updating the policy_revision_endpoint to add policy_group_list [#320](https://github.com/chef/chef-zero/pull/320) ([vinay-satish](https://github.com/vinay-satish))
-<!-- latest_stable_release -->
 
 ## [v15.0.9](https://github.com/chef/chef-zero/tree/v15.0.9) (2021-09-07)
 
