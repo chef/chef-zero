@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-log", ">= 2.0", "< 4.0"
   s.add_dependency "hashie", ">= 2.0", "< 6.0"
   s.add_dependency "uuidtools", "~> 2.1"
-  s.add_dependency "ffi-yajl", "~> 2.2"
+  s.add_dependency "ffi-yajl", ">= 2.2", "< 4.0"
   s.add_dependency "rack", "~> 3.1", ">= 3.1.10"
   s.add_dependency "rackup", "~> 2.2", ">= 2.2.1"
   s.add_dependency "webrick"
