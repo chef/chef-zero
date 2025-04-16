@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.18 -->
-## [v15.0.18](https://github.com/chef/chef-zero/tree/v15.0.18) (2025-04-16)
+<!-- latest_release 15.0.19 -->
+## [v15.0.19](https://github.com/chef/chef-zero/tree/v15.0.19) (2025-04-16)
 
 #### Merged Pull Requests
-- Update hashie requirement from &gt;= 2.0, &lt; 5.0 to &gt;= 2.0, &lt; 6.0 [#321](https://github.com/chef/chef-zero/pull/321) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#327](https://github.com/chef/chef-zero/pull/327) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.17 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#327](https://github.com/chef/chef-zero/pull/327) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 15.0.19 -->
 - Update hashie requirement from &gt;= 2.0, &lt; 5.0 to &gt;= 2.0, &lt; 6.0 [#321](https://github.com/chef/chef-zero/pull/321) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 15.0.18 -->
 <!-- release_rollup -->
 
