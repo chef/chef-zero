@@ -11,7 +11,7 @@ end
 gem "ffi", ">= 1.15.5", "< 1.17.0"
 
 group :development, :test do
-  gem "chefstyle"
+  gem "cookstyle", ">= 7.32.8"
   gem "rake"
   gem "rspec", "~> 3.0"
 end
