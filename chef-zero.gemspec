@@ -16,11 +16,11 @@ Gem::Specification.new do |s|
   # Note: 7.1.0 does not defaults its cache_format_version to 7.1 but 6.1 instead which gives deprecation warnings
   # Remove the version constraint when we can upgrade to 7.1.1 post stable release of Activesupport 7.1
   # Similar issue with 7.0 existed: https://github.com/rails/rails/pull/45293
-  s.add_dependency "activesupport", "~> 7.0", "< 7.1"
+  s.add_dependency "activesupport", ">= 7", "< 8.1"
   s.add_dependency "mixlib-log", ">= 2.0", "< 4.0"
-  s.add_dependency "hashie", ">= 2.0", "< 5.0"
+  s.add_dependency "hashie", ">= 2.0", "< 6.0"
   s.add_dependency "uuidtools", "~> 2.1"
-  s.add_dependency "ffi-yajl", "~> 2.2"
+  s.add_dependency "ffi-yajl", ">= 2.2", "< 4.0"
   s.add_dependency "rack", "~> 3.1", ">= 3.1.10"
   s.add_dependency "rackup", "~> 2.2", ">= 2.2.1"
   s.add_dependency "webrick"
