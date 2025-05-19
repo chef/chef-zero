@@ -127,11 +127,7 @@ module ChefZero
             real_results
           end
         rescue DataNotFoundError
-          if default_results
-            default_results
-          else
-            raise
-          end
+          default_results || raise
         end
       end
 

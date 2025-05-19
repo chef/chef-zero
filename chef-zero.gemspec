@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/chef/chef-zero"
   s.license = "Apache-2.0"
 
-  s.required_ruby_version = ">= 3.0"
+  s.required_ruby_version = ">= 3.1"
 
   # Note: 7.1.0 does not defaults its cache_format_version to 7.1 but 6.1 instead which gives deprecation warnings
   # Remove the version constraint when we can upgrade to 7.1.1 post stable release of Activesupport 7.1
@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
   s.add_dependency "rack", "~> 3.1", ">= 3.1.10"
   s.add_dependency "rackup", "~> 2.2", ">= 2.2.1"
   s.add_dependency "webrick"
+
+  s.add_development_dependency "yard"
 
   s.bindir       = "bin"
   s.executables  = ["chef-zero"]

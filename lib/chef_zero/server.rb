@@ -36,7 +36,7 @@ require_relative "data_store/memory_store_v2"
 require_relative "data_store/v1_to_v2_adapter"
 require_relative "data_store/default_facade"
 require_relative "version"
-require "chef_zero/dist.rb"
+require "chef_zero/dist"
 
 require_relative "endpoints/rest_list_endpoint"
 require_relative "endpoints/authenticate_user_endpoint"
@@ -314,13 +314,12 @@ module ChefZero
 
       # Start the server in the background
       @thread = Thread.new do
-        begin
           Thread.current.abort_on_exception = true
           @server.start
         ensure
           @port = nil
           @running = false
-        end
+        # end
       end
 
       # Do not return until the web server is genuinely started.
@@ -657,39 +656,39 @@ module ChefZero
       end
       @app = proc do |env|
         begin
-          prefix = global_endpoint?(env["PATH_INFO"]) ? [] : rest_base_prefix
+        prefix = global_endpoint?(env["PATH_INFO"]) ? [] : rest_base_prefix
 
-          request = RestRequest.new(env, prefix)
-          if @on_request_proc
-            @on_request_proc.call(request)
-          end
-          response = nil
-          if @request_handler
-            response = @request_handler.call(request)
-          end
-          unless response
-            response = router.call(request)
-          end
-          if @on_response_proc
-            @on_response_proc.call(request, response)
-          end
+        request = RestRequest.new(env, prefix)
+        if @on_request_proc
+          @on_request_proc.call(request)
+        end
+        response = nil
+        if @request_handler
+          response = @request_handler.call(request)
+        end
+        unless response
+          response = router.call(request)
+        end
+        if @on_response_proc
+          @on_response_proc.call(request, response)
+        end
 
-          # Insert Server header
-          response[1]["Server"] = "chef-zero"
+        # Insert Server header
+        response[1]["Server"] = "chef-zero"
 
-          # Add CORS header
-          response[1]["Access-Control-Allow-Origin"] = "*"
+        # Add CORS header
+        response[1]["Access-Control-Allow-Origin"] = "*"
 
-          # Puma expects the response to be an array (chunked responses). Since
-          # we are statically generating data, we won't ever have said chunked
-          # response, so fake it.
-          response[-1] = Array(response[-1])
+        # Puma expects the response to be an array (chunked responses). Since
+        # we are statically generating data, we won't ever have said chunked
+        # response, so fake it.
+        response[-1] = Array(response[-1])
 
-          response
-        rescue
-          if options[:log_level] == :debug
-            STDERR.puts "Request Error: #{$!}"
-            STDERR.puts $!.backtrace.join("\n")
+        response
+      rescue
+        if options[:log_level] == :debug
+          STDERR.puts "Request Error: #{$!}"
+          STDERR.puts $!.backtrace.join("\n")
           end
         end
       end

@@ -17,20 +17,20 @@ describe ChefZero::Solr::SolrParser do
   end
 
   it "handles terms" do
-    search_for("foo:d").size.should eq(1)
+    expect(search_for("foo:d").size).to eq(1)
   end
 
   it "handles ranges" do
-    search_for("foo:[a TO c]").size.should eq(1)
+    expect(search_for("foo:[a TO c]").size).to eq(1)
   end
 
   it "handles -" do
-    search_for("-foo:a").size.should eq(1)
+    expect(search_for("-foo:a").size).to eq(1)
   end
 
   it "handles wildcard ranges" do
-    search_for("foo:[* TO c]").size.should eq(1)
-    search_for("foo:[c TO *]").size.should eq(1)
-    search_for("foo:[* TO *]").size.should eq(2)
+    expect(search_for("foo:[* TO c]").size).to eq(1)
+    expect(search_for("foo:[c TO *]").size).to eq(1)
+    expect(search_for("foo:[* TO *]").size).to eq(2)
   end
 end

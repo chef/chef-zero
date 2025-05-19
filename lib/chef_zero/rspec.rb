@@ -345,9 +345,7 @@ module ChefZero
       def with_object_path(object_path)
         old_object_path = @current_object_path
         @current_object_path = object_path
-        begin
-          yield if block_given?
-        end
+        yield if block_given?
         @current_object_path = old_object_path
       end
     end

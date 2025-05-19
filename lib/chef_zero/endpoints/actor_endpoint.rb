@@ -23,10 +23,10 @@ module ChefZero
 
         if request.rest_path[0] == "users"
           list_data(request, [ "organizations" ]).each do |org|
-            begin
-              delete_data(request, [ "organizations", org, "users", request.rest_path[1] ], :data_store_exceptions)
-            rescue DataStore::DataNotFoundError
-            end
+
+            delete_data(request, [ "organizations", org, "users", request.rest_path[1] ], :data_store_exceptions)
+          rescue DataStore::DataNotFoundError
+
           end
         end
 
@@ -82,7 +82,7 @@ module ChefZero
           end
 
           if client?(request)
-            response["private_key"] = private_key ? private_key : false
+            response["private_key"] == private_key ? private_key : false
           else
             response["private_key"] = private_key if private_key
             response.delete("public_key") unless updating_public_key

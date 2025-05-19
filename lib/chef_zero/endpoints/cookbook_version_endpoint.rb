@@ -98,23 +98,24 @@ module ChefZero
           end
           cookbooks.each do |cookbook_name|
             # as below, this can be racy.
-            begin
-              data_store.list(request.rest_path[0..1] + [cookbook_type, cookbook_name]).each do |version|
-                cookbook = data_store.get(request.rest_path[0..1] + [cookbook_type, cookbook_name, version], request)
-                deleted_checksums -= get_checksums(cookbook)
-              end
-            rescue ChefZero::DataStore::DataNotFoundError
+
+            data_store.list(request.rest_path[0..1] + [cookbook_type, cookbook_name]).each do |version|
+              cookbook = data_store.get(request.rest_path[0..1] + [cookbook_type, cookbook_name, version], request)
+              deleted_checksums -= get_checksums(cookbook)
             end
+          rescue ChefZero::DataStore::DataNotFoundError
+            # this space intentionally left blank
+
           end
         end
         deleted_checksums.each do |checksum|
           # There can be a race here if multiple cookbooks are uploading.
           # This deals with an exception on delete, but things can still get deleted
           # that shouldn't be.
-          begin
-            delete_data(request, request.rest_path[0..1] + ["file_store", "checksums", checksum], :data_store_exceptions)
-          rescue ChefZero::DataStore::DataNotFoundError
-          end
+
+          delete_data(request, request.rest_path[0..1] + ["file_store", "checksums", checksum], :data_store_exceptions)
+        rescue ChefZero::DataStore::DataNotFoundError
+
         end
       end
 

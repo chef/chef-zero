@@ -422,15 +422,15 @@ module ChefZero
           acl[perm] ||= {}
           acl[perm]["users"] = owners[:users]
           acl[perm]["clients"] = owners[:clients]
-          acl[perm]["groups"] ||= begin
-            # When we create containers, we don't merge groups (not sure why).
-            if acl_path[0] == "organizations" && acl_path[3] == "containers"
-              []
-            else
-              container_acl ||= get_container_acl(acl_path) || {}
-              (container_acl[perm] ? container_acl[perm]["groups"] : []) || []
-            end
-          end
+
+          # When we create containers, we don't merge groups (not sure why).
+          acl[perm]["groups"] ||= if acl_path[0] == "organizations" && acl_path[3] == "containers"
+                                    []
+                                  else
+                                    container_acl ||= get_container_acl(acl_path) || {}
+                                    (container_acl[perm] ? container_acl[perm]["groups"] : []) || []
+                                  end
+
           acl[perm]["actors"] = acl[perm]["clients"] + acl[perm]["users"]
         end
         acl
