@@ -314,11 +314,11 @@ module ChefZero
 
       # Start the server in the background
       @thread = Thread.new do
-          Thread.current.abort_on_exception = true
-          @server.start
-        ensure
-          @port = nil
-          @running = false
+        Thread.current.abort_on_exception = true
+        @server.start
+      ensure
+        @port = nil
+        @running = false
         # end
       end
 
@@ -655,7 +655,7 @@ module ChefZero
         rest_base_prefix = []
       end
       @app = proc do |env|
-        begin
+
         prefix = global_endpoint?(env["PATH_INFO"]) ? [] : rest_base_prefix
 
         request = RestRequest.new(env, prefix)
@@ -689,7 +689,6 @@ module ChefZero
         if options[:log_level] == :debug
           STDERR.puts "Request Error: #{$!}"
           STDERR.puts $!.backtrace.join("\n")
-          end
         end
       end
       @app
