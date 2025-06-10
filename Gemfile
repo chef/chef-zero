@@ -11,9 +11,12 @@ end
 gem "ffi", ">= 1.15.5", "< 1.17.0"
 
 group :development, :test do
-  gem "cookstyle", "~> 8.1"
   gem "rake"
   gem "rspec", "~> 3.0"
+end
+
+group :style do
+  gem "cookstyle", "~> 8.1"
 end
 
 if ENV["GEMFILE_MOD"]
