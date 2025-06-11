@@ -13,11 +13,7 @@ module ChefZero
 
     def base_uri
       # Load balancer awareness
-      if env["HTTP_X_FORWARDED_PROTO"]
-        scheme = env["HTTP_X_FORWARDED_PROTO"]
-      else
-        scheme = env["rack.url_scheme"]
-      end
+      scheme = env["HTTP_X_FORWARDED_PROTO"] || env["rack.url_scheme"]
       @base_uri ||= "#{scheme}://#{env["HTTP_HOST"]}#{env["SCRIPT_NAME"]}"
     end
 

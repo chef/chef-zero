@@ -20,7 +20,7 @@ def parse_port(port)
     if b
       array = array.concat(a.to_i.upto(b.to_i).to_a)
     else
-      array = array.concat([a.to_i])
+      array = array.push(a.to_i)
     end
   end
   array
