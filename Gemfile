@@ -5,7 +5,7 @@ gemspec
 # gem 'rest-client', :git => 'https://github.com/chef/rest-client.git'
 
 group :pedant do
-  gem "oc-chef-pedant", git: "https://github.com/chef/chef-server.git", branch: "jfm/ruby-version-change"
+  gem "oc-chef-pedant", git: "https://github.com/chef/chef-server.git", branch: "main"
 end
 
 gem "ffi", ">= 1.15.5"
@@ -18,7 +18,7 @@ group :development, :test do
 end
 
 group :style do
-  gem "cookstyle", "~> 8.1"
+  gem "cookstyle", "~> 8.2"
 end
 
 if ENV["GEMFILE_MOD"]
