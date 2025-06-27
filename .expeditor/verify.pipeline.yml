@@ -44,7 +44,7 @@ steps:
       docker:
         host_os: windows
         shell: ["powershell", "-Command"]
-        image: rubydistros/windows-2025:3.4
+        image: rubydistros/windows-2019:3.4
         environment:
           - FORCE_FFI_YAJL=ext
           - EXPIRE_CACHE=true
