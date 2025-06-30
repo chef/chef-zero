@@ -7,7 +7,7 @@ module ChefZero
       # GET /organizations/ORG/policies/NAME/revisions/REVISION
       def get(request)
         data = parse_json(get_data(request))
-        
+
         # need to add another field in the response called 'policy_group_list'
         # example response
         #     {
@@ -24,7 +24,7 @@ module ChefZero
         #       },
         #       "policy_group_list": ["some_policy_group"]
         #     }
-        data[:policy_group_list] = Array.new
+        data[:policy_group_list] = []
 
         # extracting policy name and revision
         request_policy_name = request.rest_path[3]
@@ -32,7 +32,7 @@ module ChefZero
 
         # updating the request to fetch the policy group list
         request.rest_path[2] = "policy_groups"
-        request.rest_path = request.rest_path.slice(0,3)
+        request.rest_path = request.rest_path.slice(0, 3)
 
         list_data(request).each do |group_name|
           group_path = request.rest_path + [group_name]
@@ -49,7 +49,7 @@ module ChefZero
             end
           end
         end
-        
+
         data = ChefData::DataNormalizer.normalize_policy(data, request_policy_name, request_policy_revision)
         json_response(200, data)
       end

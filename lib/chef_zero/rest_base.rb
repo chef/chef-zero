@@ -29,7 +29,7 @@ module ChefZero
           "max_api_version" => MAX_API_VERSION,
         }
 
-        return json_response(406,
+        json_response(406,
           response,
           request_version: version, response_version: -1)
       end

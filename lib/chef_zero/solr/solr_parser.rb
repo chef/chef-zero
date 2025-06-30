@@ -47,7 +47,7 @@ module ChefZero
           # (characters plus backslashed escaped characters)
           start_index = @index
           loop do
-            if @query_string[@index] == '\\'
+            if @query_string[@index] == "\\"
               @index += 1
             end
             @index += 1 unless eof?

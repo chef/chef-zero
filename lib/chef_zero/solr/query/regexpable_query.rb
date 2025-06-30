@@ -22,8 +22,8 @@ module ChefZero
         end
 
         DEFAULT_FIELD = "text".freeze
-        WORD_CHARACTER = "[A-Za-z0-9@._':\-]".freeze
-        NON_WORD_CHARACTER = "[^A-Za-z0-9@._':\-]".freeze
+        WORD_CHARACTER = "[A-Za-z0-9@._':-]".freeze
+        NON_WORD_CHARACTER = "[^A-Za-z0-9@._':-]".freeze
       end
     end
   end
