@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.21 -->
-## [v15.0.21](https://github.com/chef/chef-zero/tree/v15.0.21) (2025-06-30)
+<!-- latest_release 15.0.22 -->
+## [v15.0.22](https://github.com/chef/chef-zero/tree/v15.0.22) (2025-09-02)
 
 #### Merged Pull Requests
-- Updating for Ruby 3.4 and Cookstyle [#334](https://github.com/chef/chef-zero/pull/334) ([johnmccrae](https://github.com/johnmccrae))
+- Adding myself to codeowners [#337](https://github.com/chef/chef-zero/pull/337) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.17 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Adding myself to codeowners [#337](https://github.com/chef/chef-zero/pull/337) ([jaymzh](https://github.com/jaymzh)) <!-- 15.0.22 -->
 - Updating for Ruby 3.4 and Cookstyle [#334](https://github.com/chef/chef-zero/pull/334) ([johnmccrae](https://github.com/johnmccrae)) <!-- 15.0.21 -->
 - Update activesupport requirement from ~&gt; 6.1 to &gt;= 6.1, &lt; 8.0 [#323](https://github.com/chef/chef-zero/pull/323) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 15.0.20 -->
 - Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#327](https://github.com/chef/chef-zero/pull/327) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 15.0.19 -->
