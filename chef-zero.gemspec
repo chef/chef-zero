@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   if Gem::Version.new(RUBY_VERSION) <= Gem::Version.new("3.1.7")
     s.add_dependency "fiddle", "= 1.1.0"
   else
-    s.add_dependency "fiddle", ">= 1.1.6"
+    s.add_dependency "fiddle", ">= 1.1.8"
   end
 
   s.bindir       = "bin"
