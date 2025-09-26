@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem 'rest-client', :git => 'https://github.com/chef/rest-client.git', branch: 'jfm/ucrt_update1'
+gem "rest-client", git: "https://github.com/chef/rest-client.git", branch: "jfm/ucrt_update1"
 
 group :pedant do
   gem "oc-chef-pedant", git: "https://github.com/chef/chef-server.git", branch: "jfm/chef-activesupport-update"
