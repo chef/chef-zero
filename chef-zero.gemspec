@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rackup", "~> 2.2", ">= 2.2.1"
   s.add_dependency "unf_ext", "~> 0.0.8"
   s.add_dependency "webrick"
+  s.add_dependency "fiddle", "1.1.0"
 
   s.bindir       = "bin"
   s.executables  = ["chef-zero"]
