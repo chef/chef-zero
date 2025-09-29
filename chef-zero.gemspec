@@ -22,17 +22,15 @@ Gem::Specification.new do |s|
   s.add_dependency "unf_ext", "~> 0.0.8"
   s.add_dependency "webrick"
   s.add_dependency "chef-utils"
-
+  s.add_dependency "activesupport", "~> 7.1.5"
   # We are running into some challenging things with activesupport and fiddle.
   # Chef-18 requires Ruby 3.1 and Chef-19 requires Ruby 3.4. They have incompatible dependencies on activesupport and fiddle
   # Activesupport 7.1.3.2 also has a CVE in it which requires an upgrade to 7.1.5.2. Activesupport 7.1.5 requires fiddle = 1.1.0, but Chef-19 requires fiddle >= 1.1.6.
   # Also, fiddle is a built-in gem for Ruby 3.1 but is broken out into a separate gem starting in Ruby 3.2.
   if Gem::Version.new(RUBY_VERSION) <= Gem::Version.new("3.1.7")
     s.add_dependency "fiddle", "= 1.1.0"
-    s.add_dependency "activesupport", "~> 7.1.5"
   else
     s.add_dependency "fiddle", ">= 1.1.8"
-    s.add_dependency "activesupport", "~> 7.2.2"
   end
 
   s.bindir       = "bin"
