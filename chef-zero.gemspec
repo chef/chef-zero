@@ -13,10 +13,6 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 3.0"
 
-  # Note: 7.1.0 does not defaults its cache_format_version to 7.1 but 6.1 instead which gives deprecation warnings
-  # Remove the version constraint when we can upgrade to 7.1.1 post stable release of Activesupport 7.1
-  # Similar issue with 7.0 existed: https://github.com/rails/rails/pull/45293
-  s.add_dependency "activesupport", "~> 7.1.5"
   s.add_dependency "mixlib-log", ">= 2.0", "< 4.0"
   s.add_dependency "hashie", ">= 2.0", "< 6.0"
   s.add_dependency "uuidtools", "~> 2.1"
@@ -32,8 +28,10 @@ Gem::Specification.new do |s|
   # Also, fiddle is a built-in gem for Ruby 3.1 but is broken out into a separate gem starting in Ruby 3.2.
   if Gem::Version.new(RUBY_VERSION) <= Gem::Version.new("3.1.7")
     s.add_dependency "fiddle", "= 1.1.0"
+    s.add_dependency "activesupport", "~> 7.1.5"
   else
     s.add_dependency "fiddle", ">= 1.1.8"
+    s.add_dependency "activesupport", "~> 7.2.2"
   end
 
   s.bindir       = "bin"
