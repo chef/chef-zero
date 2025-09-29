@@ -21,6 +21,12 @@ group :style do
   gem "cookstyle", "~> 8.2"
 end
 
+if Gem::Version.new(RUBY_VERSION) <= Gem::Version.new("3.1.7")
+  gem "chef", git: "https://github.com/chef/chef.git", branch: "chef-18"
+else
+  gem "chef", git: "https://github.com/chef/chef.git", branch: "main"
+end
+
 # if ENV["GEMFILE_MOD"]
 #   puts "GEMFILE_MOD: #{ENV["GEMFILE_MOD"]}"
 #   instance_eval(ENV["GEMFILE_MOD"])
