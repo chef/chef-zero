@@ -22,10 +22,10 @@ group :style do
 end
 
 if Gem::Version.new(RUBY_VERSION) <= Gem::Version.new("3.1.7")
-  gem "chef-utils", git: "https://github.com/chef/chef.git", branch: "chef-18", glob: "chef-utils/chef-utils.gemspec"
+  gem "chef-utils", git: "https://github.com/chef/chef.git", branch: "chef-18", glob: "chef-utils/chef-utils.gemspec", require: "chef-utils"
   gem "chef", git: "https://github.com/chef/chef.git", branch: "chef-18"
 else
-  gem "chef-utils", git: "https://github.com/chef/chef.git", branch: "main", glob: "chef-utils/chef-utils.gemspec"
+  gem "chef-utils", git: "https://github.com/chef/chef.git", branch: "main", glob: "chef-utils/chef-utils.gemspec", require: "chef-utils"
   gem "chef", git: "https://github.com/chef/chef.git", branch: "main"
 end
 
