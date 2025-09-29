@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency "rackup", "~> 2.2", ">= 2.2.1"
   s.add_dependency "unf_ext", "~> 0.0.8"
   s.add_dependency "webrick"
-  s.add_dependency "chef-utils"
   s.add_dependency "activesupport", "~> 7.1.5"
   # We are running into some challenging things with activesupport and fiddle.
   # Chef-18 requires Ruby 3.1 and Chef-19 requires Ruby 3.4. They have incompatible dependencies on activesupport and fiddle
