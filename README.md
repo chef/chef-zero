@@ -152,7 +152,7 @@ For information on contributing to this project see <https://github.com/chef/che
 
 ## License
 
-Copyright:: Chef Software, Inc.
+Copyright (c) 2012-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 
 ```text
 Licensed under the Apache License, Version 2.0 (the "License");
