@@ -1,17 +1,18 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.24 -->
-## [v15.0.24](https://github.com/chef/chef-zero/tree/v15.0.24) (2025-09-30)
+<!-- latest_release 15.0.25 -->
+## [v15.0.25](https://github.com/chef/chef-zero/tree/v15.0.25) (2025-10-29)
 
 #### Merged Pull Requests
-- [EnvironmentCookbookVersionsEndpoint] Add cookbook object cache to request logic [#338](https://github.com/chef/chef-zero/pull/338) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- Add Unix unit tests too, remove direct sonarqube [#350](https://github.com/chef/chef-zero/pull/350) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.17 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add Unix unit tests too, remove direct sonarqube [#350](https://github.com/chef/chef-zero/pull/350) ([jaymzh](https://github.com/jaymzh)) <!-- 15.0.25 -->
 - [EnvironmentCookbookVersionsEndpoint] Add cookbook object cache to request logic [#338](https://github.com/chef/chef-zero/pull/338) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.0.24 -->
 - set up ai assisted development workflow [#342](https://github.com/chef/chef-zero/pull/342) ([rishichawda](https://github.com/rishichawda)) <!-- 15.0.23 -->
 - Adding myself to codeowners [#337](https://github.com/chef/chef-zero/pull/337) ([jaymzh](https://github.com/jaymzh)) <!-- 15.0.22 -->
