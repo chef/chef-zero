@@ -1,6 +1,6 @@
 # Chef Zero
 
-[![Build status](https://badge.buildkite.com/943881fa8cbc4bede24eebf34685a49fecd39ea88a316f60b1.svg?branch=master)](https://buildkite.com/chef-oss/chef-chef-zero-master-verify)
+[![Build status](https://github.com/chef/chef-zero/actions/workflows/allchecks.yml/badge.svg)](https://github.com/chef/chef-zero/actions/workflows/allchecks.yml)
 [![Gem Version](https://badge.fury.io/rb/chef-zero.svg)](http://badge.fury.io/rb/chef-zero)
 
 ## Description
