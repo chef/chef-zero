@@ -8,6 +8,13 @@
 - Remove active support, it does not seem to be used [#349](https://github.com/chef/chef-zero/pull/349) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
+<!-- next_release -->
+## Unreleased
+
+#### Changed
+- Remove obsolete Chef version checks for ancient Chef versions (< 12.13.19 from 2016). All modern Chef versions support keys, ACL, cookbook-artifacts, and policies.
+<!-- next_release -->
+
 <!-- release_rollup since=15.0.17 -->
 ### Changes not yet released to rubygems.org
 
