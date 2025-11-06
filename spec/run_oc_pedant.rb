@@ -52,13 +52,6 @@ def start_cheffs_server(chef_repo_path)
 
   Dir.mkdir(chef_repo_path) unless File.exist?(chef_repo_path)
 
-  # 11.6 and below had a bug where it couldn't create the repo children automatically
-  if Chef::VERSION.to_f < 11.8
-    %w{clients cookbooks data_bags environments nodes roles users}.each do |child|
-      Dir.mkdir("#{chef_repo_path}/#{child}") unless File.exist?("#{chef_repo_path}/#{child}")
-    end
-  end
-
   # Start the new server
   Chef::Config.repo_mode = "hosted_everything"
   Chef::Config.chef_repo_path = chef_repo_path
@@ -125,7 +118,8 @@ begin
   Pedant.config[:config_file] = "spec/support/oc_pedant.rb"
 
   # Because ChefFS can only ever have one user (pivotal), we can't do most of the
-  # tests that involve multiple
+  # tests that involve multiple users. All modern Chef versions (>= 12.13.19)
+  # support keys, ACL, cookbook-artifacts, and policies, so we don't skip those.
   chef_fs_skips = if ENV["CHEF_FS"]
                     [ "--skip-association",
                       "--skip-users",
@@ -136,16 +130,6 @@ begin
                   else
                     []
                   end
-
-  unless Gem::Requirement.new(">= 12.8.0").satisfied_by?(Gem::Version.new(Chef::VERSION))
-    chef_fs_skips << "--skip-keys"
-  end
-
-  unless Gem::Requirement.new(">= 12.13.19").satisfied_by?(Gem::Version.new(Chef::VERSION))
-    chef_fs_skips << "--skip-acl"
-    chef_fs_skips << "--skip-cookbook-artifacts"
-    chef_fs_skips << "--skip-policies"
-  end
 
   # These things aren't supported by Chef Zero in any mode of operation:
   default_skips = [
