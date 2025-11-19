@@ -1,11 +1,11 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.27 -->
-## [v15.0.27](https://github.com/chef/chef-zero/tree/v15.0.27) (2025-11-06)
+<!-- latest_release 15.0.28 -->
+## [v15.0.28](https://github.com/chef/chef-zero/tree/v15.0.28) (2025-11-19)
 
 #### Merged Pull Requests
-- updating code to account for removing the chef-version [#352](https://github.com/chef/chef-zero/pull/352) ([johnmccrae](https://github.com/johnmccrae))
+- docs: Update Copilot Instructions with AI Compliance Workflow [#353](https://github.com/chef/chef-zero/pull/353) ([rishichawda](https://github.com/rishichawda))
 <!-- latest_release -->
 
 <!-- next_release -->
@@ -19,6 +19,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- docs: Update Copilot Instructions with AI Compliance Workflow [#353](https://github.com/chef/chef-zero/pull/353) ([rishichawda](https://github.com/rishichawda)) <!-- 15.0.28 -->
 - updating code to account for removing the chef-version [#352](https://github.com/chef/chef-zero/pull/352) ([johnmccrae](https://github.com/johnmccrae)) <!-- 15.0.27 -->
 - Remove active support, it does not seem to be used [#349](https://github.com/chef/chef-zero/pull/349) ([jaymzh](https://github.com/jaymzh)) <!-- 15.0.26 -->
 - Add Unix unit tests too, remove direct sonarqube [#350](https://github.com/chef/chef-zero/pull/350) ([jaymzh](https://github.com/jaymzh)) <!-- 15.0.25 -->
