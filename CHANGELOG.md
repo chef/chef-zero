@@ -1,11 +1,11 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.0.28 -->
-## [v15.0.28](https://github.com/chef/chef-zero/tree/v15.0.28) (2025-11-19)
+<!-- latest_release 15.1.0 -->
+## [v15.1.0](https://github.com/chef/chef-zero/tree/v15.1.0) (2025-11-25)
 
 #### Merged Pull Requests
-- docs: Update Copilot Instructions with AI Compliance Workflow [#353](https://github.com/chef/chef-zero/pull/353) ([rishichawda](https://github.com/rishichawda))
+- Updating the version to release it [#354](https://github.com/chef/chef-zero/pull/354) ([johnmccrae](https://github.com/johnmccrae))
 <!-- latest_release -->
 
 <!-- next_release -->
@@ -19,6 +19,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Updating the version to release it [#354](https://github.com/chef/chef-zero/pull/354) ([johnmccrae](https://github.com/johnmccrae)) <!-- 15.1.0 -->
 - docs: Update Copilot Instructions with AI Compliance Workflow [#353](https://github.com/chef/chef-zero/pull/353) ([rishichawda](https://github.com/rishichawda)) <!-- 15.0.28 -->
 - updating code to account for removing the chef-version [#352](https://github.com/chef/chef-zero/pull/352) ([johnmccrae](https://github.com/johnmccrae)) <!-- 15.0.27 -->
 - Remove active support, it does not seem to be used [#349](https://github.com/chef/chef-zero/pull/349) ([jaymzh](https://github.com/jaymzh)) <!-- 15.0.26 -->
