@@ -1,5 +1,7 @@
 # Chef Zero
 
+This is a test
+
 [![Build status](https://github.com/chef/chef-zero/actions/workflows/allchecks.yml/badge.svg)](https://github.com/chef/chef-zero/actions/workflows/allchecks.yml)
 [![Gem Version](https://badge.fury.io/rb/chef-zero.svg)](http://badge.fury.io/rb/chef-zero)
 
