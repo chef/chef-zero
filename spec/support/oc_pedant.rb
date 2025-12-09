@@ -1,4 +1,4 @@
-# Copyright: Copyright (c) 2012 Opscode, Inc.
+# Copyright: Copyright (c) 2012-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved., Inc.
 # License: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
