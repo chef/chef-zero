@@ -16,7 +16,7 @@ jobs:
         experimental: [false]
     name: Unit testing with Ruby ${{ matrix.ruby }} on ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
