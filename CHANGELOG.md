@@ -1,11 +1,11 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.1.1 -->
-## [v15.1.1](https://github.com/chef/chef-zero/tree/v15.1.1) (2025-12-09)
+<!-- latest_release 15.1.2 -->
+## [v15.1.2](https://github.com/chef/chef-zero/tree/v15.1.2) (2025-12-10)
 
 #### Merged Pull Requests
-- Remove Buildkite unit/lint tests from expeditor config [#351](https://github.com/chef/chef-zero/pull/351) ([jaymzh](https://github.com/jaymzh))
+- Update to actions/checkout@v6 [#358](https://github.com/chef/chef-zero/pull/358) ([dafyddcrosby](https://github.com/dafyddcrosby))
 <!-- latest_release -->
 
 <!-- next_release -->
@@ -19,6 +19,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update to actions/checkout@v6 [#358](https://github.com/chef/chef-zero/pull/358) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.1.2 -->
 - Remove Buildkite unit/lint tests from expeditor config [#351](https://github.com/chef/chef-zero/pull/351) ([jaymzh](https://github.com/jaymzh)) <!-- 15.1.1 -->
 - Updating the version to release it [#354](https://github.com/chef/chef-zero/pull/354) ([johnmccrae](https://github.com/johnmccrae)) <!-- 15.1.0 -->
 - docs: Update Copilot Instructions with AI Compliance Workflow [#353](https://github.com/chef/chef-zero/pull/353) ([rishichawda](https://github.com/rishichawda)) <!-- 15.0.28 -->
