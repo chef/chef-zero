@@ -152,8 +152,6 @@ For information on contributing to this project see <https://github.com/chef/che
 
 ## License
 
-Copyright:: Chef Software, Inc.
-
 ```text
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -167,3 +165,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+# Copyright
+
+See [COPYRIGHT.md](./COPYRIGHT.md).
