@@ -1,11 +1,11 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.1.2 -->
-## [v15.1.2](https://github.com/chef/chef-zero/tree/v15.1.2) (2025-12-10)
+<!-- latest_release 15.1.3 -->
+## [v15.1.3](https://github.com/chef/chef-zero/tree/v15.1.3) (2026-02-10)
 
 #### Merged Pull Requests
-- Update to actions/checkout@v6 [#358](https://github.com/chef/chef-zero/pull/358) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- Disable sonarQube until security makes it work [#361](https://github.com/chef/chef-zero/pull/361) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- next_release -->
@@ -19,6 +19,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Disable sonarQube until security makes it work [#361](https://github.com/chef/chef-zero/pull/361) ([jaymzh](https://github.com/jaymzh)) <!-- 15.1.3 -->
 - Update to actions/checkout@v6 [#358](https://github.com/chef/chef-zero/pull/358) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.1.2 -->
 - Remove Buildkite unit/lint tests from expeditor config [#351](https://github.com/chef/chef-zero/pull/351) ([jaymzh](https://github.com/jaymzh)) <!-- 15.1.1 -->
 - Updating the version to release it [#354](https://github.com/chef/chef-zero/pull/354) ([johnmccrae](https://github.com/johnmccrae)) <!-- 15.1.0 -->
