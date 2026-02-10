@@ -362,6 +362,42 @@ describe ChefZero::Endpoints::EnvironmentCookbookVersionsEndpoint do
         expect(result).to be_nil
       end
 
+      it "uses cached cookbook data instead of re-fetching during backtracking" do
+        desired = {
+          "web" => ["1.0.0", "2.0.0"],
+          "db" => ["1.0.0"],
+        }
+        # web 2.0.0 depends on lib, which depends on missing (doesn't exist) → branch fails
+        # web 1.0.0 has no deps → backtracks here, db must be re-solved
+        # db 1.0.0 should be fetched only once (cached from the first branch)
+        allow(data_store).to receive(:get)
+          .with(org_prefix + ["cookbooks", "web", "2.0.0"], request)
+          .and_return(cookbook_json("web", "2.0.0", { "lib" => ">= 1.0.0" }))
+        allow(data_store).to receive(:get)
+          .with(org_prefix + ["cookbooks", "web", "1.0.0"], request)
+          .and_return(cookbook_json("web", "1.0.0"))
+        expect(data_store).to receive(:get)
+          .with(org_prefix + ["cookbooks", "db", "1.0.0"], request)
+          .once
+          .and_return(cookbook_json("db", "1.0.0"))
+        allow(data_store).to receive(:exists_dir?)
+          .with(org_prefix + %w{cookbooks lib})
+          .and_return(true)
+        allow(data_store).to receive(:list)
+          .with(org_prefix + %w{cookbooks lib})
+          .and_return(["1.0.0"])
+        allow(data_store).to receive(:get)
+          .with(org_prefix + ["cookbooks", "lib", "1.0.0"], request)
+          .and_return(cookbook_json("lib", "1.0.0", { "missing" => ">= 1.0.0" }))
+        allow(data_store).to receive(:exists_dir?)
+          .with(org_prefix + %w{cookbooks missing})
+          .and_return(false)
+
+        result, _cache = endpoint.depsolve(request, %w{web db}, desired, {})
+        expect(result["web"]).to eq(["1.0.0"])
+        expect(result["db"]).to eq(["1.0.0"])
+      end
+
       it "resolves a deep dependency chain" do
         desired = { "app" => ["1.0.0"] }
         allow(data_store).to receive(:get)
