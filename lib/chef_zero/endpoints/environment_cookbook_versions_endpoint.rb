@@ -118,7 +118,8 @@ module ChefZero
 
       def sort_versions(versions)
         result = versions.sort_by { |version| Gem::Version.new(version.dup) }
-        result.reverse
+        result.reverse!
+        result
       end
 
       def filter_by_constraint(versions, cookbook_name, constraint)
