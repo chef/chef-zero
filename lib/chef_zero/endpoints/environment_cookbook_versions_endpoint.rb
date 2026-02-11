@@ -84,7 +84,8 @@ module ChefZero
           new_unsolved = unsolved[1..-1]
 
           # Pick this cookbook, and add dependencies
-          cookbook_obj = FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", solve_for, desired_version]))
+          cookbook_obj = cookbook_obj_cache.dig(solve_for, desired_version) ||
+            FFI_Yajl::Parser.parse(get_data(request, request.rest_path[0..1] + ["cookbooks", solve_for, desired_version]))
           cookbook_obj_cache[solve_for] ||= {}
           cookbook_obj_cache[solve_for][desired_version] = cookbook_obj
           cookbook_metadata = cookbook_obj["metadata"] || {}
@@ -110,7 +111,8 @@ module ChefZero
           next if dep_not_found
 
           # Depsolve children with this desired version!  First solution wins.
-          result, cookbook_obj_cache = depsolve(request, new_unsolved, new_desired_versions, environment_constraints, cookbook_obj_cache)
+          result, returned_cache = depsolve(request, new_unsolved, new_desired_versions, environment_constraints, cookbook_obj_cache)
+          cookbook_obj_cache = returned_cache || cookbook_obj_cache
           return [result, cookbook_obj_cache] if result
         end
         [nil, nil]
