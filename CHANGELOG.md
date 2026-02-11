@@ -1,11 +1,11 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.1.5 -->
-## [v15.1.5](https://github.com/chef/chef-zero/tree/v15.1.5) (2026-02-10)
+<!-- latest_release 15.1.6 -->
+## [v15.1.6](https://github.com/chef/chef-zero/tree/v15.1.6) (2026-02-11)
 
 #### Merged Pull Requests
-- [EnvironmentCookbookVersionsEndpoint#sort_versions] Change .reverse to .reverse! [#362](https://github.com/chef/chef-zero/pull/362) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- [EnvironmentCookbookVersionsEndpoint] Use cookbook_obj_cache in depsolve before calling get_data [#363](https://github.com/chef/chef-zero/pull/363) ([dafyddcrosby](https://github.com/dafyddcrosby))
 <!-- latest_release -->
 
 <!-- next_release -->
@@ -19,6 +19,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [EnvironmentCookbookVersionsEndpoint] Use cookbook_obj_cache in depsolve before calling get_data [#363](https://github.com/chef/chef-zero/pull/363) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.1.6 -->
 - [EnvironmentCookbookVersionsEndpoint#sort_versions] Change .reverse to .reverse! [#362](https://github.com/chef/chef-zero/pull/362) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.1.5 -->
 - [EnvironmentCookbookVersionsEndpoint] Add rspec tests [#360](https://github.com/chef/chef-zero/pull/360) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.1.4 -->
 - Disable sonarQube until security makes it work [#361](https://github.com/chef/chef-zero/pull/361) ([jaymzh](https://github.com/jaymzh)) <!-- 15.1.3 -->
