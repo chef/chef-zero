@@ -1,11 +1,11 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.1.9 -->
-## [v15.1.9](https://github.com/chef/chef-zero/tree/v15.1.9) (2026-04-28)
+<!-- latest_release 15.1.10 -->
+## [v15.1.10](https://github.com/chef/chef-zero/tree/v15.1.10) (2026-04-28)
 
 #### Merged Pull Requests
-- CHEF-27435 Update and standardize copyright notices to Progress Software Corporation - copyright_update [#359](https://github.com/chef/chef-zero/pull/359) ([clintoncwolfe](https://github.com/clintoncwolfe))
+- Remove unused unf_ext dependency [#364](https://github.com/chef/chef-zero/pull/364) ([TvdW](https://github.com/TvdW))
 <!-- latest_release -->
 
 <!-- next_release -->
@@ -19,6 +19,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Remove unused unf_ext dependency [#364](https://github.com/chef/chef-zero/pull/364) ([TvdW](https://github.com/TvdW)) <!-- 15.1.10 -->
 - CHEF-27435 Update and standardize copyright notices to Progress Software Corporation - copyright_update [#359](https://github.com/chef/chef-zero/pull/359) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 15.1.9 -->
 - Modernize CODEOWNERS [#366](https://github.com/chef/chef-zero/pull/366) ([jaymzh](https://github.com/jaymzh)) <!-- 15.1.8 -->
 - Update uuidtools requirement from ~&gt; 2.1 to &gt;= 2.1, &lt; 4.0 [#365](https://github.com/chef/chef-zero/pull/365) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 15.1.7 -->
