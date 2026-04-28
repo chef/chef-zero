@@ -1,11 +1,11 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 # Change Log
 
-<!-- latest_release 15.1.7 -->
-## [v15.1.7](https://github.com/chef/chef-zero/tree/v15.1.7) (2026-04-28)
+<!-- latest_release 15.1.8 -->
+## [v15.1.8](https://github.com/chef/chef-zero/tree/v15.1.8) (2026-04-28)
 
 #### Merged Pull Requests
-- Update uuidtools requirement from ~&gt; 2.1 to &gt;= 2.1, &lt; 4.0 [#365](https://github.com/chef/chef-zero/pull/365) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Modernize CODEOWNERS [#366](https://github.com/chef/chef-zero/pull/366) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- next_release -->
@@ -19,6 +19,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Modernize CODEOWNERS [#366](https://github.com/chef/chef-zero/pull/366) ([jaymzh](https://github.com/jaymzh)) <!-- 15.1.8 -->
 - Update uuidtools requirement from ~&gt; 2.1 to &gt;= 2.1, &lt; 4.0 [#365](https://github.com/chef/chef-zero/pull/365) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 15.1.7 -->
 - [EnvironmentCookbookVersionsEndpoint] Use cookbook_obj_cache in depsolve before calling get_data [#363](https://github.com/chef/chef-zero/pull/363) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.1.6 -->
 - [EnvironmentCookbookVersionsEndpoint#sort_versions] Change .reverse to .reverse! [#362](https://github.com/chef/chef-zero/pull/362) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 15.1.5 -->
