@@ -18,7 +18,7 @@ group :development, :test do
 end
 
 group :style do
-  gem "cookstyle", "~> 8.6"
+  gem "cookstyle", "~> 9.0"
 end
 
 if ENV["GEMFILE_MOD"]
