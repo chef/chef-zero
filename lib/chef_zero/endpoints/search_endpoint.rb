@@ -174,10 +174,9 @@ module ChefZero
         if dest.nil?
           dest = source; return dest
         end
+        return dest if source.nil?
 
         case source
-        when nil
-          dest
         when Hash
           source.each do |src_key, src_value|
             if dest.is_a?(Hash)
