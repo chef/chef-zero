@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 3.0"
 
   s.add_dependency "mixlib-log", ">= 2.0", "< 4.0"
-  s.add_dependency "hashie", ">= 2.0", "< 6.0"
+  s.add_dependency "hashie", ">= 2.0", "< 7.0"
   s.add_dependency "uuidtools", ">= 2.1", "< 4.0"
   s.add_dependency "ffi-yajl", ">= 2.2", "< 4.0"
   s.add_dependency "rack", "~> 3.2", ">= 3.2.6"
